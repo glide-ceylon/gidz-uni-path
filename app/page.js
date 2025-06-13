@@ -41,7 +41,7 @@ export default function Home() {
               <div className="space-y-6">
                 <div className="inline-flex items-center space-x-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium">
                   <FaCrown className="w-4 h-4" />
-                  <span>Premium Education Consultancy</span>
+                  <span> Education Consultancy</span>
                 </div>
                 <h1 className="text-hero font-sf-pro text-gray-900 leading-none">
                   Your Gateway to Excellence
