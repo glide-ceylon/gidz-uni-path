@@ -123,8 +123,7 @@ body {
 
 .btn-premium:focus {
   outline: none;
-  ring: 2px solid #3B82F6;
-  ring-offset: 2px;
+  box-shadow: 0 0 0 2px #3B82F6;
 }
 
 .btn-secondary {
@@ -152,8 +151,7 @@ body {
 
 .btn-secondary:focus {
   outline: none;
-  ring: 2px solid #3B82F6;
-  ring-offset: 2px;
+  box-shadow: 0 0 0 2px #3B82F6;
 }
 
 /* Premium Card Styles */
