@@ -43,10 +43,7 @@ export default function Nav() {
   // Close Visa dropdown if clicked outside (desktop)
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        visaDropdownRef.current &&
-        !visaDropdownRef.current.contains(event.target)
-      ) {
+      if (visaDropdownRef.current && !visaDropdownRef.current.contains(event.target)) {
         setIsVisaDropdownOpen(false);
       }
     };
@@ -62,11 +59,7 @@ export default function Nav() {
       <div className="container mx-auto flex justify-between lg:w-10/12 items-center p-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <img
-            src="/logo.png"
-            alt="Gidzuni Education Pathways Logo"
-            className="h-16"
-          />
+          <img src="/gidz.png" alt="Gidzuni Education Pathways Logo" className="h-16" />
         </Link>
 
         {/* Desktop Navigation */}
@@ -99,12 +92,7 @@ export default function Nav() {
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
             </Link>
@@ -160,34 +148,12 @@ export default function Nav() {
           aria-label="Toggle menu"
         >
           {isMobileMenuOpen ? (
-            <svg
-              className="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           ) : (
-            <svg
-              className="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
           )}
         </button>
@@ -197,24 +163,9 @@ export default function Nav() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 bg-white bg-opacity-95 transition-opacity duration-300 ease-in-out">
           <div className="absolute top-4 right-4">
-            <button
-              onClick={toggleMobileMenu}
-              aria-label="Close menu"
-              className="text-gray-600"
-            >
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+            <button onClick={toggleMobileMenu} aria-label="Close menu" className="text-gray-600">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
@@ -245,12 +196,7 @@ export default function Nav() {
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 

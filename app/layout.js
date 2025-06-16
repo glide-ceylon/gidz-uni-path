@@ -71,7 +71,7 @@ export default function RootLayout({ children }) {
                     <FaWhatsapp className="w-5 h-5" />
                   </a>
                 </div>
-              </div>{" "}
+              </div>
               {/* Quick Links - Only Working Pages */}
               <div>
                 <h4 className="text-lg font-semibold mb-6">Quick Links</h4>
