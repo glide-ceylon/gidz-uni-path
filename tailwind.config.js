@@ -47,19 +47,18 @@ module.exports = {
           600: "#515154",
           700: "#1D1D1F",
           800: "#000000",
-        },
-        // Primary Brand Colors
+        }, // Primary Brand Colors (Sky Blue Theme)
         primary: {
-          50: "#FEF2F2",
-          100: "#FEE2E2",
-          200: "#FECACA",
-          300: "#FCA5A5",
-          400: "#F87171",
-          500: "#DD0000", // German Red as primary
-          600: "#DC2626",
-          700: "#B91C1C",
-          800: "#991B1B",
-          900: "#7F1D1D",
+          50: "#F0F9FF",
+          100: "#E0F2FE",
+          200: "#BAE6FD",
+          300: "#7DD3FC",
+          400: "#38BDF8",
+          500: "#0EA5E9", // Sky Blue as primary
+          600: "#0284C7",
+          700: "#0369A1",
+          800: "#075985",
+          900: "#0C4A6E",
         },
         // Neutral Palette
         midnight: "#000000",

@@ -14,16 +14,16 @@ export default function ExpertiseWithIcons() {
       description:
         "Expert guidance through applications to Germany's top universities with precision and care.",
       icon: FaGraduationCap,
-      color: "bg-german-red-500",
-      gradient: "from-german-red-500 to-german-red-600",
+      color: "bg-sky-500",
+      gradient: "from-sky-500 to-sky-600",
     },
     {
       title: "Visa Assistance",
       description:
         "Streamlined student visa process with our German legal expertise and proven success.",
       icon: FaPassport,
-      color: "bg-german-gold-500",
-      gradient: "from-german-gold-500 to-german-gold-600",
+      color: "bg-sky-600",
+      gradient: "from-sky-600 to-sky-700",
     },
     {
       title: "Career Counseling",
@@ -38,16 +38,16 @@ export default function ExpertiseWithIcons() {
       description:
         "TestDaF and IELTS preparation with certified instructors for academic excellence.",
       icon: FaLanguage,
-      color: "bg-german-red-500",
-      gradient: "from-german-red-500 to-german-red-600",
+      color: "bg-sky-500",
+      gradient: "from-sky-500 to-sky-600",
     },
     {
       title: "Pre-Departure Support",
       description:
         "Complete preparation with cultural orientation and practical guidance for Germany.",
       icon: FaPlane,
-      color: "bg-german-gold-500",
-      gradient: "from-german-gold-500 to-german-gold-600",
+      color: "bg-sky-600",
+      gradient: "from-sky-600 to-sky-700",
     },
     {
       title: "Post-Arrival Assistance",
@@ -79,7 +79,7 @@ export default function ExpertiseWithIcons() {
           <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-6 leading-tight">
             Our Areas of <span className="text-gradient">Expertise</span>
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-german-red to-german-gold mx-auto mb-6"></div>
+          <div className="w-24 h-1 bg-gradient-to-r from-sky-500 to-sky-600 mx-auto mb-6"></div>
           <p className="text-xl text-appleGray-600 max-w-3xl mx-auto leading-relaxed">
             Comprehensive services designed with German precision and Apple-like
             attention to detail
@@ -97,24 +97,21 @@ export default function ExpertiseWithIcons() {
               <div
                 className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${area.gradient}`}
               ></div>
-
               {/* Icon */}
               <div
                 className={`w-16 h-16 mb-6 ${area.color} rounded-2xl flex items-center justify-center shadow-soft group-hover:scale-110 transition-transform duration-300`}
               >
                 <area.icon className="w-8 h-8 text-white" />
               </div>
-
-              {/* Content */}
-              <h3 className="text-2xl font-bold text-appleGray-800 mb-4 group-hover:text-german-red transition-colors duration-300">
+              {/* Content */}{" "}
+              <h3 className="text-2xl font-bold text-appleGray-800 mb-4 group-hover:text-sky-500 transition-colors duration-300">
                 {area.title}
               </h3>
               <p className="text-appleGray-600 leading-relaxed">
                 {area.description}
               </p>
-
               {/* Hover Effect */}
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-german-red to-german-gold transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-sky-500 to-sky-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
             </div>
           ))}
         </div>

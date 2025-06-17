@@ -135,14 +135,14 @@ export default function Nav() {
         {!isLoggedIn ? (
           <Link
             href="/login"
-            className="ml-6 bg-german-red-500 text-white active:font-bold px-4 py-2 rounded-md shadow-md transition duration-200 hover:bg-german-red-600"
+            className="ml-6 bg-sky-500 text-white active:font-bold px-4 py-2 rounded-md shadow-md transition duration-200 hover:bg-sky-600"
           >
             Login
           </Link>
         ) : (
           <button
             onClick={handleLogout}
-            className="ml-6 bg-german-red-500 text-white active:font-bold px-4 py-2 rounded-md shadow-md transition duration-200 hover:bg-german-red-600"
+            className="ml-6 bg-sky-500 text-white active:font-bold px-4 py-2 rounded-md shadow-md transition duration-200 hover:bg-sky-600"
           >
             Logout
           </button>
@@ -218,7 +218,7 @@ export default function Nav() {
             <Link
               href="/"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-2xl font-medium text-appleGray-700 hover:text-german-red transition duration-200"
+              className="text-2xl font-medium text-appleGray-700 hover:text-sky-500 transition duration-200"
             >
               Home
             </Link>
@@ -229,7 +229,7 @@ export default function Nav() {
                 onClick={toggleMobileVisa}
                 aria-haspopup="true"
                 aria-expanded={isMobileVisaOpen}
-                className="flex items-center justify-center w-full text-2xl font-medium text-appleGray-700 hover:text-german-red transition duration-200"
+                className="flex items-center justify-center w-full text-2xl font-medium text-appleGray-700 hover:text-sky-500 transition duration-200"
               >
                 Visa
                 <svg
@@ -254,14 +254,14 @@ export default function Nav() {
                   <Link
                     href="/apply-now/student"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xl font-medium text-appleGray-600 hover:text-german-red transition duration-200"
+                    className="text-xl font-medium text-appleGray-600 hover:text-sky-500 transition duration-200"
                   >
                     Student Visa
                   </Link>
                   <Link
                     href="/apply-now/work"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xl font-medium text-appleGray-600 hover:text-german-red transition duration-200"
+                    className="text-xl font-medium text-appleGray-600 hover:text-sky-500 transition duration-200"
                   >
                     Work Visa
                   </Link>
@@ -271,7 +271,7 @@ export default function Nav() {
             <Link
               href="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-2xl font-medium text-appleGray-700 hover:text-german-red transition duration-200"
+              className="text-2xl font-medium text-appleGray-700 hover:text-sky-500 transition duration-200"
             >
               Contact Us
             </Link>
@@ -280,7 +280,7 @@ export default function Nav() {
               <Link
                 href="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="bg-german-red text-white px-6 py-3 rounded-md text-2xl font-medium shadow-lg hover:bg-german-red-600 transition duration-200"
+                className="bg-sky-500 text-white px-6 py-3 rounded-md text-2xl font-medium shadow-lg hover:bg-sky-600 transition duration-200"
               >
                 Login
               </Link>
@@ -290,7 +290,7 @@ export default function Nav() {
                   handleLogout();
                   setIsMobileMenuOpen(false);
                 }}
-                className="bg-german-red text-white px-6 py-3 rounded-md text-2xl font-medium shadow-lg hover:bg-german-red-600 transition duration-200"
+                className="bg-sky-500 text-white px-6 py-3 rounded-md text-2xl font-medium shadow-lg hover:bg-sky-600 transition duration-200"
               >
                 Logout
               </button>

@@ -23,9 +23,9 @@ export default function VisaOptionsPage() {
                 height={150}
                 className="w-full h-full object-contain rounded-full"
               />
-            </div>
+            </div>{" "}
             <h2 className="text-2xl font-semibold text-appleGray-700 flex items-center mb-4">
-              <FaUserGraduate className="mr-2 text-german-red" />
+              <FaUserGraduate className="mr-2 text-sky-500" />
               Apply for Student Visa
             </h2>
             <p className="text-appleGray-600 text-center mb-6">
@@ -34,7 +34,7 @@ export default function VisaOptionsPage() {
             </p>
             <button
               onClick={() => router.push("apply-now/student")}
-              className="flex items-center justify-center w-full px-4 py-2 text-white bg-german-red hover:bg-german-red-600 rounded-md focus:outline-none focus:ring focus:ring-german-red/30 transition btn-apple-hover"
+              className="flex items-center justify-center w-full px-4 py-2 text-white bg-sky-500 hover:bg-sky-600 rounded-md focus:outline-none focus:ring focus:ring-sky-300 transition btn-apple-hover"
             >
               Apply Now <FaArrowRight className="ml-2" />
             </button>
@@ -49,9 +49,9 @@ export default function VisaOptionsPage() {
                 height={150}
                 className="w-full h-full object-contain rounded-full"
               />
-            </div>
+            </div>{" "}
             <h2 className="text-2xl font-semibold text-appleGray-700 flex items-center mb-4">
-              <FaBriefcase className="mr-2 text-german-gold-500" />
+              <FaBriefcase className="mr-2 text-sky-600" />
               Apply for Work Visa
             </h2>
             <p className="text-appleGray-600 text-center mb-6">
@@ -60,7 +60,7 @@ export default function VisaOptionsPage() {
             </p>
             <button
               onClick={() => router.push("apply-now/work")}
-              className="flex items-center justify-center w-full px-4 py-2 text-white bg-german-gold-500 hover:bg-german-gold-600 rounded-md focus:outline-none focus:ring focus:ring-german-gold/30 transition btn-apple-hover"
+              className="flex items-center justify-center w-full px-4 py-2 text-white bg-sky-600 hover:bg-sky-700 rounded-md focus:outline-none focus:ring focus:ring-sky-300 transition btn-apple-hover"
             >
               Apply Now <FaArrowRight className="ml-2" />
             </button>

@@ -38,7 +38,7 @@ export default function Home() {
     <div className="min-h-screen bg-appleGray-50">
       {/* Hero Section - Apple-style with German colors */}
       <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-32">
-        <div className="absolute inset-0 bg-gradient-to-r from-german-red-500/5 via-transparent to-german-gold-500/5"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-8 animate-fade-in-up">
@@ -47,7 +47,6 @@ export default function Home() {
               <FaCrown className="w-4 h-4" />
               <span>Premium Education Consultancy</span>
             </div>
-
             {/* Main Headline */}
             <div className="space-y-6">
               <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-appleGray-800 leading-none tracking-tight">
@@ -60,16 +59,15 @@ export default function Home() {
                 world-class German education. Experience excellence, precision,
                 and success.
               </p>
-            </div>
-
+            </div>{" "}
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-              <button className="group bg-german-red-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 shadow-soft">
+              <button className="group bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 shadow-soft hover:bg-sky-600">
                 <span>Start Your Journey</span>
                 <FaArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
 
-              <button className="group bg-appleGray-100 text-appleGray-700 px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 border border-appleGray-200">
+              <button className="group bg-appleGray-100 text-appleGray-700 px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 border border-appleGray-200 hover:border-sky-300 hover:text-sky-600">
                 <FaPlay className="w-4 h-4" />
                 <span>Watch Our Story</span>
               </button>
@@ -111,18 +109,17 @@ export default function Home() {
       {/* Trust Indicators - Apple-style with German colors */}
       <section className="py-24 bg-white relative overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
+          {/* Header */}{" "}
           <div className="text-center mb-20 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-6 leading-tight">
               Why Choose Our <span className="text-gradient">Excellence</span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-german-red-500 to-german-gold-500 mx-auto mb-6"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-sky-500 to-sky-600 mx-auto mb-6"></div>
             <p className="text-xl text-appleGray-600 max-w-3xl mx-auto leading-relaxed">
               Experience unmatched quality, transparency, and success with
               German precision
             </p>
           </div>
-
           {/* Feature Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
             {[
@@ -190,7 +187,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-
           {/* Stats */}
           <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -214,18 +210,18 @@ export default function Home() {
       {/* Services Section - Apple-style cards */}
       <section className="py-24 bg-appleGray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {" "}
           <div className="text-center mb-20 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-6 leading-tight">
               Complete Education
               <span className="block text-gradient">Solutions</span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-german-red-500 to-german-gold-500 mx-auto mb-6"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-sky-500 to-sky-600 mx-auto mb-6"></div>
             <p className="text-xl text-appleGray-600 max-w-3xl mx-auto leading-relaxed">
               From application to settlement, we provide comprehensive support
               for your entire educational journey to Germany
             </p>
           </div>
-
           {/* Service Cards */}
           <div className="grid lg:grid-cols-3 gap-8">
             {[
@@ -302,11 +298,10 @@ export default function Home() {
                 </div>
               </div>
             ))}
-          </div>
-
+          </div>{" "}
           {/* CTA */}
           <div className="text-center mt-20">
-            <div className="bg-gradient-to-br from-german-red-500 to-german-gold-500 rounded-3xl p-12 text-white shadow-large">
+            <div className="bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl p-12 text-white shadow-large">
               <h3 className="text-3xl font-bold mb-4">
                 Ready to Start Your Journey?
               </h3>
@@ -315,10 +310,10 @@ export default function Home() {
                 German education dreams with our comprehensive support.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-white text-german-red-500 px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft">
+                <button className="bg-white text-sky-500 px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft hover:bg-sky-50">
                   Start Application
                 </button>
-                <button className="border-2 border-white text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover">
+                <button className="border-2 border-white text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover hover:bg-white/10">
                   Free Consultation
                 </button>
               </div>
@@ -456,8 +451,8 @@ export default function Home() {
               <p className="text-appleGray-600 mb-6">
                 Schedule a complimentary consultation to discuss your German
                 education goals and get personalized guidance.
-              </p>
-              <button className="w-full bg-gradient-to-r from-german-red-500 to-german-gold-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft">
+              </p>{" "}
+              <button className="w-full bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft hover:from-sky-600 hover:to-sky-700">
                 Book Your Consultation
               </button>
             </div>

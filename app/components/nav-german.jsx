@@ -82,9 +82,15 @@ export default function Nav() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-german-red to-german-gold rounded-xl flex items-center justify-center shadow-soft transition-all duration-300 group-hover:scale-110">
-              <FaGraduationCap className="w-6 h-6 text-white" />
-            </div>
+            {/* <div className="w-10 h-10 bg-gradient-to-br from-german-red to-german-gold rounded-xl flex items-center justify-center shadow-soft transition-all duration-300 group-hover:scale-110"> */}
+            <Link href="/" className="flex items-center">
+              <img
+                src="/gidz-transperant.png"
+                alt="Gidzuni Education Pathways Logo"
+                className="h-10 w-10 object-contain"
+              />
+            </Link>
+            {/* </div> */}
             <div className="hidden sm:block">
               <div className="text-xl font-bold text-appleGray-800">
                 GIDZ UniPath
@@ -97,14 +103,14 @@ export default function Nav() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
+            {" "}
             <Link
               href="/"
-              className="text-appleGray-700 hover:text-german-red font-medium transition-colors duration-200 relative group"
+              className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
             >
               Home
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-german-red transition-all duration-200 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
             </Link>
-
             {/* Visa Dropdown */}
             <div
               className="relative"
@@ -112,8 +118,9 @@ export default function Nav() {
               onMouseLeave={() => setIsVisaDropdownOpen(false)}
               ref={visaDropdownRef}
             >
+              {" "}
               <button
-                className="flex items-center space-x-1 text-appleGray-700 hover:text-german-red font-medium transition-colors duration-200 relative group"
+                className="flex items-center space-x-1 text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
                 aria-haspopup="true"
                 aria-expanded={isVisaDropdownOpen}
               >
@@ -123,15 +130,15 @@ export default function Nav() {
                     isVisaDropdownOpen ? "rotate-180" : ""
                   }`}
                 />
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-german-red transition-all duration-200 group-hover:w-full"></span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
               </button>
-
               {isVisaDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-large border border-appleGray-200 overflow-hidden animate-scale-in">
                   <div className="p-2">
+                    {" "}
                     <Link
                       href="/apply-now/student"
-                      className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-german-red/10 hover:text-german-red transition-colors duration-200"
+                      className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
                     >
                       <div className="font-medium">Student Visa</div>
                       <div className="text-sm text-appleGray-500">
@@ -140,7 +147,7 @@ export default function Nav() {
                     </Link>
                     <Link
                       href="/apply-now/work"
-                      className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-german-red/10 hover:text-german-red transition-colors duration-200"
+                      className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
                     >
                       <div className="font-medium">Work Visa</div>
                       <div className="text-sm text-appleGray-500">
@@ -150,30 +157,28 @@ export default function Nav() {
                   </div>
                 </div>
               )}
-            </div>
-
+            </div>{" "}
             <Link
               href="/applications"
-              className="text-appleGray-700 hover:text-german-red font-medium transition-colors duration-200 relative group"
+              className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
             >
               Applications
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-german-red transition-all duration-200 group-hover:w-full"></span>
-            </Link>
-
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
+            </Link>{" "}
             <Link
               href="/contact"
-              className="text-appleGray-700 hover:text-german-red font-medium transition-colors duration-200 relative group"
+              className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
             >
               Contact
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-german-red transition-all duration-200 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
             </Link>
-
             {/* Authentication */}
             {isLoggedIn ? (
               <div className="flex items-center space-x-4">
+                {" "}
                 <Link
                   href="/my-admin"
-                  className="text-appleGray-700 hover:text-german-red font-medium transition-colors duration-200"
+                  className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200"
                 >
                   Dashboard
                 </Link>
@@ -187,7 +192,7 @@ export default function Nav() {
             ) : (
               <Link
                 href="/login"
-                className="bg-gradient-to-r from-german-red to-german-gold text-white px-6 py-3 rounded-xl font-semibold btn-apple-hover shadow-soft"
+                className="bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-xl font-semibold btn-apple-hover shadow-soft"
               >
                 Login
               </Link>
@@ -211,19 +216,20 @@ export default function Nav() {
         {isMobileMenuOpen && (
           <div className="lg:hidden border-t border-appleGray-200 bg-white/95 backdrop-blur-xl rounded-b-3xl shadow-large animate-fade-in-up">
             <div className="px-4 py-6 space-y-4">
+              {" "}
               <Link
                 href="/"
-                className="block text-appleGray-700 hover:text-german-red font-medium py-2 transition-colors duration-200"
+                className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Home
               </Link>
-
               {/* Mobile Visa Dropdown */}
               <div>
+                {" "}
                 <button
                   onClick={toggleMobileVisa}
-                  className="flex items-center justify-between w-full text-appleGray-700 hover:text-german-red font-medium py-2 transition-colors duration-200"
+                  className="flex items-center justify-between w-full text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
                 >
                   <span>Visa Services</span>
                   <FaChevronDown
@@ -232,50 +238,48 @@ export default function Nav() {
                     }`}
                   />
                 </button>
-
                 {isMobileVisaOpen && (
                   <div className="pl-4 mt-2 space-y-2 animate-fade-in-up">
+                    {" "}
                     <Link
                       href="/apply-now/student"
-                      className="block text-appleGray-600 hover:text-german-red py-2 transition-colors duration-200 text-sm"
+                      className="block text-appleGray-600 hover:text-sky-500 py-2 transition-colors duration-200 text-sm"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Student Visa
                     </Link>
                     <Link
                       href="/apply-now/work"
-                      className="block text-appleGray-600 hover:text-german-red py-2 transition-colors duration-200 text-sm"
+                      className="block text-appleGray-600 hover:text-sky-500 py-2 transition-colors duration-200 text-sm"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Work Visa
                     </Link>
                   </div>
                 )}
-              </div>
-
+              </div>{" "}
               <Link
                 href="/applications"
-                className="block text-appleGray-700 hover:text-german-red font-medium py-2 transition-colors duration-200"
+                className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Applications
-              </Link>
-
+              </Link>{" "}
               <Link
                 href="/contact"
-                className="block text-appleGray-700 hover:text-german-red font-medium py-2 transition-colors duration-200"
+                className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Contact
               </Link>
-
               {/* Mobile Authentication */}
               <div className="pt-4 border-t border-appleGray-200">
                 {isLoggedIn ? (
                   <div className="space-y-2">
+                    {" "}
                     <Link
                       href="/my-admin"
-                      className="block text-appleGray-700 hover:text-german-red font-medium py-2 transition-colors duration-200"
+                      className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Dashboard
@@ -285,7 +289,7 @@ export default function Nav() {
                         handleLogout();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="block w-full text-left text-appleGray-700 hover:text-german-red font-medium py-2 transition-colors duration-200"
+                      className="block w-full text-left text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
                     >
                       Logout
                     </button>
@@ -293,7 +297,7 @@ export default function Nav() {
                 ) : (
                   <Link
                     href="/login"
-                    className="block bg-gradient-to-r from-german-red to-german-gold text-white px-6 py-3 rounded-xl font-semibold text-center btn-apple-hover shadow-soft"
+                    className="block bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-xl font-semibold text-center btn-apple-hover shadow-soft"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Login
