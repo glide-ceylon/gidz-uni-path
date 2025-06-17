@@ -109,11 +109,10 @@ export default function TestimonialsCarousel() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-german-red to-german-gold"></div>
 
             <div className="relative z-10">
-              {/* Quote Icon */}
-              <div className="w-16 h-16 bg-german-red rounded-2xl flex items-center justify-center mb-8 shadow-soft">
+              {/* Quote Icon */}{" "}
+              <div className="w-16 h-16 bg-sky-500 rounded-2xl flex items-center justify-center mb-8 shadow-soft">
                 <FaQuoteLeft className="w-8 h-8 text-white" />
               </div>
-
               {/* Testimonial Content */}
               <div className="grid lg:grid-cols-3 gap-8 items-center">
                 {/* Text Content */}
@@ -122,7 +121,7 @@ export default function TestimonialsCarousel() {
                   <div className="flex items-center space-x-1 mb-6">
                     {[...Array(testimonialsData[activeIndex].rating)].map(
                       (_, i) => (
-                        <FaStar key={i} className="w-5 h-5 text-german-gold" />
+                        <FaStar key={i} className="w-5 h-5 text-sky-400" />
                       )
                     )}
                   </div>
@@ -180,16 +179,15 @@ export default function TestimonialsCarousel() {
 
           {/* Navigation Controls */}
           <div className="flex justify-between items-center mt-12">
-            {/* Previous Button */}
+            {/* Previous Button */}{" "}
             <button
               onClick={handlePrev}
-              className="group w-12 h-12 bg-appleGray-100 hover:bg-german-red rounded-2xl flex items-center justify-center transition-all duration-300 btn-apple-hover"
+              className="group w-12 h-12 bg-appleGray-100 hover:bg-sky-500 rounded-2xl flex items-center justify-center transition-all duration-300 btn-apple-hover"
               onMouseEnter={() => setIsAutoPlaying(false)}
               onMouseLeave={() => setIsAutoPlaying(true)}
             >
               <FaChevronLeft className="w-5 h-5 text-appleGray-600 group-hover:text-white transition-colors duration-300" />
             </button>
-
             {/* Dots Indicator */}
             <div className="flex space-x-3">
               {testimonialsData.map((_, index) => (
@@ -198,7 +196,7 @@ export default function TestimonialsCarousel() {
                   onClick={() => handleDotClick(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     index === activeIndex
-                      ? "bg-german-red shadow-soft"
+                      ? "bg-sky-500 shadow-soft"
                       : "bg-appleGray-300 hover:bg-appleGray-400"
                   }`}
                   onMouseEnter={() => setIsAutoPlaying(false)}
@@ -206,11 +204,10 @@ export default function TestimonialsCarousel() {
                 />
               ))}
             </div>
-
-            {/* Next Button */}
+            {/* Next Button */}{" "}
             <button
               onClick={handleNext}
-              className="group w-12 h-12 bg-appleGray-100 hover:bg-german-red rounded-2xl flex items-center justify-center transition-all duration-300 btn-apple-hover"
+              className="group w-12 h-12 bg-appleGray-100 hover:bg-sky-500 rounded-2xl flex items-center justify-center transition-all duration-300 btn-apple-hover"
               onMouseEnter={() => setIsAutoPlaying(false)}
               onMouseLeave={() => setIsAutoPlaying(true)}
             >

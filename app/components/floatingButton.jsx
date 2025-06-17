@@ -41,7 +41,7 @@ export default function FloatingButtons() {
         {showBackToTop && (
           <button
             onClick={handleBackToTop}
-            className="w-14 h-14 bg-appleGray-800 hover:bg-german-red text-white rounded-2xl shadow-large flex items-center justify-center transition-all duration-300 btn-apple-hover animate-fade-in"
+            className="w-14 h-14 bg-appleGray-800 hover:bg-sky-500 text-white rounded-2xl shadow-large flex items-center justify-center transition-all duration-300 btn-apple-hover animate-fade-in"
             aria-label="Back to top"
           >
             <FaChevronUp className="w-5 h-5" />
@@ -56,7 +56,7 @@ export default function FloatingButtons() {
               {/* Email */}
               <button
                 onClick={handleEmailClick}
-                className="w-12 h-12 bg-german-gold hover:bg-german-gold-600 text-white rounded-xl shadow-soft flex items-center justify-center transition-all duration-300 btn-apple-hover"
+                className="w-12 h-12 bg-sky-400 hover:bg-sky-500 text-white rounded-xl shadow-soft flex items-center justify-center transition-all duration-300 btn-apple-hover"
                 aria-label="Send email"
               >
                 <FaEnvelope className="w-4 h-4" />
@@ -65,7 +65,7 @@ export default function FloatingButtons() {
               {/* Phone */}
               <button
                 onClick={handlePhoneClick}
-                className="w-12 h-12 bg-german-red hover:bg-german-red-600 text-white rounded-xl shadow-soft flex items-center justify-center transition-all duration-300 btn-apple-hover"
+                className="w-12 h-12 bg-sky-500 hover:bg-sky-600 text-white rounded-xl shadow-soft flex items-center justify-center transition-all duration-300 btn-apple-hover"
                 aria-label="Call us"
               >
                 <FaPhone className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function FloatingButtons() {
           </button>
 
           {/* Menu Toggle Indicator */}
-          <div className="absolute -top-1 -left-1 w-4 h-4 bg-german-red rounded-full flex items-center justify-center animate-pulse">
+          <div className="absolute -top-1 -left-1 w-4 h-4 bg-sky-500 rounded-full flex items-center justify-center animate-pulse">
             <div className="w-2 h-2 bg-white rounded-full"></div>
           </div>
         </div>

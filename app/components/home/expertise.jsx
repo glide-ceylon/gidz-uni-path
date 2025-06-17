@@ -67,7 +67,7 @@ export default function ExpertiseWithIcons() {
           {Array.from({ length: 144 }).map((_, i) => (
             <div
               key={i}
-              className="bg-german-red rounded-full w-1 h-1 animate-pulse-slow"
+              className="bg-sky-500 rounded-full w-1 h-1 animate-pulse-slow"
             ></div>
           ))}
         </div>

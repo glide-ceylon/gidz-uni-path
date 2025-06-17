@@ -87,7 +87,7 @@ export default function TestimonialsCarousel() {
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-german-red-500/5 via-transparent to-german-gold-500/5"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-sky-400/5"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -95,7 +95,7 @@ export default function TestimonialsCarousel() {
           <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-6 leading-tight">
             Success Stories from <span className="text-gradient">Germany</span>
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-german-red-500 to-german-gold-500 mx-auto mb-6"></div>
+          <div className="w-24 h-1 bg-gradient-to-r from-sky-500 to-sky-400 mx-auto mb-6"></div>
           <p className="text-xl text-appleGray-600 max-w-3xl mx-auto leading-relaxed">
             Hear from our students who achieved their German education dreams
             with our premium guidance
@@ -106,11 +106,11 @@ export default function TestimonialsCarousel() {
         <div className="relative">
           {/* Main Testimonial Card */}
           <div className="relative bg-appleGray-50 rounded-3xl p-8 lg:p-12 shadow-large border border-appleGray-200 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-german-red-500 to-german-gold-500"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-500 to-sky-400"></div>
 
             <div className="relative z-10">
               {/* Quote Icon */}
-              <div className="w-16 h-16 bg-german-red-500 rounded-2xl flex items-center justify-center mb-8 shadow-soft">
+              <div className="w-16 h-16 bg-sky-500 rounded-2xl flex items-center justify-center mb-8 shadow-soft">
                 <FaQuoteLeft className="w-8 h-8 text-white" />
               </div>
 
@@ -137,7 +137,7 @@ export default function TestimonialsCarousel() {
 
                   {/* Author Info */}
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-german-red-500 to-german-gold-500 rounded-full flex items-center justify-center shadow-soft">
+                    <div className="w-16 h-16 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full flex items-center justify-center shadow-soft">
                       {testimonialsData[activeIndex].avatar ? (
                         <Image
                           src={testimonialsData[activeIndex].avatar}
@@ -157,7 +157,7 @@ export default function TestimonialsCarousel() {
                       <div className="text-appleGray-600 text-sm">
                         {testimonialsData[activeIndex].program}
                       </div>
-                      <div className="text-german-red-500 font-semibold text-sm">
+                      <div className="text-sky-500 font-semibold text-sm">
                         {testimonialsData[activeIndex].university}
                       </div>
                     </div>
@@ -166,8 +166,8 @@ export default function TestimonialsCarousel() {
 
                 {/* Visual Element */}
                 <div className="flex justify-center lg:justify-end">
-                  <div className="w-64 h-64 bg-gradient-to-br from-german-black via-german-red-500 to-german-gold-500 rounded-3xl shadow-large flex items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-black/40"></div>
+                  <div className="w-64 h-64 bg-gradient-to-br from-sky-700 to-sky-400 rounded-3xl shadow-large flex items-center justify-center relative overflow-hidden">
+                    <div className="absolute inset-0"></div>
                     <div className="relative z-10 text-center text-white">
                       <FaGraduationCap className="w-16 h-16 mx-auto mb-4 animate-float" />
                       <div className="font-bold text-lg">
@@ -183,16 +183,15 @@ export default function TestimonialsCarousel() {
 
           {/* Navigation Controls */}
           <div className="flex justify-between items-center mt-12">
-            {/* Previous Button */}
+            {/* Previous Button */}{" "}
             <button
               onClick={handlePrev}
-              className="group w-12 h-12 bg-appleGray-100 hover:bg-german-red-500 rounded-2xl flex items-center justify-center transition-all duration-300 btn-apple-hover"
+              className="group w-12 h-12 bg-appleGray-100 hover:bg-sky-500 rounded-2xl flex items-center justify-center transition-all duration-300 btn-apple-hover"
               onMouseEnter={() => setIsAutoPlaying(false)}
               onMouseLeave={() => setIsAutoPlaying(true)}
             >
               <FaChevronLeft className="w-5 h-5 text-appleGray-600 group-hover:text-white transition-colors duration-300" />
             </button>
-
             {/* Dots Indicator */}
             <div className="flex space-x-3">
               {testimonialsData.map((_, index) => (
@@ -201,7 +200,7 @@ export default function TestimonialsCarousel() {
                   onClick={() => handleDotClick(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     index === activeIndex
-                      ? "bg-german-red-500 shadow-soft"
+                      ? "bg-sky-500 shadow-soft"
                       : "bg-appleGray-300 hover:bg-appleGray-400"
                   }`}
                   onMouseEnter={() => setIsAutoPlaying(false)}
@@ -209,11 +208,10 @@ export default function TestimonialsCarousel() {
                 />
               ))}
             </div>
-
-            {/* Next Button */}
+            {/* Next Button */}{" "}
             <button
               onClick={handleNext}
-              className="group w-12 h-12 bg-appleGray-100 hover:bg-german-red-500 rounded-2xl flex items-center justify-center transition-all duration-300 btn-apple-hover"
+              className="group w-12 h-12 bg-appleGray-100 hover:bg-sky-500 rounded-2xl flex items-center justify-center transition-all duration-300 btn-apple-hover"
               onMouseEnter={() => setIsAutoPlaying(false)}
               onMouseLeave={() => setIsAutoPlaying(true)}
             >
@@ -231,7 +229,7 @@ export default function TestimonialsCarousel() {
             { value: "5★", label: "Average Rating" },
           ].map((stat, index) => (
             <div key={index} className="group">
-              <div className="text-3xl lg:text-4xl font-bold text-german-red-500 mb-2 group-hover:text-german-gold transition-colors duration-300">
+              <div className="text-3xl lg:text-4xl font-bold text-sky-500 mb-2 group-hover:text-german-gold transition-colors duration-300">
                 {stat.value}
               </div>
               <div className="text-appleGray-600 text-sm lg:text-base">

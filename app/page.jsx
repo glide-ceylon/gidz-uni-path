@@ -42,8 +42,8 @@ export default function Home() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-8 animate-fade-in-up">
-            {/* Badge */}
-            <div className="inline-flex items-center space-x-2 bg-german-red-500/10 text-german-red-700 px-6 py-3 rounded-full text-sm font-medium border border-german-red-500/20">
+            {/* Badge */}{" "}
+            <div className="inline-flex items-center space-x-2 bg-sky-500/10 text-sky-700 px-6 py-3 rounded-full text-sm font-medium border border-sky-500/20">
               <FaCrown className="w-4 h-4" />
               <span>Premium Education Consultancy</span>
             </div>
@@ -77,7 +77,7 @@ export default function Home() {
           {/* Hero Image/Visual */}
           <div className="mt-20 relative">
             <div className="relative max-w-4xl mx-auto">
-              <div className="aspect-video bg-gradient-to-br from-german-black via-german-red-500 to-german-gold-500 rounded-3xl shadow-large overflow-hidden">
+              <div className="aspect-video bg-gradient-to-br from-slate-900 via-sky-500 to-sky-600 rounded-3xl shadow-large overflow-hidden">
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <div className="text-center text-white space-y-4 animate-fade-in-up">
                     <FaGraduationCap className="w-16 h-16 mx-auto animate-float" />
@@ -90,14 +90,12 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-german-gold-500 rounded-full shadow-medium flex items-center justify-center animate-float">
-                <FaUniversity className="w-8 h-8 text-german-black" />
+              {/* Floating Elements */}{" "}
+              <div className="absolute -top-4 -left-4 w-24 h-24 bg-sky-400 rounded-full shadow-medium flex items-center justify-center animate-float">
+                <FaUniversity className="w-8 h-8 text-white" />
               </div>
-
               <div
-                className="absolute -bottom-4 -right-4 w-32 h-32 bg-german-red-500 rounded-2xl shadow-medium flex items-center justify-center animate-float"
+                className="absolute -bottom-4 -right-4 w-32 h-32 bg-sky-500 rounded-2xl shadow-medium flex items-center justify-center animate-float"
                 style={{ animationDelay: "1s" }}
               >
                 <FaGlobe className="w-10 h-10 text-white" />
@@ -128,14 +126,14 @@ export default function Home() {
                 title: "Expert Legal Team",
                 description:
                   "Immigration lawyers in Germany handle your applications with precision and care.",
-                color: "bg-german-red-500",
+                color: "bg-sky-500",
               },
               {
                 icon: FaShieldAlt,
                 title: "Money-Back Guarantee",
                 description:
                   "Complete refund within 14 days if we can't secure your admission.",
-                color: "bg-german-gold-500",
+                color: "bg-sky-400",
               },
               {
                 icon: FaHandshake,
@@ -149,14 +147,14 @@ export default function Home() {
                 title: "Proven Success",
                 description:
                   "Proven track record with over 1000 successful university placements.",
-                color: "bg-german-red-500",
+                color: "bg-sky-500",
               },
               {
                 icon: FaGlobe,
                 title: "Global Network",
                 description:
                   "Partnerships with 50+ top German universities and institutions.",
-                color: "bg-german-gold-500",
+                color: "bg-sky-400",
               },
               {
                 icon: FaHeart,
@@ -188,7 +186,7 @@ export default function Home() {
             ))}
           </div>
           {/* Stats */}
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { number: "1000+", label: "Students Placed" },
               { number: "99%", label: "Success Rate" },
@@ -204,7 +202,7 @@ export default function Home() {
                 <div className="text-appleGray-600 text-lg">{stat.label}</div>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       </section>
       {/* Services Section - Apple-style cards */}
@@ -236,7 +234,7 @@ export default function Home() {
                   "Interview coaching",
                   "Deadline management",
                 ],
-                color: "bg-german-red-500",
+                color: "bg-sky-500",
               },
               {
                 icon: FaPassport,
@@ -249,7 +247,7 @@ export default function Home() {
                   "Embassy appointments",
                   "Legal compliance",
                 ],
-                color: "bg-german-gold-500",
+                color: "bg-sky-400",
               },
               {
                 icon: FaHome,
@@ -343,14 +341,14 @@ export default function Home() {
                 title: "Language Support",
                 description:
                   "TestDaF and IELTS preparation with certified instructors.",
-                color: "bg-german-red-500",
+                color: "bg-sky-500",
               },
               {
                 icon: FaMoneyBillWave,
                 title: "Scholarship Guidance",
                 description:
                   "Access to exclusive funding opportunities and financial aid.",
-                color: "bg-german-gold-500",
+                color: "bg-sky-400",
               },
               {
                 icon: FaUserTie,
@@ -364,7 +362,7 @@ export default function Home() {
                 title: "Premium Mentorship",
                 description:
                   "One-on-one guidance from industry experts and alumni.",
-                color: "bg-german-red-500",
+                color: "bg-sky-500",
               },
             ].map((service, index) => (
               <div
@@ -403,11 +401,11 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Contact Info */}
-            <div className="space-y-8">
+          <div className="grid lg:grid-cols-4 gap-12 items-center">
+            {/* Contact Info */}{" "}
+            {/* <div className="space-y-8">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-german-red-500 rounded-2xl flex items-center justify-center shadow-soft">
+                <div className="w-16 h-16 bg-sky-500 rounded-2xl flex items-center justify-center shadow-soft">
                   <FaPhone className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -419,7 +417,7 @@ export default function Home() {
               </div>
 
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-german-gold-500 rounded-2xl flex items-center justify-center shadow-soft">
+                <div className="w-16 h-16 bg-sky-400 rounded-2xl flex items-center justify-center shadow-soft">
                   <FaWhatsapp className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -441,10 +439,9 @@ export default function Home() {
                   <p className="text-appleGray-600">Colombo 07, Sri Lanka</p>
                 </div>
               </div>
-            </div>
-
+            </div> */}
             {/* CTA Card */}
-            <div className="bg-appleGray-50 p-8 rounded-3xl border border-appleGray-200">
+            <div className="bg-appleGray-50 col-span-2 col-start-2 p-8 rounded-3xl border border-appleGray-200">
               <h3 className="text-2xl font-bold text-appleGray-800 mb-4">
                 Free Consultation
               </h3>
