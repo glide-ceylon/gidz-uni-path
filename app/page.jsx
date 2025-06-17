@@ -36,10 +36,34 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-appleGray-50">
+    <div className="min-h-screen bg-appleGray-50 relative overflow-hidden">
+      {/* Floating Background Elements */}
+      <div className="absolute top-32 left-10 w-20 h-20 bg-sky-400/10 rounded-full animate-float"></div>
+      <div
+        className="absolute top-64 right-16 w-16 h-16 bg-sky-500/15 rounded-2xl animate-float"
+        style={{ animationDelay: "1s" }}
+      ></div>
+      <div
+        className="absolute top-96 left-20 w-12 h-12 bg-sky-600/20 rounded-full animate-float"
+        style={{ animationDelay: "2s" }}
+      ></div>
+      <div
+        className="absolute top-80 right-32 w-8 h-8 bg-sky-400/25 rounded-full animate-float"
+        style={{ animationDelay: "3s" }}
+      ></div>
       {/* Hero Section - Apple-style with German colors */}
       <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-32">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
+
+        {/* Additional floating elements for hero section */}
+        <div
+          className="absolute top-20 left-1/4 w-32 h-32 bg-sky-500/5 rounded-full animate-float"
+          style={{ animationDelay: "0.5s" }}
+        ></div>
+        <div
+          className="absolute bottom-20 right-1/4 w-24 h-24 bg-sky-400/8 rounded-2xl animate-float"
+          style={{ animationDelay: "1.5s" }}
+        ></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-8 animate-fade-in-up">
@@ -107,9 +131,23 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section>{" "}
       {/* Trust Indicators - Apple-style with German colors */}
       <section className="py-24 bg-white relative overflow-hidden">
+        {/* Floating elements for this section */}
+        <div
+          className="absolute top-16 right-10 w-28 h-28 bg-sky-400/8 rounded-full animate-float"
+          style={{ animationDelay: "2.5s" }}
+        ></div>
+        <div
+          className="absolute bottom-20 left-8 w-20 h-20 bg-sky-500/10 rounded-2xl animate-float"
+          style={{ animationDelay: "4s" }}
+        ></div>
+        <div
+          className="absolute top-32 left-1/3 w-16 h-16 bg-sky-600/12 rounded-full animate-float"
+          style={{ animationDelay: "3.5s" }}
+        ></div>
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}{" "}
           <div className="text-center mb-20 animate-fade-in-up">
@@ -208,9 +246,26 @@ export default function Home() {
             ))}
           </div> */}
         </div>
-      </section>
+      </section>{" "}
       {/* Services Section - Apple-style cards */}
-      <section className="py-24 bg-appleGray-50">
+      <section className="py-24 bg-appleGray-50 relative overflow-hidden">
+        {/* Floating elements for services section */}
+        <div
+          className="absolute top-12 left-12 w-24 h-24 bg-sky-500/8 rounded-2xl animate-float"
+          style={{ animationDelay: "1.8s" }}
+        ></div>
+        <div
+          className="absolute bottom-16 right-14 w-32 h-32 bg-sky-400/6 rounded-full animate-float"
+          style={{ animationDelay: "3.2s" }}
+        ></div>
+        <div
+          className="absolute top-40 right-1/4 w-14 h-14 bg-sky-600/15 rounded-full animate-float"
+          style={{ animationDelay: "2.8s" }}
+        ></div>
+        <div
+          className="absolute bottom-32 left-1/4 w-18 h-18 bg-sky-500/12 rounded-2xl animate-float"
+          style={{ animationDelay: "4.5s" }}
+        ></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {" "}
           <div className="text-center mb-20 animate-fade-in-up">
@@ -324,9 +379,22 @@ export default function Home() {
         </div>{" "}
       </section>
       {/* Expertise Section */}
-      <Expertise />
-      {/* Additional Services */}
-      <section className="py-24 bg-white">
+      <Expertise /> {/* Additional Services */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        {/* Floating elements for additional services */}
+        <div
+          className="absolute top-20 left-16 w-22 h-22 bg-sky-400/10 rounded-full animate-float"
+          style={{ animationDelay: "2.2s" }}
+        ></div>
+        <div
+          className="absolute bottom-24 right-12 w-26 h-26 bg-sky-500/8 rounded-2xl animate-float"
+          style={{ animationDelay: "3.8s" }}
+        ></div>
+        <div
+          className="absolute top-56 right-20 w-12 h-12 bg-sky-600/18 rounded-full animate-float"
+          style={{ animationDelay: "1.5s" }}
+        ></div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800">
@@ -390,9 +458,26 @@ export default function Home() {
         </div>
       </section>{" "}
       {/* Testimonials Section */}
-      <Testimonials />
-      {/* Contact Section */}
-      <section className="py-24 bg-white">
+      <Testimonials /> {/* Contact Section */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        {/* Floating elements for contact section */}
+        <div
+          className="absolute top-8 right-8 w-30 h-30 bg-sky-400/7 rounded-full animate-float"
+          style={{ animationDelay: "1.2s" }}
+        ></div>
+        <div
+          className="absolute bottom-12 left-10 w-20 h-20 bg-sky-500/12 rounded-2xl animate-float"
+          style={{ animationDelay: "3.5s" }}
+        ></div>
+        <div
+          className="absolute top-32 left-1/3 w-16 h-16 bg-sky-600/10 rounded-full animate-float"
+          style={{ animationDelay: "2.7s" }}
+        ></div>
+        <div
+          className="absolute bottom-28 right-1/4 w-14 h-14 bg-sky-400/15 rounded-2xl animate-float"
+          style={{ animationDelay: "4.2s" }}
+        ></div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-6">

@@ -87,7 +87,7 @@ export default function TestimonialsCarousel() {
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-german-red/5 via-transparent to-german-gold/5"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-sky-400/5"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -95,7 +95,7 @@ export default function TestimonialsCarousel() {
           <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-6 leading-tight">
             Success Stories from <span className="text-gradient">Germany</span>
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-german-red to-german-gold mx-auto mb-6"></div>
+          <div className="w-24 h-1 bg-gradient-to-r from-sky-500 to-sky-400 mx-auto mb-6"></div>
           <p className="text-xl text-appleGray-600 max-w-3xl mx-auto leading-relaxed">
             Hear from our students who achieved their German education dreams
             with our premium guidance

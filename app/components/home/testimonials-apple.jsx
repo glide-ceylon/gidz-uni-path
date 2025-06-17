@@ -122,10 +122,7 @@ export default function TestimonialsCarousel() {
                   <div className="flex items-center space-x-1 mb-6">
                     {[...Array(testimonialsData[activeIndex].rating)].map(
                       (_, i) => (
-                        <FaStar
-                          key={i}
-                          className="w-5 h-5 text-german-gold-500"
-                        />
+                        <FaStar key={i} className="w-5 h-5 text-sky-400" />
                       )
                     )}
                   </div>
@@ -229,7 +226,7 @@ export default function TestimonialsCarousel() {
             { value: "5★", label: "Average Rating" },
           ].map((stat, index) => (
             <div key={index} className="group">
-              <div className="text-3xl lg:text-4xl font-bold text-sky-500 mb-2 group-hover:text-german-gold transition-colors duration-300">
+              <div className="text-3xl lg:text-4xl font-bold text-sky-500 mb-2 group-hover:text-sky-400 transition-colors duration-300">
                 {stat.value}
               </div>
               <div className="text-appleGray-600 text-sm lg:text-base">

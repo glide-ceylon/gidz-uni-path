@@ -56,7 +56,7 @@ export default function RootLayout({ children }) {
               {/* Company Info */}
               <div className="lg:col-span-2">
                 <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-german-red to-german-gold rounded-2xl flex items-center justify-center shadow-soft">
+                  <div className="w-12 h-12 bg-gradient-to-br from-sky-500 to-sky-400 rounded-2xl flex items-center justify-center shadow-soft">
                     <FaGraduationCap className="w-7 h-7 text-white" />
                   </div>
                   <div>
@@ -71,35 +71,34 @@ export default function RootLayout({ children }) {
                   in German university admissions and visa processing. Our
                   expert team has helped over 1000 students achieve their
                   academic dreams in Germany.
-                </p>
-
-                {/* German Flag Colors Accent */}
+                </p>{" "}
+                {/* Brand Colors Accent */}
                 <div className="flex items-center space-x-2 mb-6">
-                  <div className="w-6 h-4 bg-german-black rounded-sm"></div>
-                  <div className="w-6 h-4 bg-german-red-500 rounded-sm"></div>
-                  <div className="w-6 h-4 bg-german-gold-500 rounded-sm"></div>
+                  <div className="w-6 h-4 bg-sky-600 rounded-sm"></div>
+                  <div className="w-6 h-4 bg-sky-500 rounded-sm"></div>
+                  <div className="w-6 h-4 bg-sky-400 rounded-sm"></div>
                   <span className="text-appleGray-400 text-sm ml-2">
                     Excellence. Precision. Success.
                   </span>
                 </div>
-
                 {/* Social Links */}
                 <div className="flex space-x-3">
+                  {" "}
                   <a
                     href="mailto:info@gidzunipath.com"
-                    className="w-12 h-12 bg-appleGray-700 rounded-2xl flex items-center justify-center hover:bg-german-red-500 transition-all duration-300 btn-apple-hover"
+                    className="w-12 h-12 bg-appleGray-700 rounded-2xl flex items-center justify-center hover:bg-sky-500 transition-all duration-300 btn-apple-hover"
                   >
                     <FaEnvelope className="w-5 h-5" />
-                  </a>
+                  </a>{" "}
                   <a
                     href="tel:+94701234567"
-                    className="w-12 h-12 bg-appleGray-700 rounded-2xl flex items-center justify-center hover:bg-german-red-500 transition-all duration-300 btn-apple-hover"
+                    className="w-12 h-12 bg-appleGray-700 rounded-2xl flex items-center justify-center hover:bg-sky-500 transition-all duration-300 btn-apple-hover"
                   >
                     <FaPhone className="w-5 h-5" />
                   </a>
                   <a
                     href="https://wa.me/94701234567"
-                    className="w-12 h-12 bg-appleGray-700 rounded-2xl flex items-center justify-center hover:bg-german-gold-500 transition-all duration-300 btn-apple-hover"
+                    className="w-12 h-12 bg-appleGray-700 rounded-2xl flex items-center justify-center hover:bg-sky-400 transition-all duration-300 btn-apple-hover"
                   >
                     <FaWhatsapp className="w-5 h-5" />
                   </a>
@@ -113,9 +112,10 @@ export default function RootLayout({ children }) {
                 </h4>
                 <ul className="space-y-4">
                   <li>
+                    {" "}
                     <Link
                       href="/apply-now"
-                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-sky-400 transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>Apply Now</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -124,9 +124,10 @@ export default function RootLayout({ children }) {
                     </Link>
                   </li>
                   <li>
+                    {" "}
                     <Link
                       href="/contact"
-                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-sky-400 transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>Contact Us</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -135,9 +136,10 @@ export default function RootLayout({ children }) {
                     </Link>
                   </li>
                   <li>
+                    {" "}
                     <Link
                       href="/application"
-                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-sky-400 transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>Application Status</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -146,9 +148,10 @@ export default function RootLayout({ children }) {
                     </Link>
                   </li>
                   <li>
+                    {" "}
                     <Link
                       href="/applications"
-                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-sky-400 transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>View Applications</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -157,9 +160,10 @@ export default function RootLayout({ children }) {
                     </Link>
                   </li>
                   <li>
+                    {" "}
                     <Link
                       href="/login"
-                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-sky-400 transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>Login</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -176,8 +180,9 @@ export default function RootLayout({ children }) {
                   Contact Info
                 </h4>
                 <div className="space-y-6">
+                  {" "}
                   <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-german-red-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-soft">
+                    <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-soft">
                       <FaMapMarkerAlt className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -188,11 +193,10 @@ export default function RootLayout({ children }) {
                         Colombo 03, Sri Lanka
                       </p>
                     </div>
-                  </div>
-
+                  </div>{" "}
                   <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-german-gold-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-soft">
-                      <FaPhone className="w-5 h-5 text-german-black" />
+                    <div className="w-10 h-10 bg-sky-400 rounded-xl flex items-center justify-center flex-shrink-0 shadow-soft">
+                      <FaPhone className="w-5 h-5 text-white" />
                     </div>
                     <a
                       href="tel:+94701234567"
@@ -201,7 +205,6 @@ export default function RootLayout({ children }) {
                       +94 70 123 4567
                     </a>
                   </div>
-
                   <div className="flex items-center space-x-4">
                     <div className="w-10 h-10 bg-appleGray-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-soft">
                       <FaEnvelope className="w-5 h-5 text-white" />
@@ -212,10 +215,9 @@ export default function RootLayout({ children }) {
                     >
                       info@gidzunipath.com
                     </a>
-                  </div>
-
+                  </div>{" "}
                   <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-german-red-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-soft">
+                    <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-soft">
                       <FaClock className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -248,7 +250,7 @@ export default function RootLayout({ children }) {
                     href="https://helarix.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 text-german-gold-500 hover:text-white transition-colors duration-300 font-bold"
+                    className="flex items-center space-x-2 text-sky-400 hover:text-white transition-colors duration-300 font-bold"
                   >
                     <FaCode className="w-4 h-4" />
                     <span>Helarix Technologies</span>
