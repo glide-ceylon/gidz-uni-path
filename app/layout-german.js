@@ -115,7 +115,7 @@ export default function RootLayout({ children }) {
                   <li>
                     <Link
                       href="/apply-now"
-                      className="text-appleGray-300 hover:text-german-gold-500 transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>Apply Now</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -126,7 +126,7 @@ export default function RootLayout({ children }) {
                   <li>
                     <Link
                       href="/contact"
-                      className="text-appleGray-300 hover:text-german-gold-500 transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>Contact Us</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -137,7 +137,7 @@ export default function RootLayout({ children }) {
                   <li>
                     <Link
                       href="/application"
-                      className="text-appleGray-300 hover:text-german-gold-500 transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>Application Status</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -148,7 +148,7 @@ export default function RootLayout({ children }) {
                   <li>
                     <Link
                       href="/applications"
-                      className="text-appleGray-300 hover:text-german-gold-500 transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>View Applications</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -159,7 +159,7 @@ export default function RootLayout({ children }) {
                   <li>
                     <Link
                       href="/login"
-                      className="text-appleGray-300 hover:text-german-gold-500 transition-colors duration-300 flex items-center space-x-2 group"
+                      className="text-appleGray-300 hover:text-german-gold transition-colors duration-300 flex items-center space-x-2 group"
                     >
                       <span>Login</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">

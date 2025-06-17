@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Expertise from "./components/home/expertise";
-import Testimonials from "./components/home/testimonials-apple";
+import Testimonials from "./components/home/testimonials";
 import {
   FaGraduationCap,
   FaUserShield,
@@ -43,7 +43,7 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-8 animate-fade-in-up">
             {/* Badge */}
-            <div className="inline-flex items-center space-x-2 bg-german-red-500/10 text-german-red-700 px-6 py-3 rounded-full text-sm font-medium border border-german-red-500/20">
+            <div className="inline-flex items-center space-x-2 bg-german-red-500/10 text-german-red-700 px-6 py-3 rounded-full text-sm font-medium border border-german-red/20">
               <FaCrown className="w-4 h-4" />
               <span>Premium Education Consultancy</span>
             </div>
@@ -64,7 +64,7 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-              <button className="group bg-german-red-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 shadow-soft">
+              <button className="group bg-german-red text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 shadow-soft">
                 <span>Start Your Journey</span>
                 <FaArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
@@ -79,7 +79,7 @@ export default function Home() {
           {/* Hero Image/Visual */}
           <div className="mt-20 relative">
             <div className="relative max-w-4xl mx-auto">
-              <div className="aspect-video bg-gradient-to-br from-german-black via-german-red-500 to-german-gold-500 rounded-3xl shadow-large overflow-hidden">
+              <div className="aspect-video bg-gradient-to-br from-german-black via-german-red to-german-gold rounded-3xl shadow-large overflow-hidden">
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <div className="text-center text-white space-y-4 animate-fade-in-up">
                     <FaGraduationCap className="w-16 h-16 mx-auto animate-float" />
@@ -94,12 +94,12 @@ export default function Home() {
               </div>
 
               {/* Floating Elements */}
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-german-gold-500 rounded-full shadow-medium flex items-center justify-center animate-float">
+              <div className="absolute -top-4 -left-4 w-24 h-24 bg-german-gold rounded-full shadow-medium flex items-center justify-center animate-float">
                 <FaUniversity className="w-8 h-8 text-german-black" />
               </div>
 
               <div
-                className="absolute -bottom-4 -right-4 w-32 h-32 bg-german-red-500 rounded-2xl shadow-medium flex items-center justify-center animate-float"
+                className="absolute -bottom-4 -right-4 w-32 h-32 bg-german-red rounded-2xl shadow-medium flex items-center justify-center animate-float"
                 style={{ animationDelay: "1s" }}
               >
                 <FaGlobe className="w-10 h-10 text-white" />
@@ -108,6 +108,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
       {/* Trust Indicators - Apple-style with German colors */}
       <section className="py-24 bg-white relative overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -116,7 +117,7 @@ export default function Home() {
             <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-6 leading-tight">
               Why Choose Our <span className="text-gradient">Excellence</span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-german-red-500 to-german-gold-500 mx-auto mb-6"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-german-red to-german-gold mx-auto mb-6"></div>
             <p className="text-xl text-appleGray-600 max-w-3xl mx-auto leading-relaxed">
               Experience unmatched quality, transparency, and success with
               German precision
@@ -131,14 +132,14 @@ export default function Home() {
                 title: "Expert Legal Team",
                 description:
                   "Immigration lawyers in Germany handle your applications with precision and care.",
-                color: "bg-german-red-500",
+                color: "bg-german-red",
               },
               {
                 icon: FaShieldAlt,
                 title: "Money-Back Guarantee",
                 description:
                   "Complete refund within 14 days if we can't secure your admission.",
-                color: "bg-german-gold-500",
+                color: "bg-german-gold",
               },
               {
                 icon: FaHandshake,
@@ -152,14 +153,14 @@ export default function Home() {
                 title: "Proven Success",
                 description:
                   "Proven track record with over 1000 successful university placements.",
-                color: "bg-german-red-500",
+                color: "bg-german-red",
               },
               {
                 icon: FaGlobe,
                 title: "Global Network",
                 description:
                   "Partnerships with 50+ top German universities and institutions.",
-                color: "bg-german-gold-500",
+                color: "bg-german-gold",
               },
               {
                 icon: FaHeart,
@@ -211,6 +212,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
       {/* Services Section - Apple-style cards */}
       <section className="py-24 bg-appleGray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -219,7 +221,7 @@ export default function Home() {
               Complete Education
               <span className="block text-gradient">Solutions</span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-german-red-500 to-german-gold-500 mx-auto mb-6"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-german-red to-german-gold mx-auto mb-6"></div>
             <p className="text-xl text-appleGray-600 max-w-3xl mx-auto leading-relaxed">
               From application to settlement, we provide comprehensive support
               for your entire educational journey to Germany
@@ -240,7 +242,7 @@ export default function Home() {
                   "Interview coaching",
                   "Deadline management",
                 ],
-                color: "bg-german-red-500",
+                color: "bg-german-red",
               },
               {
                 icon: FaPassport,
@@ -253,7 +255,7 @@ export default function Home() {
                   "Embassy appointments",
                   "Legal compliance",
                 ],
-                color: "bg-german-gold-500",
+                color: "bg-german-gold",
               },
               {
                 icon: FaHome,
@@ -306,7 +308,7 @@ export default function Home() {
 
           {/* CTA */}
           <div className="text-center mt-20">
-            <div className="bg-gradient-to-br from-german-red-500 to-german-gold-500 rounded-3xl p-12 text-white shadow-large">
+            <div className="bg-gradient-to-br from-german-red to-german-gold rounded-3xl p-12 text-white shadow-large">
               <h3 className="text-3xl font-bold mb-4">
                 Ready to Start Your Journey?
               </h3>
@@ -315,7 +317,7 @@ export default function Home() {
                 German education dreams with our comprehensive support.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-white text-german-red-500 px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft">
+                <button className="bg-white text-german-red px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft">
                   Start Application
                 </button>
                 <button className="border-2 border-white text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover">
@@ -324,10 +326,9 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>{" "}
+        </div>
       </section>
-      {/* Expertise Section */}
-      <Expertise />
+
       {/* Additional Services */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -348,14 +349,14 @@ export default function Home() {
                 title: "Language Support",
                 description:
                   "TestDaF and IELTS preparation with certified instructors.",
-                color: "bg-german-red-500",
+                color: "bg-german-red",
               },
               {
                 icon: FaMoneyBillWave,
                 title: "Scholarship Guidance",
                 description:
                   "Access to exclusive funding opportunities and financial aid.",
-                color: "bg-german-gold-500",
+                color: "bg-german-gold",
               },
               {
                 icon: FaUserTie,
@@ -369,7 +370,7 @@ export default function Home() {
                 title: "Premium Mentorship",
                 description:
                   "One-on-one guidance from industry experts and alumni.",
-                color: "bg-german-red-500",
+                color: "bg-german-red",
               },
             ].map((service, index) => (
               <div
@@ -391,9 +392,82 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>{" "}
+      </section>
+
       {/* Testimonials Section */}
-      <Testimonials />
+      <section className="py-24 bg-appleGray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-6">
+              Success Stories from{" "}
+              <span className="text-gradient">Germany</span>
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-german-red to-german-gold mx-auto"></div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Priya Wickramasinghe",
+                university: "Technical University of Munich",
+                program: "Master's in Computer Science",
+                image: "/stu1.jpg",
+                quote:
+                  "GIDZ made my dream of studying in Germany a reality. Their support was exceptional throughout the entire process.",
+              },
+              {
+                name: "Kasun Perera",
+                university: "University of Stuttgart",
+                program: "Master's in Mechanical Engineering",
+                image: "/stu2.jpg",
+                quote:
+                  "Professional, reliable, and transparent. I couldn't have asked for better guidance for my German education journey.",
+              },
+              {
+                name: "Dilini Fernando",
+                university: "RWTH Aachen University",
+                program: "Master's in Data Science",
+                image: "/stu1.jpg",
+                quote:
+                  "The team's expertise and dedication helped me secure admission to one of Germany's top technical universities.",
+              },
+            ].map((testimonial, index) => (
+              <div
+                key={index}
+                className="bg-white p-8 rounded-3xl shadow-soft card-apple-hover border border-appleGray-200"
+              >
+                <div className="flex items-center space-x-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <FaStar key={i} className="w-4 h-4 text-german-gold" />
+                  ))}
+                </div>
+
+                <p className="text-appleGray-700 leading-relaxed mb-6 italic">
+                  "{testimonial.quote}"
+                </p>
+
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-german-red rounded-full flex items-center justify-center">
+                    <FaUsers className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-appleGray-800">
+                      {testimonial.name}
+                    </div>
+                    <div className="text-sm text-appleGray-600">
+                      {testimonial.program}
+                    </div>
+                    <div className="text-sm text-german-red font-medium">
+                      {testimonial.university}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -412,7 +486,7 @@ export default function Home() {
             {/* Contact Info */}
             <div className="space-y-8">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-german-red-500 rounded-2xl flex items-center justify-center shadow-soft">
+                <div className="w-16 h-16 bg-german-red rounded-2xl flex items-center justify-center shadow-soft">
                   <FaPhone className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -424,7 +498,7 @@ export default function Home() {
               </div>
 
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-german-gold-500 rounded-2xl flex items-center justify-center shadow-soft">
+                <div className="w-16 h-16 bg-german-gold rounded-2xl flex items-center justify-center shadow-soft">
                   <FaWhatsapp className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -457,7 +531,7 @@ export default function Home() {
                 Schedule a complimentary consultation to discuss your German
                 education goals and get personalized guidance.
               </p>
-              <button className="w-full bg-gradient-to-r from-german-red-500 to-german-gold-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft">
+              <button className="w-full bg-gradient-to-r from-german-red to-german-gold text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft">
                 Book Your Consultation
               </button>
             </div>
