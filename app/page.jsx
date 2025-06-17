@@ -32,6 +32,7 @@ import {
   FaBookOpen,
   FaMapPin,
 } from "react-icons/fa";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -62,10 +63,13 @@ export default function Home() {
             </div>{" "}
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-              <button className="group bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 shadow-soft hover:bg-sky-600">
+              <Link
+                href="/apply-now"
+                className="group bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 shadow-soft hover:bg-sky-600"
+              >
                 <span>Start Your Journey</span>
                 <FaArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </button>
+              </Link>
 
               <button className="group bg-appleGray-100 text-appleGray-700 px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 border border-appleGray-200 hover:border-sky-300 hover:text-sky-600">
                 <FaPlay className="w-4 h-4" />
