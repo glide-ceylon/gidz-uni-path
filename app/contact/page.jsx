@@ -118,9 +118,10 @@ export default function Page() {
 
           {/* Card 2 - Visit Us */}
           <div className="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+            {" "}
             <div className="flex justify-center">
-              <div className="bg-yellow-100 p-4 rounded-full mb-4">
-                <FaMapMarkerAlt className="text-yellow-500 text-2xl" />
+              <div className="bg-sky-100 p-4 rounded-full mb-4">
+                <FaMapMarkerAlt className="text-sky-500 text-2xl" />
               </div>
             </div>
             <h3 className="text-xl font-semibold text-gray-800">Visit us</h3>
@@ -269,7 +270,7 @@ export default function Page() {
               href="https://youtube.com/@gidzunipath?si=WoGKw0TkY3Aj0Ar-"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 hover:text-red-500 transition-colors"
+              className="text-gray-600 hover:text-sky-500 transition-colors"
             >
               <FaYoutube className="w-8 h-8" />
             </a>

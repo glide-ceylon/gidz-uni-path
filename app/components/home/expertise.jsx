@@ -1,67 +1,117 @@
+import {
+  FaGraduationCap,
+  FaPassport,
+  FaUserTie,
+  FaLanguage,
+  FaPlane,
+  FaHome,
+} from "react-icons/fa";
+
 export default function ExpertiseWithIcons() {
   const expertiseAreas = [
     {
       title: "University Applications",
       description:
-        "Guiding students through applications to top universities worldwide with ease.",
-      icon: "🎓",
+        "Expert guidance through applications to Germany's top universities with precision and care.",
+      icon: FaGraduationCap,
+      color: "bg-sky-500",
+      gradient: "from-sky-500 to-sky-600",
     },
     {
       title: "Visa Assistance",
       description:
-        "Expert guidance to simplify the complex student visa application process.",
-      icon: "✈️",
+        "Streamlined student visa process with our German legal expertise and proven success.",
+      icon: FaPassport,
+      color: "bg-sky-600",
+      gradient: "from-sky-600 to-sky-700",
     },
     {
       title: "Career Counseling",
       description:
-        "Helping you choose the right academic and professional path for a bright future.",
-      icon: "💼",
+        "Strategic academic and professional pathway planning for your German success story.",
+      icon: FaUserTie,
+      color: "bg-appleGray-700",
+      gradient: "from-appleGray-700 to-appleGray-800",
     },
     {
       title: "Language Training",
       description:
-        "Preparing you for academic success with tailored language training programs.",
-      icon: "🌐",
+        "TestDaF and IELTS preparation with certified instructors for academic excellence.",
+      icon: FaLanguage,
+      color: "bg-sky-500",
+      gradient: "from-sky-500 to-sky-600",
     },
     {
       title: "Pre-Departure Support",
       description:
-        "Equipping students with all they need to transition smoothly to their new academic journey.",
-      icon: "🛫",
+        "Complete preparation with cultural orientation and practical guidance for Germany.",
+      icon: FaPlane,
+      color: "bg-sky-600",
+      gradient: "from-sky-600 to-sky-700",
     },
     {
       title: "Post-Arrival Assistance",
       description:
-        "Providing ongoing support to students after their arrival, ensuring a comfortable adjustment.",
-      icon: "🏡",
+        "Ongoing support for accommodation, banking, and cultural integration in Germany.",
+      icon: FaHome,
+      color: "bg-appleGray-700",
+      gradient: "from-appleGray-700 to-appleGray-800",
     },
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-6 lg:px-12 lg:w-10/12">
-        <h2 className="text-4xl font-bold text-center text-gray-900 mb-10">
-          Our Areas of Expertise
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <section className="py-24 bg-appleGray-50 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="grid grid-cols-12 gap-4 h-full">
+          {Array.from({ length: 144 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-sky-500 rounded-full w-1 h-1 animate-pulse-slow"
+            ></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-20 animate-fade-in-up">
+          <h2 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-6 leading-tight">
+            Our Areas of <span className="text-gradient">Expertise</span>
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-sky-500 to-sky-600 mx-auto mb-6"></div>
+          <p className="text-xl text-appleGray-600 max-w-3xl mx-auto leading-relaxed">
+            Comprehensive services designed with German precision and Apple-like
+            attention to detail
+          </p>
+        </div>
+
+        {/* Expertise Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {expertiseAreas.map((area, index) => (
             <div
               key={index}
-              className="flex items-center bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
+              className="group bg-white p-8 rounded-3xl shadow-soft card-apple-hover border border-appleGray-200 relative overflow-hidden"
             >
-              {/* Icon Section */}
-              <div className="flex-shrink-0 bg-blue-100 text-blue-600 rounded-full p-4 mr-4">
-                <span className="text-2xl">{area.icon}</span>
+              {/* Background Gradient Accent */}
+              <div
+                className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${area.gradient}`}
+              ></div>
+              {/* Icon */}
+              <div
+                className={`w-16 h-16 mb-6 ${area.color} rounded-2xl flex items-center justify-center shadow-soft group-hover:scale-110 transition-transform duration-300`}
+              >
+                <area.icon className="w-8 h-8 text-white" />
               </div>
-
-              {/* Content Section */}
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800">
-                  {area.title}
-                </h3>
-                <p className="mt-2 text-gray-600">{area.description}</p>
-              </div>
+              {/* Content */}{" "}
+              <h3 className="text-2xl font-bold text-appleGray-800 mb-4 group-hover:text-sky-500 transition-colors duration-300">
+                {area.title}
+              </h3>
+              <p className="text-appleGray-600 leading-relaxed">
+                {area.description}
+              </p>
+              {/* Hover Effect */}
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-sky-500 to-sky-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
             </div>
           ))}
         </div>
