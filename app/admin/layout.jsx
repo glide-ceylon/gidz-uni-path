@@ -20,7 +20,6 @@ export default function RootLayout({ children }) {
 
       setLoading(false);
     };
-
     checkUser();
   }, [router]);
 

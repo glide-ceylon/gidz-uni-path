@@ -66,7 +66,7 @@ export default function RootLayout({ children }) {
                       Your Gateway to German Excellence
                     </p>
                   </div>
-                </div>
+                </div>{" "}
                 <p className="text-appleGray-300 mb-8 leading-relaxed max-w-md text-lg">
                   We are Sri Lanka&apos;s premier education consultancy,
                   specializing in German university admissions and visa

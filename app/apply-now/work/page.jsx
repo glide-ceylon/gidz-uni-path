@@ -387,7 +387,7 @@ const WorkVisaApplicationForm = () => {
       ></div>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-16">
+      <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
 
         <div className="container-apple text-center relative z-10">
@@ -403,7 +403,8 @@ const WorkVisaApplicationForm = () => {
           <p className="text-xl text-appleGray-600 max-w-2xl mx-auto mb-8">
             Start your career journey abroad. Complete your work visa
             application in simple steps.
-          </p>{" "}
+          </p>
+
           {/* Progress indicator */}
           <div className="max-w-4xl mx-auto mb-2">
             <div className="flex items-center justify-between">
@@ -819,7 +820,7 @@ const WorkVisaApplicationForm = () => {
           <p className="text-appleGray-600">
             Your education and work background
           </p>
-        </div>{" "}
+        </div>
         {/* Document Uploads */}
         <div className="grid grid-cols-1 gap-6">
           {/* CV Upload - First */}

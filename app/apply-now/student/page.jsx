@@ -518,14 +518,16 @@ const StudentApplicationForm = () => {
         className="absolute top-80 right-32 w-8 h-8 bg-sky-400/25 rounded-full animate-float"
         style={{ animationDelay: "3s" }}
       ></div>
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-16">
+      <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
 
         <div className="container-apple text-center relative z-10">
           <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-soft">
             <FaGraduationCap className="w-10 h-10 text-white" />
           </div>
+
           <h1 className="text-4xl lg:text-6xl font-bold text-appleGray-900 mb-6">
             Student Visa
             <span className="block text-gradient bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
@@ -1408,7 +1410,6 @@ const StudentApplicationForm = () => {
             <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
               For Master&apos;s Degree Applications
             </h4>
-
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-appleGray-700 mb-2">
@@ -1427,7 +1428,7 @@ const StudentApplicationForm = () => {
                     className="hidden"
                     id="bachelors-upload"
                     accept=".pdf,.jpg,.jpeg,.png"
-                  />
+                  />{" "}
                   <label
                     htmlFor="bachelors-upload"
                     className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
@@ -1685,7 +1686,7 @@ const StudentApplicationForm = () => {
           />
           <p className="text-sm text-appleGray-500 mt-2">
             Optional but recommended - helps us understand your motivation
-          </p>{" "}
+          </p>
         </div>
       </div>
     );

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation"; // For redirecting on logout
 import Image from "next/image";
 
@@ -60,12 +61,14 @@ export default function Nav() {
   return (
     <header className="bg-gradient-to-r from-appleGray-50 to-white w-full bg-[length:400%_400%] animate-gradient-move shadow-sm border-b border-appleGray-200">
       <div className="container mx-auto flex justify-between lg:w-10/12 items-center p-4">
-        {/* Logo */}
+        {/* Logo */}{" "}
         <Link href="/" className="flex items-center">
           <Image
             src="/gidz.png"
             alt="Gidzuni Education Pathways Logo"
-            className="h-16"
+            width={64}
+            height={64}
+            className="h-16 w-auto"
           />
         </Link>
         {/* Desktop Navigation */}
