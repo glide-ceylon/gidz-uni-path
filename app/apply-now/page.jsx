@@ -92,7 +92,7 @@ export default function VisaOptionsPage() {
 
               {/* Subtitle */}
               <p className="text-xl lg:text-2xl text-appleGray-600 max-w-4xl mx-auto leading-relaxed">
-                Whether you're pursuing higher education or advancing your
+                Whether you&apos;re pursuing higher education or advancing your
                 career, we make your international dreams a reality with expert
                 guidance and proven results.
               </p>
@@ -374,8 +374,8 @@ export default function VisaOptionsPage() {
                     </h3>
                     <p className="text-appleGray-600 leading-relaxed flex-1">
                       Receive instant notifications as soon as your review is
-                      completed. We'll guide you through the next steps for your
-                      successful application.
+                      completed. We&apos;ll guide you through the next steps for
+                      your successful application.
                     </p>
                   </div>
                 </div>
@@ -436,8 +436,8 @@ export default function VisaOptionsPage() {
                   Ready to Start Your Journey?
                 </h2>
                 <p className="text-xl mb-8 opacity-90">
-                  Don't wait any longer. Your international education or career
-                  opportunity is just one click away.
+                  Don&apos;t wait any longer. Your international education or
+                  career opportunity is just one click away.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button

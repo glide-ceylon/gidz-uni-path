@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Icon} from "@iconify/react";
+import { Icon } from "@iconify/react";
 import { supabase } from "../../../../lib/supabase";
 import UniversitiesTable from "../../components/UniversitiesTable";
 import DocumentsTable from "../../components/DocumentsTable";
@@ -9,6 +9,7 @@ import DcoumentsFromUs from "../../components/DocumentsFromUs";
 import ApplicationOptions from "../../components/ApplicationOptoins";
 import ProfilePic from "../../components/ProfilePic";
 import axios from "axios";
+import Image from "next/image";
 
 const EDUCATIONAL_BACKGROUNDS = [
   "Bachelors",
@@ -139,12 +140,11 @@ const ApplicantDetail = () => {
 
   // For toggling password visibility
   const [showPassword, setShowPassword] = useState(false);
-  
 
   // For the "Create New Password" modal
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [tempPassword, setTempPassword] = useState("");
-  const[lockstate,setlockstate]=useState(false);
+  const [lockstate, setlockstate] = useState(false);
 
   // Notification Modal State
   const [notification, setNotification] = useState({
@@ -422,21 +422,19 @@ const ApplicantDetail = () => {
   };
 
   // -------------------------------------------
-  //  Handle Lock 
+  //  Handle Lock
   // -------------------------------------------
 
-  const handleLock =async() => {
-    try{
+  const handleLock = async () => {
+    try {
       const { error } = await supabase
-      .from("applications")
-      .update({ lock_1: !lockstate })
-      .eq("id", applicant.id);
+        .from("applications")
+        .update({ lock_1: !lockstate })
+        .eq("id", applicant.id);
 
-      if(error) throw error;
+      if (error) throw error;
       setlockstate(!lockstate);
-    
-    }
-    catch(error){
+    } catch (error) {
       console.error("Error updating lock status:", error.message);
       setNotification({
         isOpen: true,
@@ -444,10 +442,8 @@ const ApplicantDetail = () => {
         message: error.message,
         type: "error",
       });
-    } 
-
-
-  }
+    }
+  };
   // -------------------------------------------
   //  Applicant Payments Handlers
   // -------------------------------------------
@@ -595,7 +591,7 @@ const ApplicantDetail = () => {
         <hr className="my-3" />
         <div className="flex flex-col items-start justify-center">
           <h4 className="text-2xl font-semibold mb-4">Profile Picture</h4>
-          <img
+          <Image
             src={getDocumentUrl(applicant.documents, "Profile Picture")}
             alt="profile"
             className="w-24 h-24 rounded-full object-cover"
@@ -687,17 +683,22 @@ const ApplicantDetail = () => {
         <hr className="my-3" />
 
         <section className="mb-6">
-        <div className="flex items-center gap-4">
-  <h2 className="text-2xl font-semibold mb-4">VISA APPLICATION</h2>
-  <button className="px-4 py-2  text-white rounded hover:bg-blue-600 transition" onClick={handleLock}>
-  <Icon
-          icon={lockstate ? "solar:lock-bold" : "solar:lock-unlocked-bold"} // Render lock or unlock based on state
-          width="32"
-          color="#FF8A65"
-        />
-  </button>
-</div>
-          
+          <div className="flex items-center gap-4">
+            <h2 className="text-2xl font-semibold mb-4">VISA APPLICATION</h2>
+            <button
+              className="px-4 py-2  text-white rounded hover:bg-blue-600 transition"
+              onClick={handleLock}
+            >
+              <Icon
+                icon={
+                  lockstate ? "solar:lock-bold" : "solar:lock-unlocked-bold"
+                } // Render lock or unlock based on state
+                width="32"
+                color="#FF8A65"
+              />
+            </button>
+          </div>
+
           <div className="space-y-4">
             {/* Payment 2 */}
             <div className="p-4 border rounded">

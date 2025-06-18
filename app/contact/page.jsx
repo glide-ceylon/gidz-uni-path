@@ -29,7 +29,8 @@ const SuccessDialog = ({ onClose }) => {
         </div>
         <h3 className="text-2xl font-bold text-appleGray-900 mb-2">Success!</h3>
         <p className="text-appleGray-600 mb-6">
-          Your message has been sent successfully. We'll get back to you soon!
+          Your message has been sent successfully. We&apos;ll get back to you
+          soon!
         </p>
         <button
           onClick={onClose}
@@ -145,8 +146,8 @@ export default function ContactPage() {
             </h1>
 
             <p className="text-xl text-appleGray-600 max-w-2xl mx-auto">
-              Ready to start your journey abroad? We're here to help you every
-              step of the way.
+              Ready to start your journey abroad? We&apos;re here to help you
+              every step of the way.
             </p>
 
             {/* Quick Contact Stats */}
@@ -297,8 +298,8 @@ export default function ContactPage() {
                     Send us a Message
                   </h3>
                   <p className="text-appleGray-600">
-                    We appreciate your inquiry. Leave us a message, and we'll
-                    reach out shortly.
+                    We appreciate your inquiry. Leave us a message, and
+                    we&apos;ll reach out shortly.
                   </p>
                 </div>
 
@@ -522,8 +523,9 @@ export default function ContactPage() {
               Ready to Start Your Journey?
             </h3>
             <p className="text-sky-100 mb-6 max-w-2xl mx-auto">
-              Don't wait! Your dream of studying or working abroad is just one
-              step away. Contact us today and let's make it happen together.
+              Don&apos;t wait! Your dream of studying or working abroad is just
+              one step away. Contact us today and let&apos;s make it happen
+              together.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a

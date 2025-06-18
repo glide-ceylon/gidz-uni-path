@@ -129,7 +129,7 @@ export default function TestimonialsCarousel() {
 
                   {/* Testimonial Text */}
                   <blockquote className="text-lg lg:text-xl text-appleGray-700 leading-relaxed mb-8 italic">
-                    "{testimonialsData[activeIndex].text}"
+                    {testimonialsData[activeIndex].text}
                   </blockquote>
 
                   {/* Author Info */}

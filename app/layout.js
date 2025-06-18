@@ -68,10 +68,10 @@ export default function RootLayout({ children }) {
                   </div>
                 </div>
                 <p className="text-appleGray-300 mb-8 leading-relaxed max-w-md text-lg">
-                  We are Sri Lanka's premier education consultancy, specializing
-                  in German university admissions and visa processing. Our
-                  expert team has helped over 1000 students achieve their
-                  academic dreams in Germany.
+                  We are Sri Lanka&apos;s premier education consultancy,
+                  specializing in German university admissions and visa
+                  processing. Our expert team has helped over 1000 students
+                  achieve their academic dreams in Germany.
                 </p>
                 {/* German Flag Colors Accent */}
                 <div className="flex items-center space-x-2 mb-6">

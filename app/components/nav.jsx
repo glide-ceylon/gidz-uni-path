@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation"; // For redirecting on logout
+import Image from "next/image";
 
 export default function Nav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -61,7 +62,7 @@ export default function Nav() {
       <div className="container mx-auto flex justify-between lg:w-10/12 items-center p-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <img
+          <Image
             src="/gidz.png"
             alt="Gidzuni Education Pathways Logo"
             className="h-16"
