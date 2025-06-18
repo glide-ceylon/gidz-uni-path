@@ -83,16 +83,14 @@ export default function VisaOptionsPage() {
                 <FaGraduationCap className="w-4 h-4" />
                 <span>Your Gateway to International Education</span>
               </div>
-
               {/* Main Headline */}
               <h1 className="text-5xl lg:text-6xl font-bold text-appleGray-800 leading-tight">
                 Choose Your Path to
                 <span className="block text-gradient mt-2">Global Success</span>
               </h1>
-
-              {/* Subtitle */}
+              {/* Subtitle */}{" "}
               <p className="text-xl lg:text-2xl text-appleGray-600 max-w-4xl mx-auto leading-relaxed">
-                Whether you're pursuing higher education or advancing your
+                Whether you&apos;re pursuing higher education or advancing your
                 career, we make your international dreams a reality with expert
                 guidance and proven results.
               </p>
@@ -374,7 +372,7 @@ export default function VisaOptionsPage() {
                     </h3>
                     <p className="text-appleGray-600 leading-relaxed flex-1">
                       Receive instant notifications as soon as your review is
-                      completed. We'll guide you through the next steps for your
+                      completed. Well guide you through the next steps for your
                       successful application.
                     </p>
                   </div>
@@ -434,10 +432,10 @@ export default function VisaOptionsPage() {
               <div className="relative z-10">
                 <h2 className="text-4xl lg:text-5xl font-bold mb-6">
                   Ready to Start Your Journey?
-                </h2>
+                </h2>{" "}
                 <p className="text-xl mb-8 opacity-90">
-                  Don't wait any longer. Your international education or career
-                  opportunity is just one click away.
+                  Don&apos;t wait any longer. Your international education or
+                  career opportunity is just one click away.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button

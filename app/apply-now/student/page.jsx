@@ -961,12 +961,12 @@ const StudentApplicationForm = () => {
                 )
               }
               className="w-4 h-4 text-sky-500 border-appleGray-300 rounded focus:ring-sky-500"
-            />
+            />{" "}
             <label
               htmlFor="gpaRequired"
               className="text-sm font-semibold text-appleGray-700"
             >
-              Applying for Master's Degree (GPA Required)
+              Applying for Master&apos;s Degree (GPA Required)
             </label>
           </div>
 
@@ -1175,14 +1175,14 @@ const StudentApplicationForm = () => {
           </div>
 
           <div className="bg-appleGray-50 p-6 rounded-2xl">
+            {" "}
             <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-              For Master's Degree Applications
+              For Master&apos;s Degree Applications
             </h4>
-
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  Bachelor's Certificate
+                  Bachelor&apos;s Certificate
                 </label>
                 <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
                   <input
@@ -1197,12 +1197,12 @@ const StudentApplicationForm = () => {
                     className="hidden"
                     id="bachelors-upload"
                     accept=".pdf,.jpg,.jpeg,.png"
-                  />
+                  />{" "}
                   <label
                     htmlFor="bachelors-upload"
                     className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
                   >
-                    Upload Bachelor's Certificate
+                    Upload Bachelor&apos;s Certificate
                   </label>
                   <p className="text-sm text-appleGray-500 mt-2">
                     PDF, JPG, PNG up to 10MB

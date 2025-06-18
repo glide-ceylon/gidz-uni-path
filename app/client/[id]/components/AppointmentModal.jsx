@@ -1,10 +1,12 @@
+import Image from "next/image";
+
 export default function AppointmentModal({ onClose }) {
   return (
     <div className="text-center relative">
       {/* Close Button */}
 
       {/* Appointment Image */}
-      <img
+      <Image
         src="/app.webp"
         alt="Appointment"
         className="w-32 h-32 mx-auto object-cover rounded-lg shadow-md"

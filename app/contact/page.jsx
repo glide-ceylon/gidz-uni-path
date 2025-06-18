@@ -27,9 +27,10 @@ const SuccessDialog = ({ onClose }) => {
         <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <FaCheckCircle className="w-8 h-8 text-sky-500" />
         </div>
-        <h3 className="text-2xl font-bold text-appleGray-900 mb-2">Success!</h3>
+        <h3 className="text-2xl font-bold text-appleGray-900 mb-2">Success!</h3>{" "}
         <p className="text-appleGray-600 mb-6">
-          Your message has been sent successfully. We'll get back to you soon!
+          Your message has been sent successfully. We&apos;ll get back to you
+          soon!
         </p>
         <button
           onClick={onClose}
@@ -136,19 +137,16 @@ export default function ContactPage() {
             <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto shadow-soft">
               <FaComments className="w-10 h-10 text-white" />
             </div>
-
             <h1 className="text-4xl lg:text-6xl font-bold text-appleGray-900">
               Get In
               <span className="block text-gradient bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
                 Touch
               </span>
-            </h1>
-
+            </h1>{" "}
             <p className="text-xl text-appleGray-600 max-w-2xl mx-auto">
-              Ready to start your journey abroad? We're here to help you every
-              step of the way.
+              Ready to start your journey abroad? We&apos;re here to help you
+              every step of the way.
             </p>
-
             {/* Quick Contact Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto pt-8">
               {" "}
@@ -295,10 +293,10 @@ export default function ContactPage() {
                   </div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-appleGray-900 mb-2">
                     Send us a Message
-                  </h3>
+                  </h3>{" "}
                   <p className="text-appleGray-600">
-                    We appreciate your inquiry. Leave us a message, and we'll
-                    reach out shortly.
+                    We appreciate your inquiry. Leave us a message, and
+                    we&apos;ll reach out shortly.
                   </p>
                 </div>
 
@@ -520,10 +518,11 @@ export default function ContactPage() {
           <div className="bg-gradient-to-r from-sky-500 to-sky-600 rounded-3xl p-8 text-white">
             <h3 className="text-2xl font-bold mb-4">
               Ready to Start Your Journey?
-            </h3>
+            </h3>{" "}
             <p className="text-sky-100 mb-6 max-w-2xl mx-auto">
-              Don't wait! Your dream of studying or working abroad is just one
-              step away. Contact us today and let's make it happen together.
+              Don&apos;t wait! Your dream of studying or working abroad is just
+              one step away. Contact us today and let&apos;s make it happen
+              together.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a

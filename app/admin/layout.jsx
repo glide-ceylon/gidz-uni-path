@@ -21,9 +21,8 @@ export default function RootLayout({ children }) {
 
       setLoading(false);
     };
-
     checkUser();
-  }, []);
+  }, [router]);
 
   if (loading) return <p>Loading...</p>; // Show a loading state while checking authentication
 

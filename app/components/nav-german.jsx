@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   FaGraduationCap,
@@ -105,11 +106,13 @@ export default function Nav() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            {/* <div className="w-10 h-10 bg-gradient-to-br from-german-red to-german-gold rounded-xl flex items-center justify-center shadow-soft transition-all duration-300 group-hover:scale-110"> */}
+            {/* <div className="w-10 h-10 bg-gradient-to-br from-german-red to-german-gold rounded-xl flex items-center justify-center shadow-soft transition-all duration-300 group-hover:scale-110"> */}{" "}
             <Link href="/" className="flex items-center">
-              <img
+              <Image
                 src="/gidz-transperant.png"
                 alt="Gidzuni Education Pathways Logo"
+                width={40}
+                height={40}
                 className="h-10 w-10 object-contain"
               />
             </Link>
