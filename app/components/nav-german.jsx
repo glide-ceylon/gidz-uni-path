@@ -15,9 +15,9 @@ export default function Nav() {
   const [isMobileVisaOpen, setIsMobileVisaOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
   const router = useRouter();
   const visaDropdownRef = useRef(null);
+  const dropdownTimeoutRef = useRef(null);
 
   // Check localStorage on mount
   useEffect(() => {
@@ -52,6 +52,29 @@ export default function Nav() {
   const toggleMobileVisa = () => {
     setIsMobileVisaOpen(!isMobileVisaOpen);
   };
+
+  // Handle dropdown with delay
+  const openDropdown = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+    }
+    setIsVisaDropdownOpen(true);
+  };
+
+  const closeDropdownWithDelay = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setIsVisaDropdownOpen(false);
+    }, 150); // 500ms delay
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (dropdownTimeoutRef.current) {
+        clearTimeout(dropdownTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Close dropdown if clicked outside
   useEffect(() => {
@@ -110,16 +133,17 @@ export default function Nav() {
             >
               Home
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
-            </Link>
+            </Link>{" "}
             {/* Visa Dropdown */}
             <div
               className="relative"
-              onMouseEnter={() => setIsVisaDropdownOpen(true)}
-              onMouseLeave={() => setIsVisaDropdownOpen(false)}
+              onMouseEnter={openDropdown}
+              onMouseLeave={closeDropdownWithDelay}
               ref={visaDropdownRef}
             >
-              {" "}
-              <button
+              <Link
+                href="/apply-now"
+                onClick={() => setIsVisaDropdownOpen(!isVisaDropdownOpen)}
                 className="flex items-center space-x-1 text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
                 aria-haspopup="true"
                 aria-expanded={isVisaDropdownOpen}
@@ -131,14 +155,18 @@ export default function Nav() {
                   }`}
                 />
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
-              </button>
+              </Link>
               {isVisaDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-large border border-appleGray-200 overflow-hidden animate-scale-in">
+                <div
+                  className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-large border border-appleGray-200 overflow-hidden animate-scale-in z-50"
+                  onMouseEnter={openDropdown}
+                  onMouseLeave={closeDropdownWithDelay}
+                >
                   <div className="p-2">
-                    {" "}
                     <Link
                       href="/apply-now/student"
                       className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
+                      onClick={() => setIsVisaDropdownOpen(false)}
                     >
                       <div className="font-medium">Student Visa</div>
                       <div className="text-sm text-appleGray-500">
@@ -148,6 +176,7 @@ export default function Nav() {
                     <Link
                       href="/apply-now/work"
                       className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
+                      onClick={() => setIsVisaDropdownOpen(false)}
                     >
                       <div className="font-medium">Work Visa</div>
                       <div className="text-sm text-appleGray-500">
@@ -158,13 +187,13 @@ export default function Nav() {
                 </div>
               )}
             </div>{" "}
-            <Link
+            {/* <Link
               href="/applications"
               className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
             >
               Applications
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
-            </Link>{" "}
+            </Link> */}
             <Link
               href="/contact"
               className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
