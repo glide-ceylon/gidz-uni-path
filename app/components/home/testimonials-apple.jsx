@@ -125,13 +125,11 @@ export default function TestimonialsCarousel() {
                         <FaStar key={i} className="w-5 h-5 text-sky-400" />
                       )
                     )}
-                  </div>
-
+                  </div>{" "}
                   {/* Testimonial Text */}
                   <blockquote className="text-lg lg:text-xl text-appleGray-700 leading-relaxed mb-8 italic">
-                    "{testimonialsData[activeIndex].text}"
+                    &ldquo;{testimonialsData[activeIndex].text}&rdquo;
                   </blockquote>
-
                   {/* Author Info */}
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full flex items-center justify-center shadow-soft">
