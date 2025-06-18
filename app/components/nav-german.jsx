@@ -1,14 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import {
-  FaGraduationCap,
-  FaChevronDown,
-  FaBars,
-  FaTimes,
-} from "react-icons/fa";
+import { FaChevronDown, FaBars, FaTimes } from "react-icons/fa";
 import Image from "next/image";
 
 export default function Nav() {
@@ -114,8 +108,6 @@ export default function Nav() {
                 height={40}
                 src="/gidz-transperant.png"
                 alt="Gidzuni Education Pathways Logo"
-                width={40}
-                height={40}
                 className="h-10 w-10 object-contain"
               />
             </button>
