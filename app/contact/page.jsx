@@ -131,54 +131,70 @@ export default function ContactPage() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-16">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
-
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-          <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-soft">
-            <FaComments className="w-10 h-10 text-white" />
-          </div>
-
-          <h1 className="text-4xl lg:text-6xl font-bold text-appleGray-900 mb-6">
-            Get In
-            <span className="block text-gradient bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
-              Touch
-            </span>
-          </h1>
-
-          <p className="text-xl text-appleGray-600 max-w-2xl mx-auto mb-8">
-            Ready to start your journey abroad? We're here to help you every
-            step of the way.
-          </p>
-
-          {/* Quick Contact Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <FaUsers className="w-8 h-8 text-sky-500" />
-              </div>
-              <h3 className="text-2xl font-bold text-appleGray-900">500+</h3>
-              <p className="text-appleGray-600">Happy Clients</p>
+          <div className="space-y-8 animate-fade-in-up">
+            <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto shadow-soft">
+              <FaComments className="w-10 h-10 text-white" />
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <FaHandshake className="w-8 h-8 text-sky-500" />
+
+            <h1 className="text-4xl lg:text-6xl font-bold text-appleGray-900">
+              Get In
+              <span className="block text-gradient bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
+                Touch
+              </span>
+            </h1>
+
+            <p className="text-xl text-appleGray-600 max-w-2xl mx-auto">
+              Ready to start your journey abroad? We're here to help you every
+              step of the way.
+            </p>
+
+            {/* Quick Contact Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto pt-8">
+              {" "}
+              <div className="text-center">
+                <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <FaUsers className="w-8 h-8 text-sky-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-appleGray-900">500+</h3>
+                <p className="text-appleGray-600">Happy Clients</p>
               </div>
-              <h3 className="text-2xl font-bold text-appleGray-900">24/7</h3>
-              <p className="text-appleGray-600">Support Available</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <FaGlobe className="w-8 h-8 text-sky-500" />
+              <div className="text-center">
+                <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <FaHandshake className="w-8 h-8 text-sky-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-appleGray-900">24/7</h3>
+                <p className="text-appleGray-600">Support Available</p>
               </div>
-              <h3 className="text-2xl font-bold text-appleGray-900">15+</h3>
-              <p className="text-appleGray-600">Countries Served</p>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <FaGlobe className="w-8 h-8 text-sky-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-appleGray-900">15+</h3>
+                <p className="text-appleGray-600">Countries Served</p>
+              </div>
             </div>
           </div>
         </div>
       </section>{" "}
       {/* Contact Cards Section */}
       <section className="py-16 relative">
+        {/* Additional floating elements */}
+        <div
+          className="absolute top-20 left-16 w-24 h-24 bg-sky-400/8 rounded-2xl animate-float"
+          style={{ animationDelay: "0.5s" }}
+        ></div>
+        <div
+          className="absolute bottom-20 right-12 w-20 h-20 bg-sky-500/10 rounded-full animate-float"
+          style={{ animationDelay: "1.5s" }}
+        ></div>
+        <div
+          className="absolute top-40 right-1/4 w-16 h-16 bg-sky-600/12 rounded-full animate-float"
+          style={{ animationDelay: "2.5s" }}
+        ></div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 animate-fade-in-up">
             <h2 className="text-3xl lg:text-4xl font-bold text-appleGray-900 mb-4">
               Ways to Reach Us
             </h2>
@@ -267,8 +283,9 @@ export default function ContactPage() {
       <section className="py-16 bg-gradient-to-br from-sky-500/5 to-sky-600/5 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            {" "}
             {/* Contact Form */}
-            <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-large relative overflow-hidden">
+            <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-large relative overflow-hidden animate-fade-in-up">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-sky-400/10 to-sky-600/10 rounded-full -translate-y-16 translate-x-16"></div>
 
               <div className="relative z-10">
@@ -395,10 +412,9 @@ export default function ContactPage() {
                   </button>
                 </form>
               </div>
-            </div>
-
+            </div>{" "}
             {/* Map */}
-            <div className="bg-white rounded-3xl p-8 shadow-large">
+            <div className="bg-white rounded-3xl p-8 shadow-large animate-fade-in-up">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
                   Find Us Here
@@ -424,13 +440,30 @@ export default function ContactPage() {
       </section>{" "}
       {/* Social Media Section */}
       <section className="py-16 relative">
+        {/* Additional floating elements */}
+        <div
+          className="absolute top-16 left-12 w-28 h-28 bg-sky-400/6 rounded-full animate-float"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute bottom-24 right-16 w-22 h-22 bg-sky-500/8 rounded-2xl animate-float"
+          style={{ animationDelay: "2s" }}
+        ></div>
+        <div
+          className="absolute top-32 right-1/3 w-18 h-18 bg-sky-600/10 rounded-full animate-float"
+          style={{ animationDelay: "3s" }}
+        ></div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-appleGray-900 mb-4">
-            Follow Our Journey
-          </h2>
-          <p className="text-xl text-appleGray-600 max-w-2xl mx-auto mb-12">
-            Stay updated with the latest news, success stories, and visa updates
-          </p>
+          <div className="animate-fade-in-up">
+            <h2 className="text-3xl lg:text-4xl font-bold text-appleGray-900 mb-4">
+              Follow Our Journey
+            </h2>
+            <p className="text-xl text-appleGray-600 max-w-2xl mx-auto mb-12">
+              Stay updated with the latest news, success stories, and visa
+              updates
+            </p>
+          </div>
 
           <div className="flex justify-center space-x-6 mb-8">
             {/* TikTok */}
