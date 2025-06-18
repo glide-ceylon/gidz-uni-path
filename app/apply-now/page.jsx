@@ -13,6 +13,9 @@ import {
   FaRocket,
   FaUniversity,
   FaStar,
+  FaCloudUploadAlt,
+  FaFileAlt,
+  FaEnvelope,
 } from "react-icons/fa";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -293,102 +296,88 @@ export default function VisaOptionsPage() {
               <div className="group relative text-center">
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sky-500 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-soft z-10">
                   1
-                </div>
-
-                <div className="bg-white rounded-3xl p-8 pt-12 shadow-large border border-appleGray-200 hover:shadow-xl transition-all duration-300 card-apple-hover">
+                </div>{" "}
+                <div className="bg-white rounded-3xl p-8 pt-12 shadow-large border border-appleGray-200 hover:shadow-xl transition-all duration-300 card-apple-hover min-h-full flex flex-col">
                   <div className="mb-8 flex justify-center">
                     <div className="relative">
-                      <Image
-                        src="/Step_1.png"
-                        alt="Submit Documents"
-                        width={200}
-                        height={200}
-                        className="rounded-2xl shadow-soft group-hover:scale-105 transition-transform duration-300"
-                      />
+                      <div className="w-48 h-48 bg-gradient-to-br from-sky-100 to-sky-200 rounded-3xl flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform duration-300">
+                        <FaCloudUploadAlt className="w-24 h-24 text-sky-500" />
+                      </div>
                       <div className="absolute -top-2 -right-2 w-8 h-8 bg-sky-400 rounded-full flex items-center justify-center">
                         <FaCheckCircle className="w-4 h-4 text-white" />
                       </div>
                     </div>
                   </div>
-
-                  <h3 className="text-2xl font-bold text-appleGray-800 mb-4">
-                    Submit Required Documents
-                  </h3>
-                  <p className="text-appleGray-600 leading-relaxed">
-                    Upload your documents through our secure online portal. Our
-                    system guides you through each required document with clear
-                    instructions.
-                  </p>
+                  <div className="flex-1 flex flex-col">
+                    <h3 className="text-2xl font-bold text-appleGray-800 mb-4">
+                      Submit Required Documents
+                    </h3>
+                    <p className="text-appleGray-600 leading-relaxed flex-1">
+                      Upload your documents through our secure online portal.
+                      Our system guides you through each required document with
+                      clear instructions.
+                    </p>
+                  </div>
                 </div>
-
-                <div className="hidden lg:block absolute top-1/2 right-0 transform translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-sky-400 to-sky-500"></div>
+                {/* <div className="hidden lg:block absolute top-1/2 right-0 transform translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-sky-400 to-sky-500"></div> */}
               </div>
 
               {/* Step 2 */}
               <div className="group relative text-center">
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sky-500 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-soft z-10">
                   2
-                </div>
-
-                <div className="bg-white rounded-3xl p-8 pt-12 shadow-large border border-appleGray-200 hover:shadow-xl transition-all duration-300 card-apple-hover">
+                </div>{" "}
+                <div className="bg-white rounded-3xl p-8 pt-12 shadow-large border border-appleGray-200 hover:shadow-xl transition-all duration-300 card-apple-hover min-h-full flex flex-col">
                   <div className="mb-8 flex justify-center">
                     <div className="relative">
-                      <Image
-                        src="/Step_2.png"
-                        alt="Document Review"
-                        width={200}
-                        height={160}
-                        className="rounded-2xl shadow-soft group-hover:scale-105 transition-transform duration-300"
-                      />
+                      <div className="w-48 h-48 bg-gradient-to-br from-sky-100 to-sky-200 rounded-3xl flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform duration-300">
+                        <FaFileAlt className="w-24 h-24 text-sky-500" />
+                      </div>
                       <div className="absolute -top-2 -right-2 w-8 h-8 bg-sky-400 rounded-full flex items-center justify-center">
                         <FaClock className="w-4 h-4 text-white" />
                       </div>
                     </div>
                   </div>
-
-                  <h3 className="text-2xl font-bold text-appleGray-800 mb-4">
-                    Expert Document Review
-                  </h3>
-                  <p className="text-appleGray-600 leading-relaxed">
-                    Our experienced consultants thoroughly review your documents
-                    for completeness and accuracy to ensure maximum approval
-                    chances.
-                  </p>
+                  <div className="flex-1 flex flex-col">
+                    <h3 className="text-2xl font-bold text-appleGray-800 mb-4">
+                      Expert Document Review
+                    </h3>
+                    <p className="text-appleGray-600 leading-relaxed flex-1">
+                      Our experienced consultants thoroughly review your
+                      documents for completeness and accuracy to ensure maximum
+                      approval chances.
+                    </p>
+                  </div>
                 </div>
-
-                <div className="hidden lg:block absolute top-1/2 right-0 transform translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-sky-400 to-sky-500"></div>
+                {/* <div className="hidden lg:block absolute top-1/2 right-0 transform translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-sky-400 to-sky-500"></div> */}
               </div>
 
               {/* Step 3 */}
               <div className="group relative text-center">
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sky-500 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-soft z-10">
                   3
-                </div>
-
-                <div className="bg-white rounded-3xl p-8 pt-12 shadow-large border border-appleGray-200 hover:shadow-xl transition-all duration-300 card-apple-hover">
+                </div>{" "}
+                <div className="bg-white rounded-3xl p-8 pt-12 shadow-large border border-appleGray-200 hover:shadow-xl transition-all duration-300 card-apple-hover min-h-full flex flex-col">
                   <div className="mb-8 flex justify-center">
                     <div className="relative">
-                      <Image
-                        src="/Step_3.png"
-                        alt="Application Success"
-                        width={200}
-                        height={192}
-                        className="rounded-2xl shadow-soft group-hover:scale-105 transition-transform duration-300"
-                      />
+                      <div className="w-48 h-48 bg-gradient-to-br from-sky-100 to-sky-200 rounded-3xl flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform duration-300">
+                        <FaEnvelope className="w-24 h-24 text-sky-500" />
+                      </div>
                       <div className="absolute -top-2 -right-2 w-8 h-8 bg-sky-400 rounded-full flex items-center justify-center">
                         <FaRocket className="w-4 h-4 text-white" />
                       </div>
                     </div>
                   </div>
-
-                  <h3 className="text-2xl font-bold text-appleGray-800 mb-4">
-                    Get Your Approval
-                  </h3>
-                  <p className="text-appleGray-600 leading-relaxed">
-                    Receive instant notifications as soon as your review is
-                    completed. We'll guide you through the next steps for your
-                    successful application.
-                  </p>
+                  <div className="flex-1 flex flex-col">
+                    <h3 className="text-2xl font-bold text-appleGray-800 mb-4">
+                      Get Your Approval
+                    </h3>
+                    <p className="text-appleGray-600 leading-relaxed flex-1">
+                      Receive instant notifications as soon as your review is
+                      completed. We'll guide you through the next steps for your
+                      successful application.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

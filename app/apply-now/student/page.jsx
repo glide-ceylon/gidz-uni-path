@@ -1,11 +1,35 @@
 "use client";
 import React, { useState } from "react";
 import { supabase } from "../../../lib/supabase";
+import {
+  FaGraduationCap,
+  FaUser,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaFileUpload,
+  FaCertificate,
+  FaCheckCircle,
+  FaArrowLeft,
+  FaArrowRight,
+  FaUsers,
+  FaGlobe,
+  FaBookOpen,
+  FaAward,
+  FaChevronRight,
+} from "react-icons/fa";
 
-const ApplicationForm = () => {
+const StudentApplicationForm = () => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Form validation errors
+  const [errors, setErrors] = useState({});
+
   const subjectsList = [
     "Biology",
-    "Physics",
+    "Physics", 
     "Chemistry",
     "Combined Mathematics (Pure Mathematics and Applied Mathematics)",
     "Agricultural Science",
@@ -24,229 +48,42 @@ const ApplicationForm = () => {
     "Biosystems Technology",
     "Science for Technology",
   ];
+
   const countries = [
-    "Afghanistan",
-    "Albania",
-    "Algeria",
-    "Andorra",
-    "Angola",
-    "Antigua and Barbuda",
-    "Argentina",
-    "Armenia",
-    "Australia",
-    "Austria",
-    "Azerbaijan",
-    "Bahamas",
-    "Bahrain",
-    "Bangladesh",
-    "Barbados",
-    "Belarus",
-    "Belgium",
-    "Belize",
-    "Benin",
-    "Bhutan",
-    "Bolivia",
-    "Bosnia and Herzegovina",
-    "Botswana",
-    "Brazil",
-    "Brunei",
-    "Bulgaria",
-    "Burkina Faso",
-    "Burundi",
-    "Cabo Verde",
-    "Cambodia",
-    "Cameroon",
-    "Canada",
-    "Central African Republic",
-    "Chad",
-    "Chile",
-    "China",
-    "Colombia",
-    "Comoros",
-    "Congo (Congo-Brazzaville)",
-    "Costa Rica",
-    "Croatia",
-    "Cuba",
-    "Cyprus",
-    "Czechia",
-    "Democratic Republic of the Congo",
-    "Denmark",
-    "Djibouti",
-    "Dominica",
-    "Dominican Republic",
-    "Ecuador",
-    "Egypt",
-    "El Salvador",
-    "Equatorial Guinea",
-    "Eritrea",
-    "Estonia",
-    "Eswatini",
-    "Ethiopia",
-    "Fiji",
-    "Finland",
-    "France",
-    "Gabon",
-    "Gambia",
-    "Georgia",
-    "Germany",
-    "Ghana",
-    "Greece",
-    "Grenada",
-    "Guatemala",
-    "Guinea",
-    "Guinea-Bissau",
-    "Guyana",
-    "Haiti",
-    "Honduras",
-    "Hungary",
-    "Iceland",
-    "India",
-    "Indonesia",
-    "Iran",
-    "Iraq",
-    "Ireland",
-    "Israel",
-    "Italy",
-    "Jamaica",
-    "Japan",
-    "Jordan",
-    "Kazakhstan",
-    "Kenya",
-    "Kiribati",
-    "Kuwait",
-    "Kyrgyzstan",
-    "Laos",
-    "Latvia",
-    "Lebanon",
-    "Lesotho",
-    "Liberia",
-    "Libya",
-    "Liechtenstein",
-    "Lithuania",
-    "Luxembourg",
-    "Madagascar",
-    "Malawi",
-    "Malaysia",
-    "Maldives",
-    "Mali",
-    "Malta",
-    "Marshall Islands",
-    "Mauritania",
-    "Mauritius",
-    "Mexico",
-    "Micronesia",
-    "Moldova",
-    "Monaco",
-    "Mongolia",
-    "Montenegro",
-    "Morocco",
-    "Mozambique",
-    "Myanmar",
-    "Namibia",
-    "Nauru",
-    "Nepal",
-    "Netherlands",
-    "New Zealand",
-    "Nicaragua",
-    "Niger",
-    "Nigeria",
-    "North Korea",
-    "North Macedonia",
-    "Norway",
-    "Oman",
-    "Pakistan",
-    "Palau",
-    "Palestine",
-    "Panama",
-    "Papua New Guinea",
-    "Paraguay",
-    "Peru",
-    "Philippines",
-    "Poland",
-    "Portugal",
-    "Qatar",
-    "Romania",
-    "Russia",
-    "Rwanda",
-    "Saint Kitts and Nevis",
-    "Saint Lucia",
-    "Saint Vincent and the Grenadines",
-    "Samoa",
-    "San Marino",
-    "Sao Tome and Principe",
-    "Saudi Arabia",
-    "Senegal",
-    "Serbia",
-    "Seychelles",
-    "Sierra Leone",
-    "Singapore",
-    "Slovakia",
-    "Slovenia",
-    "Solomon Islands",
-    "Somalia",
-    "South Africa",
-    "South Korea",
-    "South Sudan",
-    "Spain",
-    "Sri Lanka",
-    "Sudan",
-    "Suriname",
-    "Sweden",
-    "Switzerland",
-    "Syria",
-    "Tajikistan",
-    "Tanzania",
-    "Thailand",
-    "Timor-Leste",
-    "Togo",
-    "Tonga",
-    "Trinidad and Tobago",
-    "Tunisia",
-    "Turkey",
-    "Turkmenistan",
-    "Tuvalu",
-    "Uganda",
-    "Ukraine",
-    "United Arab Emirates",
-    "United Kingdom",
-    "United States",
-    "Uruguay",
-    "Uzbekistan",
-    "Vanuatu",
-    "Vatican City",
-    "Venezuela",
-    "Vietnam",
-    "Yemen",
-    "Zambia",
-    "Zimbabwe",
-  ];
-
-  const resultsList = ["A", "B", "C", "S", "W", "AB"];
-  const ieltsScores = [
-    "0.5",
-    "1.0",
-    "1.5",
-    "2.0",
-    "2.5",
-    "3.0",
-    "3.5",
-    "4.0",
-    "4.5",
-    "5.0",
-    "5.5",
-    "6.0",
-    "6.5",
-    "7.0",
-    "7.5",
-    "8.0",
-    "8.5",
-    "9.0",
-  ];
-
-  const ieltsScoreOptions = [
-    "Have 5.5 or more",
-    "No, But can score 5.5",
-    "Can't score 5.5",
+    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda",
+    "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas",
+    "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize",
+    "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana",
+    "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde",
+    "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad",
+    "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica",
+    "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti",
+    "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador",
+    "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia",
+    "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany",
+    "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau",
+    "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia",
+    "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan",
+    "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan",
+    "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya",
+    "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi",
+    "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands",
+    "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco",
+    "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia",
+    "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger",
+    "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman",
+    "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru",
+    "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia",
+    "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines",
+    "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal",
+    "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia",
+    "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea",
+    "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden",
+    "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand",
+    "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia",
+    "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates",
+    "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu",
+    "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
   ];
 
   const [formData, setFormData] = useState({
@@ -298,932 +135,930 @@ const ApplicationForm = () => {
       AcademicYear: "",
       AcademicTerm: "",
       CoursePreferences: [""],
-      CityPreferences: [""],
       UniversityPreferences: [""],
-      OpenForOtherOptions: false,
+      PersonalStatement: "",
     },
   });
 
-  const [errors, setErrors] = useState({});
-  const [uploading, setUploading] = useState(false);
-
-  const handleChange = (e, section, key, index = null, subIndex = null) => {
-    const { name, value, type, files, checked } = e.target;
-
-    setFormData((prevData) => {
-      if (section === "IELTSResults") {
-        return {
-          ...prevData,
-          IELTSResults: {
-            ...prevData.IELTSResults,
-            [name]:
-              type === "file"
-                ? files[0]
-                : type === "checkbox"
-                ? checked
-                : value,
-          },
-        };
-      }
-
-      const updatedSection = { ...prevData[section] };
-
-      if (section === "EducationalQualification" && key === "SubjectResults") {
-        const updatedSubjectResults = [...updatedSection.ALevel.SubjectResults];
-        updatedSubjectResults[subIndex][name] =
-          type === "file" ? files[0] : value;
-        updatedSection.ALevel.SubjectResults = updatedSubjectResults;
-      } else if (section === "EducationalQualification" && key === "GPA") {
-        updatedSection.ALevel.GPA = {
-          ...updatedSection.ALevel.GPA,
-          [name]: type === "checkbox" ? checked : value,
-        };
-      } else if (
-        section === "AdditionalInformation" &&
-        (key === "CoursePreferences" ||
-          key === "CityPreferences" ||
-          key === "UniversityPreferences")
-      ) {
-        updatedSection[key] = value;
-      } else {
-        updatedSection[key] =
-          type === "file" ? files[0] : type === "checkbox" ? checked : value;
-      }
-
-      return { ...prevData, [section]: updatedSection };
-    });
-  };
-
-  const handleCheckboxChange = (e, section, key) => {
-    const { value, checked } = e.target;
-    setFormData((prevData) => {
-      const updatedSection = { ...prevData[section] };
-      const currentValues = updatedSection[key] || [];
-      const newValues = checked
-        ? [...currentValues, value]
-        : currentValues.filter((item) => item !== value);
-      updatedSection[key] = newValues;
-      return { ...prevData, [section]: updatedSection };
-    });
-  };
-
-  const validate = () => {
-    const newErrors = {};
-
-    if (!formData.PersonalInformation.FirstName)
-      newErrors.FirstName = "First Name is required.";
-    if (!formData.PersonalInformation.LastName)
-      newErrors.LastName = "Last name is required.";
-    if (!formData.PersonalInformation.Gender)
-      newErrors.Gender = "Gender is required.";
-    if (!formData.PersonalInformation.DateOfBirth)
-      newErrors.DateOfBirth = "Date of birth is required.";
-    if (!formData.PersonalInformation.UniversityType)
-      newErrors.UniversityType = "University type is required.";
-
-    if (!formData.ContactInformation.Email)
-      newErrors.Email = "Email is required.";
-    else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
-        formData.ContactInformation.Email
-      )
-    )
-      newErrors.Email = "Invalid email address.";
-    if (!formData.ContactInformation.MobileNo)
-      newErrors.MobileNo = "Mobile number is required.";
-    if (!formData.ContactInformation.Address)
-      newErrors.Address = "Address is required.";
-    if (!formData.ContactInformation.Country)
-      newErrors.Country = "Country is required.";
-
-    // formData.EducationalQualification.ALevel.SubjectResults.forEach(
-    //   (subjectResult, index) => {
-    //     if (!subjectResult.Subject)
-    //       newErrors[`Subject_${index}`] = `Subject ${index + 1} is required.`;
-    //     if (!subjectResult.Result)
-    //       newErrors[`Result_${index}`] = `Result for Subject ${
-    //         index + 1
-    //       } is required.`;
-    //   }
-    // );
-
-    // if (formData.EducationalQualification.ALevel.GPA.RequiredForMasters) {
-    //   if (!formData.EducationalQualification.ALevel.GPA.Value)
-    //     newErrors.GPAValue = "GPA value is required when required for Masters.";
-    //   else if (isNaN(formData.EducationalQualification.ALevel.GPA.Value))
-    //     newErrors.GPAValue = "GPA must be a number.";
-    //   else if (
-    //     Number(formData.EducationalQualification.ALevel.GPA.Value) < 0 ||
-    //     Number(formData.EducationalQualification.ALevel.GPA.Value) > 4
-    //   )
-    //     newErrors.GPAValue = "GPA must be between 0 and 4.";
-    // }
-
-    // if (!formData.IELTSResults.ScoreOption)
-    //   newErrors.IELTS_ScoreOption = "IELTS Score Option is required.";
-
-    // if (
-    //   formData.IELTSResults.ScoreOption === "Have 5.5 or more" &&
-    //   (!formData.IELTSResults.Reading ||
-    //     !formData.IELTSResults.Writing ||
-    //     !formData.IELTSResults.Listening ||
-    //     !formData.IELTSResults.Speaking)
-    // ) {
-    //   newErrors.IELTS_AllScores =
-    //     "All IELTS scores (Reading, Writing, Listening, Speaking) are required when you have 5.5 or more.";
-    // }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const uploadFileToSupabase = async (file, folder) => {
-    if (!file) return null;
-
-    const filePath = `${folder}/${Date.now()}_${file.name}`;
-
-    // Upload the file to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from("student_visa_files") // Replace with your bucket name
-      .upload(filePath, file);
-
-    if (uploadError) {
-      console.error(`Error uploading file to ${folder}:`, uploadError);
-      return null;
+  // Define form steps
+  const steps = [
+    {
+      id: 0,
+      title: "Personal Information",
+      description: "Basic personal details",
+      icon: FaUser,
+      fields: ["PersonalInformation"]
+    },
+    {
+      id: 1,
+      title: "Contact Details",
+      description: "How we can reach you",
+      icon: FaPhone,
+      fields: ["ContactInformation"]
+    },
+    {
+      id: 2,
+      title: "Education",
+      description: "Academic qualifications",
+      icon: FaGraduationCap,
+      fields: ["EducationalQualification"]
+    },
+    {
+      id: 3,
+      title: "English Proficiency",
+      description: "IELTS scores and certificates",
+      icon: FaCertificate,
+      fields: ["IELTSResults"]
+    },
+    {
+      id: 4,
+      title: "Documents",
+      description: "Upload required documents",
+      icon: FaFileUpload,
+      fields: ["CVUpload", "WhenApplyingMaster"]
+    },
+    {
+      id: 5,
+      title: "Preferences",
+      description: "Course and university choices",
+      icon: FaBookOpen,
+      fields: ["AdditionalInformation"]
     }
+  ];
 
-    // Get the public URL of the uploaded file
-    const { data: publicUrlData } = await supabase.storage
-      .from("student_visa_files")
-      .getPublicUrl(filePath);
+  // Handle input changes
+  const handleInputChange = (section, field, value, index = null) => {
+    setFormData(prevData => {
+      const newData = { ...prevData };
+      
+      if (index !== null) {
+        // Handle array fields
+        if (!newData[section][field]) {
+          newData[section][field] = [];
+        }
+        newData[section][field][index] = value;
+      } else if (field.includes('.')) {
+        // Handle nested fields
+        const fieldParts = field.split('.');
+        let current = newData[section];
+        for (let i = 0; i < fieldParts.length - 1; i++) {
+          if (!current[fieldParts[i]]) {
+            current[fieldParts[i]] = {};
+          }
+          current = current[fieldParts[i]];
+        }
+        current[fieldParts[fieldParts.length - 1]] = value;
+      } else {
+        // Handle regular fields
+        newData[section][field] = value;
+      }
+      
+      return newData;
+    });
 
-    return publicUrlData.publicUrl;
+    // Clear error for this field
+    const errorKey = section + '.' + field;
+    if (errors[errorKey]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[errorKey];
+        return newErrors;
+      });
+    }
   };
 
-
-  const MessageModal = ({ isOpen, message, onClose }) => {
-    if (!isOpen) return null;
-  
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg text-center">
-          <p className="text-lg font-semibold mb-4">{message}</p>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            OK
-          </button>
-        </div>
-      </div>
-    );
+  // Navigate between steps
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
   };
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");  
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const goToStep = (stepIndex) => {
+    setCurrentStep(stepIndex);
+  };
+
+  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    if (!validate()) {
-      setModalMessage("Please fill the required field in the form.");
-      setIsModalOpen(true);
-      return;
-    }
-  
-    setUploading(true);
-  
+    setIsLoading(true);
+
     try {
-      const cvUrl = await uploadFileToSupabase(formData.CVUpload.File, "cv");
-      const ieltsUrl = await uploadFileToSupabase(
-        formData.IELTSResults.Certificate,
-        "ielts"
-      );
-      const transcriptUrl = await uploadFileToSupabase(
-        formData.EducationalQualification.TranscriptOrAdditionalDocument,
-        "transcript"
-      );
-      const bachelorsCertificateUrl = await uploadFileToSupabase(
-        formData.WhenApplyingMaster.BachelorsCertificate,
-        "bachelors"
-      );
-      const transcriptUrlForMaster = await uploadFileToSupabase(
-        formData.WhenApplyingMaster.Transcript,
-        "bachelors"
-      );
-  
-      const updatedFormData = {
-        ...formData,
-        CVUpload: { File: cvUrl },
-        IELTSResults: { ...formData.IELTSResults, Certificate: ieltsUrl },
-        EducationalQualification: {
-          ...formData.EducationalQualification,
-          TranscriptOrAdditionalDocument: transcriptUrl,
-        },
-        WhenApplyingMaster: {
-          ...formData.WhenApplyingMaster,
-          BachelorsCertificate: bachelorsCertificateUrl,
-          Transcript: transcriptUrlForMaster,
-        },
-      };
-  
-      const updatedFormDataWithMark = {
-        ...updatedFormData,
-        MarkasRead: false
-      };
-      
-      const { error: supabaseError } = await supabase
-        .from("student_visa")
-        .insert([{ data: [updatedFormDataWithMark] }]);
-  
-      if (supabaseError) {
-        console.error("Error inserting data into Supabase:", supabaseError);
-        setModalMessage("Failed to submit form to Supabase.");
-        setIsModalOpen(true);
-        return;
-      }
-  
-      setModalMessage("Form submitted successfully!");
-      setIsModalOpen(true);
-    } catch (err) {
-      console.error("Error during form submission:", err);
-      setModalMessage("An error occurred: " + err.message);
-      setIsModalOpen(true);
+      const { data, error } = await supabase
+        .from('student_applications')
+        .insert([formData]);
+
+      if (error) throw error;
+
+      alert('Application submitted successfully!');
+      // Reset form or redirect
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      alert('Error submitting application. Please try again.');
     } finally {
-      setUploading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-2 md:p-8 flex justify-center items-start">
-      <div className="bg-white shadow-lg rounded-lg p-3 md:p-8 w-full max-w-5xl overflow-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Application Form
-        </h1>
-        <div className="mx-auto p-6 my-8">
-          <p className="text-center text-gray-600 mt-2">
-            Welcome to{" "}
-            <span className="font-bold text-blue-600">Gidz Uni Path!</span>
+    <div className="min-h-screen bg-appleGray-50 relative overflow-hidden">
+      {/* Floating Background Elements */}
+      <div className="absolute top-32 left-10 w-20 h-20 bg-sky-400/10 rounded-full animate-float"></div>
+      <div className="absolute top-64 right-16 w-16 h-16 bg-sky-500/15 rounded-2xl animate-float" style={{animationDelay: '1s'}}></div>
+      <div className="absolute top-96 left-20 w-12 h-12 bg-sky-600/20 rounded-full animate-float" style={{animationDelay: '2s'}}></div>
+      <div className="absolute top-80 right-32 w-8 h-8 bg-sky-400/25 rounded-full animate-float" style={{animationDelay: '3s'}}></div>
+      
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-16">
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
+        
+        <div className="container-apple text-center relative z-10">
+          <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-soft">
+            <FaGraduationCap className="w-10 h-10 text-white" />
+          </div>
+          
+          <h1 className="text-4xl lg:text-6xl font-bold text-appleGray-900 mb-6">
+            Student Visa
+            <span className="block text-gradient bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
+              Application
+            </span>
+          </h1>
+          
+          <p className="text-xl text-appleGray-600 max-w-2xl mx-auto mb-8">
+            Start your journey to study abroad. Complete your application in simple steps.
           </p>
-          <p className="text-center text-gray-500 text-sm">
-            Fill out this form if you want to study abroad. We will contact you
-            via <span className="font-medium">Call, Email,</span> or{" "}
-            <span className="font-medium">WhatsApp</span>.
-          </p>
-        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-10">
-          {/* Personal Information */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              Personal Information
-            </h2>
-            {[
-              { name: "FirstName", label: "First Name", type: "text" },
-              { name: "LastName", label: "Last Name", type: "text" },
-              {
-                name: "Gender",
-                label: "Gender",
-                type: "select",
-                options: ["Male", "Female", "Other"],
-              },
-              {
-                name: "DateOfBirth",
-                label: "Date of Birth",
-                type: "date",
-              },
-            ].map(({ name, label, type, options }) => (
-              <div key={name} className="mb-4">
-                <label className="block mb-2 text-sm font-medium">
-                  {label}
-                </label>
-                {type === "select" ? (
-                  <select
-                    name={name}
-                    value={formData.PersonalInformation[name] || ""}
-                    onChange={(e) =>
-                      handleChange(e, "PersonalInformation", name)
-                    }
-                    className="w-full border border-gray-300 rounded-lg p-2"
+          {/* Progress indicator */}
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="flex items-center justify-between">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center">
+                  <div 
+                    className={`w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
+                      index <= currentStep 
+                        ? 'bg-sky-500 text-white shadow-lg' 
+                        : 'bg-appleGray-200 text-appleGray-400'
+                    }`}
+                    onClick={() => goToStep(index)}
                   >
-                    <option value="">Select {label}</option>
-                    {options.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type={type}
-                    name={name}
-                    placeholder={
-                      type!='date'?
-                      
-                      `Enter your ${label.toLowerCase()}`
-                      :'mm/dd/yyyy'
-                    }
-                    value={formData.PersonalInformation[name] || ""}
-                    onChange={(e) =>
-                      handleChange(e, "PersonalInformation", name)
-                    }
-                    className="w-full border border-gray-300 rounded-lg p-2"
-                
-                  />
-                )}
-                {!formData.PersonalInformation[name] && errors[name] && (
-                  <p className="text-red-500 text-sm mt-1">{errors[name]}</p>
-                )}
-              </div>
-            ))}
-
-            {/* University Type Checkboxes */}
-            <div className="mb-4">
-              <label className="block mb-2 text-sm font-medium">
-                University Type
-              </label>
-              <div className="flex space-x-4">
-                {["Public University", "Private University"].map((option) => (
-                  <label key={option} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="UniversityType"
-                      value={option}
-                      checked={formData.PersonalInformation.UniversityType.includes(
-                        option
-                      )}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e,
-                          "PersonalInformation",
-                          "UniversityType"
-                        )
-                      }
-                      className="mr-2"
-                    />
-                    {option}
-                  </label>
-                ))}
-              </div>
-              {errors.UniversityType && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.UniversityType}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Contact Information */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              Contact Information
-            </h2>
-            {[
-              { name: "Email", label: "Email", type: "email" },
-              { name: "MobileNo", label: "Mobile Number", type: "text" },
-              { name: "Address", label: "Address", type: "text" },
-              { name: "Country", label: "Country", type: "select" },
-            ].map(({ name, label, type }) => (
-              <div key={name} className="mb-4">
-                <label className="block mb-2 text-sm font-medium">
-                  {label}
-                </label>
-                {type === "select" ? (
-                  <select
-                    name={name}
-                    value={formData.ContactInformation[name] || ""}
-                    onChange={(e) =>
-                      handleChange(e, "ContactInformation", name)
-                    }
-                    className="w-full border border-gray-300 rounded-lg p-2"
-                  >
-                    <option value="">Select a country</option>
-                    {countries.map((country, index) => (
-                      <option key={index} value={country}>
-                        {country}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type={type}
-                    name={name}
-                    placeholder={`Enter your ${label.toLowerCase()}`}
-                    value={formData.ContactInformation[name] || ""}
-                    onChange={(e) =>
-                      handleChange(e, "ContactInformation", name)
-                    }
-                    className="w-full border border-gray-300 rounded-lg p-2"
-                
-                  />
-                )}
-                {!formData.ContactInformation[name] && errors[name] && (
-                  <p className="text-red-500 text-sm mt-1">{errors[name]}</p>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Educational Qualification */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              A/L Subjects and Results
-            </h2>
-            {formData.EducationalQualification.ALevel.SubjectResults.map(
-              (subjectResult, index) => (
-                <div key={index} className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block mb-2 text-sm font-medium">
-                      Subject {index + 1}
-                    </label>
-                    <select
-                      name="Subject"
-                      value={subjectResult.Subject}
-                      onChange={(e) =>
-                        handleChange(
-                          e,
-                          "EducationalQualification",
-                          "SubjectResults",
-                          null,
-                          index
-                        )
-                      }
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    >
-                      <option value="">Select Subject</option>
-                      {subjectsList.map((subject) => (
-                        <option key={subject} value={subject}>
-                          {subject}
-                        </option>
-                      ))}
-                    </select>
-                    {errors[`Subject_${index}`] && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors[`Subject_${index}`]}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block mb-2 text-sm font-medium">
-                      Result
-                    </label>
-                    <select
-                      name="Result"
-                      value={subjectResult.Result}
-                      onChange={(e) =>
-                        handleChange(
-                          e,
-                          "EducationalQualification",
-                          "SubjectResults",
-                          null,
-                          index
-                        )
-                      }
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    >
-                      <option value="">Select Result</option>
-                      {resultsList.map((result) => (
-                        <option key={result} value={result}>
-                          {result}
-                        </option>
-                      ))}
-                    </select>
-                    {errors[`Result_${index}`] && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors[`Result_${index}`]}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )
-            )}
-
-            {/* Transcript or Additional Document Upload */}
-            <div className="mb-4">
-              <label className="block mb-2 text-sm font-medium">
-                Upload your Transcript/Additional Document
-              </label>
-              <div className="flex items-center gap-4">
-                <label className="bg-gray-200 p-2 rounded-lg cursor-pointer hover:bg-gray-300">
-                  Choose File
-                  <input
-                    type="file"
-                    name="TranscriptOrAdditionalDocument"
-                    onChange={(e) =>
-                      handleChange(
-                        e,
-                        "EducationalQualification",
-                        "TranscriptOrAdditionalDocument"
-                      )
-                    }
-                    className="hidden"
-                    accept=".pdf,.doc,.docx,image/*"
-                  />
-                </label>
-                {formData.EducationalQualification
-                  .TranscriptOrAdditionalDocument && (
-                  <span className="text-sm font-medium">
-                    {
-                      formData.EducationalQualification
-                        .TranscriptOrAdditionalDocument.name
-                    }
-                  </span>
-                )}
-              </div>
-              {errors.TranscriptOrAdditionalDocument && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.TranscriptOrAdditionalDocument}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* IELTS Results */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              IELTS Results
-            </h2>
-            <div>
-              <div className="mb-4">
-                <label className="block mb-2 text-sm font-medium">
-                  Score Option
-                </label>
-                <select
-                  name="ScoreOption"
-                  value={formData.IELTSResults.ScoreOption || ""}
-                  onChange={(e) =>
-                    handleChange(e, "IELTSResults", "ScoreOption")
-                  }
-                  className="w-full border border-gray-300 rounded-lg p-2"
-                >
-                  <option value="">Select Score Option</option>
-                  {ieltsScoreOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-                {errors.IELTS_ScoreOption && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.IELTS_ScoreOption}
-                  </p>
-                )}
-              </div>
-
-              {formData.IELTSResults.ScoreOption === "Have 5.5 or more" && (
-                <>
-                  <div className="mb-4">
-                    <label className="block mb-2 text-sm font-medium">
-                      Reading
-                    </label>
-                    <select
-                      name="Reading"
-                      value={formData.IELTSResults.Reading || ""}
-                      onChange={(e) =>
-                        handleChange(e, "IELTSResults", "Reading")
-                      }
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    >
-                      <option value="">Select Score</option>
-                      {ieltsScores.map((score) => (
-                        <option key={score} value={score}>
-                          {score}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block mb-2 text-sm font-medium">
-                      Writing
-                    </label>
-                    <select
-                      name="Writing"
-                      value={formData.IELTSResults.Writing || ""}
-                      onChange={(e) =>
-                        handleChange(e, "IELTSResults", "Writing")
-                      }
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    >
-                      <option value="">Select Score</option>
-                      {ieltsScores.map((score) => (
-                        <option key={score} value={score}>
-                          {score}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block mb-2 text-sm font-medium">
-                      Listening
-                    </label>
-                    <select
-                      name="Listening"
-                      value={formData.IELTSResults.Listening || ""}
-                      onChange={(e) =>
-                        handleChange(e, "IELTSResults", "Listening")
-                      }
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    >
-                      <option value="">Select Score</option>
-                      {ieltsScores.map((score) => (
-                        <option key={score} value={score}>
-                          {score}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block mb-2 text-sm font-medium">
-                      Speaking
-                    </label>
-                    <select
-                      name="Speaking"
-                      value={formData.IELTSResults.Speaking || ""}
-                      onChange={(e) =>
-                        handleChange(e, "IELTSResults", "Speaking")
-                      }
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    >
-                      <option value="">Select Score</option>
-                      {ieltsScores.map((score) => (
-                        <option key={score} value={score}>
-                          {score}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {errors.IELTS_AllScores && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.IELTS_AllScores}
-                    </p>
-                  )}
-                </>
-              )}
-              <div className="mb-4">
-                <label className="block mb-2 text-sm font-medium">
-                  Upload IELTS Certificate
-                </label>
-                <div className="flex items-center gap-4">
-                  <label className="bg-gray-200 p-2 rounded-lg cursor-pointer hover:bg-gray-300">
-                    Choose File
-                    <input
-                      type="file"
-                      name="Certificate"
-                      onChange={(e) =>
-                        handleChange(e, "IELTSResults", "Certificate")
-                      }
-                      className="hidden"
-                      accept=".pdf,.doc,.docx,image/*"
-                    />
-                  </label>
-                  {formData.IELTSResults.Certificate && (
-                    <span className="text-sm font-medium">
-                      {formData.IELTSResults.Certificate.name}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CV Upload */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              CV Upload
-            </h2>
-            <label className="block mb-2 text-sm font-medium">
-              Upload your CV
-            </label>
-            <div className="flex items-center gap-4">
-              <label className="bg-gray-200 p-2 rounded-lg cursor-pointer hover:bg-gray-300">
-                Choose File
-                <input
-                  type="file"
-                  name="File"
-                  onChange={(e) => handleChange(e, "CVUpload", "File")}
-                  className="hidden"
-                  accept=".pdf,.doc,.docx,image/*"
-                />
-              </label>
-              {formData.CVUpload.File && (
-                <span className="text-sm font-medium">
-                  {formData.CVUpload.File.name}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              When Applying Master
-            </h2>
-            <label className="block mb-2 text-sm font-medium">
-              Bachelors Certificate
-            </label>
-            <div className="flex items-center gap-4">
-              <label className="bg-gray-200 p-2 rounded-lg cursor-pointerm hover:bg-gray-300">
-                Choose File
-                <input
-                  type="file"
-                  name="BachelorsCertificate"
-                  onChange={(e) =>
-                    handleChange(
-                      e,
-                      "WhenApplyingMaster",
-                      "BachelorsCertificate"
-                    )
-                  }
-                  className="hidden"
-                  accept=".pdf,.doc,.docx,image/*"
-                />
-              </label>
-              {formData.WhenApplyingMaster.BachelorsCertificate && (
-                <span className="text-sm font-medium">
-                  {formData.WhenApplyingMaster.BachelorsCertificate.name}
-                </span>
-              )}
-            </div>
-            <label className="block mb-2 text-sm font-medium">Transcript</label>
-            <div className="flex items-center gap-4">
-              <label className="bg-gray-200 p-2 rounded-lg cursor-pointer hover:bg-gray-300">
-                Choose File
-                <input
-                  type="file"
-                  name="Transcript"
-                  onChange={(e) =>
-                    handleChange(e, "WhenApplyingMaster", "Transcript")
-                  }
-                  className="hidden"
-                  accept=".pdf,.doc,.docx,image/*"
-                />
-              </label>
-              {formData.WhenApplyingMaster.Transcript && (
-                <span className="text-sm font-medium">
-                  {formData.WhenApplyingMaster.Transcript.name}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Additional Information */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              Additional Information
-            </h2>
-            {[
-              {
-                name: "Course",
-                label: "Course",
-                type: "select",
-                options: ["Bachelors", "Masters", "PhD"],
-              },
-              {
-                name: "AcademicYear",
-                label: "Academic Year",
-                type: "select",
-                options: ["2025", "2026", "2027"],
-              },
-              {
-                name: "AcademicTerm",
-                label: "Academic Term",
-                type: "select",
-                options: ["Summer", "Winter"],
-              },
-              {
-                name: "CoursePreferences",
-                label: "Course Preferences",
-                type: "textarea",
-              },
-              {
-                name: "CityPreferences",
-                label: "City Preferences",
-                type: "textarea",
-              },
-              {
-                name: "UniversityPreferences",
-                label: "University Preferences",
-                type: "textarea",
-              },
-              {
-                name: "ReferenceCode",
-                label: "Reference Code",
-                type: "textfield",
-              },
-            ].map(({ name, label, type, options }) => (
-              <div key={name} className="mb-4">
-                {type !== "checkbox" ? (
-                  <>
-                    <label className="block mb-2 text-sm font-medium">
-                      {label}
-                    </label>
-                    {type === "select" ? (
-                      <select
-                        name={name}
-                        value={formData.AdditionalInformation[name] || ""}
-                        onChange={(e) =>
-                          handleChange(e, "AdditionalInformation", name)
-                        }
-                        className="w-full border border-gray-300 rounded-lg p-2"
-                      >
-                        <option value="">Select {label}</option>
-                        {options.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    ) : type === "textarea" ? (
-                      <textarea
-                        name={name}
-                        value={formData.AdditionalInformation[name] || ""}
-                        onChange={(e) =>
-                          handleChange(e, "AdditionalInformation", name)
-                        }
-                        className="w-full border border-gray-300 rounded-lg p-2"
-                        rows="3"
-                        placeholder={`Enter ${label.toLowerCase()}`}
-                      />
+                    {index < currentStep ? (
+                      <FaCheckCircle className="w-5 h-5" />
                     ) : (
-                      <input
-                        type={type}
-                        name={name}
-                        value={formData.AdditionalInformation[name] || ""}
-                        onChange={(e) =>
-                          handleChange(e, "AdditionalInformation", name)
-                        }
-                        className="w-full border border-gray-300 rounded-lg p-2"
-                        placeholder={`Enter ${label.toLowerCase()}`}
-                      />
+                      <step.icon className="w-5 h-5" />
                     )}
-                  </>
-                ) : (
-                  <div className="flex items-center">
-                    <input
-                      type={type}
-                      name={name}
-                      checked={formData.AdditionalInformation[name] || false}
-                      onChange={(e) =>
-                        handleChange(e, "AdditionalInformation", name)
-                      }
-                      className="mr-2"
-                    />
-                    <span>{label}</span>
                   </div>
-                )}
-                {errors[name] && (
-                  <p className="text-red-500 text-sm mt-1">{errors[name]}</p>
-                )}
-              </div>
-            ))}
+                  {index < steps.length - 1 && (
+                    <div className={`h-1 w-16 lg:w-24 mx-2 transition-all duration-300 ${
+                      index < currentStep ? 'bg-sky-500' : 'bg-appleGray-200'
+                    }`}></div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 text-center">
+              <h3 className="text-lg font-semibold text-appleGray-800">
+                {steps[currentStep].title}
+              </h3>
+              <p className="text-appleGray-600">{steps[currentStep].description}</p>
+            </div>
           </div>
-          <button
-            type="submit"
-            className={`w-full bg-indigo-600 text-white p-3 rounded-lg ${
-              uploading
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-indigo-700"
-            }`}
-            disabled={uploading}
-          >
-            {uploading ? (
-              <div className="flex items-center justify-center">
-                <svg
-                  className="animate-spin h-5 w-5 mr-3 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Submitting...
-              </div>
-            ) : (
-              "Submit"
-            )}
-          </button>
-        </form>
-        <MessageModal
-  isOpen={isModalOpen}
-  message={modalMessage}
-  onClose={() => setIsModalOpen(false)}
-/>
+        </div>
+      </section>
 
-      </div>
+      {/* Form Section */}
+      <section className="py-16 relative">
+        <div className="container-apple">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-3xl shadow-large p-8 lg:p-12 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-sky-400/10 to-sky-600/10 rounded-full -translate-y-16 translate-x-16"></div>
+              
+              <form onSubmit={handleSubmit}>
+                {/* Step Content */}
+                <div className="min-h-[500px]">
+                  {renderStepContent()}
+                </div>
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between items-center mt-12 pt-8 border-t border-appleGray-100">
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    disabled={currentStep === 0}
+                    className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
+                      currentStep === 0
+                        ? 'bg-appleGray-100 text-appleGray-400 cursor-not-allowed'
+                        : 'bg-appleGray-200 text-appleGray-700 hover:bg-appleGray-300 btn-apple-hover'
+                    }`}
+                  >
+                    <FaArrowLeft className="w-4 h-4" />
+                    <span>Previous</span>
+                  </button>
+
+                  <div className="text-sm text-appleGray-500">
+                    Step {currentStep + 1} of {steps.length}
+                  </div>
+
+                  {currentStep === steps.length - 1 ? (
+                    <button
+                      type="submit"
+                      disabled={isLoading}
+                      className="flex items-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft"
+                    >
+                      {isLoading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Submitting...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Submit Application</span>
+                          <FaCheckCircle className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="flex items-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft"
+                    >
+                      <span>Next</span>
+                      <FaArrowRight className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Help Section */}
+      <section className="py-16 bg-gradient-to-br from-sky-500/5 to-sky-600/5 relative">
+        <div className="container-apple text-center">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-appleGray-900 mb-4">
+              Need Help?
+            </h2>
+            <p className="text-appleGray-600 mb-8">
+              Our team is here to assist you with your application process.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="tel:+94701234567"
+                className="flex items-center justify-center space-x-2 bg-white text-sky-600 px-6 py-3 rounded-2xl font-semibold hover:bg-appleGray-50 transition-all duration-300 btn-apple-hover shadow-soft"
+              >
+                <FaPhone className="w-4 h-4" />
+                <span>Call Us</span>
+              </a>
+              <a
+                href="mailto:info@gidzunipath.com"
+                className="flex items-center justify-center space-x-2 bg-sky-500 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-sky-600 transition-all duration-300 btn-apple-hover shadow-soft"
+              >
+                <FaEnvelope className="w-4 h-4" />
+                <span>Email Us</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
+
+  // Render step content based on current step
+  function renderStepContent() {
+    switch (currentStep) {
+      case 0:
+        return renderPersonalInformation();
+      case 1:
+        return renderContactInformation();
+      case 2:
+        return renderEducationalQualification();
+      case 3:
+        return renderIELTSResults();
+      case 4:
+        return renderDocuments();
+      case 5:
+        return renderAdditionalInformation();
+      default:
+        return null;
+    }
+  }
+
+  function renderPersonalInformation() {
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-8">
+          <FaUser className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">Personal Information</h3>
+          <p className="text-appleGray-600">Tell us about yourself</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              First Name *
+            </label>
+            <input
+              type="text"
+              value={formData.PersonalInformation.FirstName}
+              onChange={(e) => handleInputChange('PersonalInformation', 'FirstName', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter your first name"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Last Name *
+            </label>
+            <input
+              type="text"
+              value={formData.PersonalInformation.LastName}
+              onChange={(e) => handleInputChange('PersonalInformation', 'LastName', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter your last name"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Gender *
+            </label>
+            <select
+              value={formData.PersonalInformation.Gender}
+              onChange={(e) => handleInputChange('PersonalInformation', 'Gender', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              required
+            >
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Date of Birth *
+            </label>
+            <input
+              type="date"
+              value={formData.PersonalInformation.DateOfBirth}
+              onChange={(e) => handleInputChange('PersonalInformation', 'DateOfBirth', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+            University Type Preference
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {['Public Universities', 'Private Universities', 'Research Universities', 'Technical Universities'].map((type) => (
+              <label key={type} className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200">
+                <input
+                  type="checkbox"
+                  checked={formData.PersonalInformation.UniversityType.includes(type)}
+                  onChange={(e) => {
+                    const currentTypes = formData.PersonalInformation.UniversityType;
+                    if (e.target.checked) {
+                      handleInputChange('PersonalInformation', 'UniversityType', [...currentTypes, type]);
+                    } else {
+                      handleInputChange('PersonalInformation', 'UniversityType', currentTypes.filter(t => t !== type));
+                    }
+                  }}
+                  className="w-4 h-4 text-sky-500 border-appleGray-300 rounded focus:ring-sky-500"
+                />
+                <span className="text-appleGray-700">{type}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function renderContactInformation() {
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-8">
+          <FaPhone className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">Contact Information</h3>
+          <p className="text-appleGray-600">How can we reach you?</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              value={formData.ContactInformation.Email}
+              onChange={(e) => handleInputChange('ContactInformation', 'Email', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter your email address"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Mobile Number *
+            </label>
+            <input
+              type="tel"
+              value={formData.ContactInformation.MobileNo}
+              onChange={(e) => handleInputChange('ContactInformation', 'MobileNo', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter your mobile number"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Country *
+            </label>
+            <select
+              value={formData.ContactInformation.Country}
+              onChange={(e) => handleInputChange('ContactInformation', 'Country', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              required
+            >
+              <option value="">Select your country</option>
+              {countries.map((country) => (
+                <option key={country} value={country}>{country}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Address *
+            </label>
+            <textarea
+              value={formData.ContactInformation.Address}
+              onChange={(e) => handleInputChange('ContactInformation', 'Address', e.target.value)}
+              rows={3}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter your full address"
+              required
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function renderEducationalQualification() {
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-8">
+          <FaGraduationCap className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">Educational Qualification</h3>
+          <p className="text-appleGray-600">Your academic background</p>
+        </div>
+
+        <div className="bg-appleGray-50 p-6 rounded-2xl">
+          <h4 className="text-lg font-semibold text-appleGray-800 mb-4">A-Level Results</h4>
+          
+          {formData.EducationalQualification.ALevel.SubjectResults.map((subject, index) => (
+            <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                  Subject {index + 1}
+                </label>
+                <select
+                  value={subject.Subject}
+                  onChange={(e) => {
+                    const newSubjects = [...formData.EducationalQualification.ALevel.SubjectResults];
+                    newSubjects[index].Subject = e.target.value;
+                    handleInputChange('EducationalQualification', 'ALevel.SubjectResults', newSubjects);
+                  }}
+                  className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                >
+                  <option value="">Select subject</option>
+                  {subjectsList.map((subj) => (
+                    <option key={subj} value={subj}>{subj}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                  Grade
+                </label>
+                <select
+                  value={subject.Result}
+                  onChange={(e) => {
+                    const newSubjects = [...formData.EducationalQualification.ALevel.SubjectResults];
+                    newSubjects[index].Result = e.target.value;
+                    handleInputChange('EducationalQualification', 'ALevel.SubjectResults', newSubjects);
+                  }}
+                  className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                >
+                  <option value="">Select grade</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="S">S</option>
+                </select>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-appleGray-50 p-6 rounded-2xl">
+          <div className="flex items-center space-x-3 mb-4">
+            <input
+              type="checkbox"
+              id="gpaRequired"
+              checked={formData.EducationalQualification.ALevel.GPA.RequiredForMasters}
+              onChange={(e) => handleInputChange('EducationalQualification', 'ALevel.GPA.RequiredForMasters', e.target.checked)}
+              className="w-4 h-4 text-sky-500 border-appleGray-300 rounded focus:ring-sky-500"
+            />
+            <label htmlFor="gpaRequired" className="text-sm font-semibold text-appleGray-700">
+              Applying for Master's Degree (GPA Required)
+            </label>
+          </div>
+          
+          {formData.EducationalQualification.ALevel.GPA.RequiredForMasters && (
+            <div>
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                GPA Value
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max="4.0"
+                value={formData.EducationalQualification.ALevel.GPA.Value}
+                onChange={(e) => handleInputChange('EducationalQualification', 'ALevel.GPA.Value', e.target.value)}
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder="Enter your GPA (e.g., 3.75)"
+              />
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+            Transcript or Additional Documents
+          </label>
+          <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
+            <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+            <input
+              type="file"
+              onChange={(e) => handleInputChange('EducationalQualification', 'TranscriptOrAdditionalDocument', e.target.files[0])}
+              className="hidden"
+              id="transcript-upload"
+              accept=".pdf,.jpg,.jpeg,.png"
+            />
+            <label
+              htmlFor="transcript-upload"
+              className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+            >
+              Click to upload transcript
+            </label>
+            <p className="text-sm text-appleGray-500 mt-2">PDF, JPG, PNG up to 10MB</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function renderIELTSResults() {
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-8">
+          <FaCertificate className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">English Proficiency</h3>
+          <p className="text-appleGray-600">IELTS scores and certificates</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+            Do you have IELTS scores? *
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {['Yes', 'No', 'Planning to take'].map((option) => (
+              <label key={option} className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200">
+                <input
+                  type="radio"
+                  name="ieltsOption"
+                  value={option}
+                  checked={formData.IELTSResults.ScoreOption === option}
+                  onChange={(e) => handleInputChange('IELTSResults', 'ScoreOption', e.target.value)}
+                  className="w-4 h-4 text-sky-500 border-appleGray-300 focus:ring-sky-500"
+                />
+                <span className="text-appleGray-700">{option}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {formData.IELTSResults.ScoreOption === 'Yes' && (
+          <div className="bg-appleGray-50 p-6 rounded-2xl">
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">IELTS Scores</h4>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {['Reading', 'Writing', 'Listening', 'Speaking'].map((skill) => (
+                <div key={skill}>
+                  <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                    {skill}
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    max="9"
+                    value={formData.IELTSResults[skill]}
+                    onChange={(e) => handleInputChange('IELTSResults', skill, e.target.value)}
+                    className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                    placeholder="0.0"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                IELTS Certificate
+              </label>
+              <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
+                <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+                <input
+                  type="file"
+                  onChange={(e) => handleInputChange('IELTSResults', 'Certificate', e.target.files[0])}
+                  className="hidden"
+                  id="ielts-upload"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                />
+                <label
+                  htmlFor="ielts-upload"
+                  className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+                >
+                  Upload IELTS certificate
+                </label>
+                <p className="text-sm text-appleGray-500 mt-2">PDF, JPG, PNG up to 10MB</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  function renderDocuments() {
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-8">
+          <FaFileUpload className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">Documents Upload</h3>
+          <p className="text-appleGray-600">Upload your required documents</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
+          <div className="bg-appleGray-50 p-6 rounded-2xl">
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">CV/Resume *</h4>
+            <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
+              <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+              <input
+                type="file"
+                onChange={(e) => handleInputChange('CVUpload', 'File', e.target.files[0])}
+                className="hidden"
+                id="cv-upload"
+                accept=".pdf,.doc,.docx"
+                required
+              />
+              <label
+                htmlFor="cv-upload"
+                className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+              >
+                Upload your CV/Resume
+              </label>
+              <p className="text-sm text-appleGray-500 mt-2">PDF, DOC, DOCX up to 10MB</p>
+            </div>
+          </div>
+
+          <div className="bg-appleGray-50 p-6 rounded-2xl">
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">For Master's Degree Applications</h4>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                  Bachelor's Certificate
+                </label>
+                <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
+                  <input
+                    type="file"
+                    onChange={(e) => handleInputChange('WhenApplyingMaster', 'BachelorsCertificate', e.target.files[0])}
+                    className="hidden"
+                    id="bachelors-upload"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                  />
+                  <label
+                    htmlFor="bachelors-upload"
+                    className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+                  >
+                    Upload Bachelor's Certificate
+                  </label>
+                  <p className="text-sm text-appleGray-500 mt-2">PDF, JPG, PNG up to 10MB</p>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                  Academic Transcript
+                </label>
+                <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
+                  <input
+                    type="file"
+                    onChange={(e) => handleInputChange('WhenApplyingMaster', 'Transcript', e.target.files[0])}
+                    className="hidden"
+                    id="masters-transcript-upload"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                  />
+                  <label
+                    htmlFor="masters-transcript-upload"
+                    className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+                  >
+                    Upload Academic Transcript
+                  </label>
+                  <p className="text-sm text-appleGray-500 mt-2">PDF, JPG, PNG up to 10MB</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function renderAdditionalInformation() {
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-8">
+          <FaBookOpen className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">Course Preferences</h3>
+          <p className="text-appleGray-600">Tell us about your study preferences</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Reference Code (Optional)
+            </label>
+            <input
+              type="text"
+              value={formData.AdditionalInformation.ReferenceCode}
+              onChange={(e) => handleInputChange('AdditionalInformation', 'ReferenceCode', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter reference code if any"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Preferred Course *
+            </label>
+            <input
+              type="text"
+              value={formData.AdditionalInformation.Course}
+              onChange={(e) => handleInputChange('AdditionalInformation', 'Course', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter your preferred course"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Academic Year *
+            </label>
+            <select
+              value={formData.AdditionalInformation.AcademicYear}
+              onChange={(e) => handleInputChange('AdditionalInformation', 'AcademicYear', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              required
+            >
+              <option value="">Select academic year</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Academic Term *
+            </label>
+            <select
+              value={formData.AdditionalInformation.AcademicTerm}
+              onChange={(e) => handleInputChange('AdditionalInformation', 'AcademicTerm', e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              required
+            >
+              <option value="">Select academic term</option>
+              <option value="Fall">Fall</option>
+              <option value="Spring">Spring</option>
+              <option value="Summer">Summer</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+            Course Preferences (Top 3)
+          </label>
+          {formData.AdditionalInformation.CoursePreferences.map((course, index) => (
+            <div key={index} className="mb-3">
+              <input
+                type="text"
+                value={course}
+                onChange={(e) => {
+                  const newCourses = [...formData.AdditionalInformation.CoursePreferences];
+                  newCourses[index] = e.target.value;
+                  handleInputChange('AdditionalInformation', 'CoursePreferences', newCourses);
+                }}
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder={`Course preference ${index + 1}`}
+              />
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => {
+              if (formData.AdditionalInformation.CoursePreferences.length < 3) {
+                handleInputChange('AdditionalInformation', 'CoursePreferences', [...formData.AdditionalInformation.CoursePreferences, '']);
+              }
+            }}
+            className="text-sky-500 hover:text-sky-600 font-semibold text-sm"
+          >
+            + Add another course preference
+          </button>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+            University Preferences (Top 3)
+          </label>
+          {formData.AdditionalInformation.UniversityPreferences.map((university, index) => (
+            <div key={index} className="mb-3">
+              <input
+                type="text"
+                value={university}
+                onChange={(e) => {
+                  const newUniversities = [...formData.AdditionalInformation.UniversityPreferences];
+                  newUniversities[index] = e.target.value;
+                  handleInputChange('AdditionalInformation', 'UniversityPreferences', newUniversities);
+                }}
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder={`University preference ${index + 1}`}
+              />
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => {
+              if (formData.AdditionalInformation.UniversityPreferences.length < 3) {
+                handleInputChange('AdditionalInformation', 'UniversityPreferences', [...formData.AdditionalInformation.UniversityPreferences, '']);
+              }
+            }}
+            className="text-sky-500 hover:text-sky-600 font-semibold text-sm"
+          >
+            + Add another university preference
+          </button>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+            Personal Statement
+          </label>
+          <textarea
+            value={formData.AdditionalInformation.PersonalStatement}
+            onChange={(e) => handleInputChange('AdditionalInformation', 'PersonalStatement', e.target.value)}
+            rows={6}
+            className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+            placeholder="Tell us why you want to study abroad and what makes you a good candidate..."
+          />
+          <p className="text-sm text-appleGray-500 mt-2">Optional but recommended - helps us understand your motivation</p>
+        </div>
+      </div>
+    );
+  }
 };
 
-export default ApplicationForm;
+export default StudentApplicationForm;
