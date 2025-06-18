@@ -942,10 +942,9 @@ const StudentApplicationForm = () => {
         <div className="bg-appleGray-50 p-6 rounded-2xl">
           <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
             G.C.E. Ordinary Level (O/L) Results
-          </h4>
-
+          </h4>{" "}
           {/* Basic O-Level Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm font-semibold text-appleGray-700 mb-2">
                 Index Number *
@@ -1026,8 +1025,7 @@ const StudentApplicationForm = () => {
                 placeholder="Enter your school name"
               />
             </div>
-          </div>
-
+          </div> */}
           {/* O-Level Subject Results */}
           <div>
             <h5 className="text-md font-semibold text-appleGray-700 mb-4">
@@ -1058,7 +1056,7 @@ const StudentApplicationForm = () => {
                             newSubjects
                           );
                         }}
-                        className="w-full px-3 py-2 border border-appleGray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 text-sm"
+                        className="w-full px-4 py-3 border border-appleGray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 text-sm"
                       >
                         <option value="">Select subject</option>
                         {oLevelSubjects.map((subj) => (
@@ -1087,7 +1085,7 @@ const StudentApplicationForm = () => {
                             newSubjects
                           );
                         }}
-                        className="w-full px-3 py-2 border border-appleGray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 text-sm"
+                        className="w-full px-4 py-3 border border-appleGray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 text-sm"
                       >
                         <option value="">Select grade</option>
                         <option value="A">A - Distinction</option>

@@ -107,7 +107,7 @@ export default function Nav() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             {/* <div className="w-10 h-10 bg-gradient-to-br from-german-red to-german-gold rounded-xl flex items-center justify-center shadow-soft transition-all duration-300 group-hover:scale-110"> */}
-            <Link href="/" className="flex items-center">
+            <button className="flex items-center">
               <Image
                 width={40}
                 height={40}
@@ -115,7 +115,7 @@ export default function Nav() {
                 alt="Gidzuni Education Pathways Logo"
                 className="h-10 w-10 object-contain"
               />
-            </Link>
+            </button>
             {/* </div> */}
             <div className="hidden sm:block">
               <div className="text-xl font-bold text-appleGray-800">

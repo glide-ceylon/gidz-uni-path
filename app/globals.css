@@ -481,3 +481,264 @@ html {
     border: 2px solid #000000;
   }
 }
+
+/* Form Input Styling - Consistent border radius and clean styles */
+/* Remove default focus outlines and implement custom focus rings */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+  transition: all 0.2s var(--transition-apple);
+}
+
+/* Base input styles - All form elements use consistent 1rem border radius */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-apple-gray-dark);
+  transition: all 0.2s var(--transition-apple);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Input hover states */
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="tel"]:hover,
+input[type="date"]:hover,
+textarea:hover {
+  border-color: #9ca3af;
+}
+
+/* Select dropdown styling with proper arrow alignment and consistent border radius */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 1rem;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-apple-gray-dark);
+  transition: all 0.2s var(--transition-apple);
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+
+select:hover {
+  border-color: #9ca3af;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+/* Fix for Firefox select dropdown */
+select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 var(--color-apple-gray-dark);
+}
+
+/* Disabled input states */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Input validation states - only show colors when focused or after user interaction */
+/* Disable automatic validation styling by default */
+input:invalid,
+textarea:invalid,
+select:invalid {
+  border-color: #d1d5db; /* Keep default border color */
+}
+
+input:valid,
+textarea:valid,
+select:valid {
+  border-color: #d1d5db; /* Keep default border color */
+}
+
+/* Override for date inputs specifically to prevent red borders */
+input[type="date"]:invalid,
+input[type="date"]:valid {
+  border-color: #d1d5db; /* Always use default border color */
+}
+
+/* Show validation colors only on focus */
+input:invalid:focus,
+textarea:invalid:focus,
+select:invalid:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+input:valid:focus,
+textarea:valid:focus,
+select:valid:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Show validation colors only after the user has interacted with the field */
+input.touched:invalid,
+textarea.touched:invalid,
+select.touched:invalid {
+  border-color: #ef4444;
+}
+
+input.touched:valid,
+textarea.touched:valid,
+select.touched:valid {
+  border-color: #10b981;
+}
+
+/* Alternative approach using blur event */
+input:not(:focus):not(:placeholder-shown):invalid,
+textarea:not(:focus):not(:placeholder-shown):invalid {
+  border-color: #ef4444;
+}
+
+input:not(:focus):not(:placeholder-shown):valid,
+textarea:not(:focus):not(:placeholder-shown):valid {
+  border-color: #10b981;
+}
+
+/* Special handling for date inputs - they don't have placeholder-shown state */
+input[type="date"]:invalid:not(:focus) {
+  border-color: #d1d5db; /* Keep default border color */
+}
+
+input[type="date"]:valid:not(:focus) {
+  border-color: #d1d5db; /* Keep default border color */
+}
+
+/* Only show validation colors for date inputs when focused */
+input[type="date"]:invalid:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+input[type="date"]:valid:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Placeholder styling */
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #9ca3af;
+}
+
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: #9ca3af;
+}
+
+/* File input styling */
+input[type="file"] {
+  font-size: 1rem;
+  color: var(--color-apple-gray-dark);
+}
+
+input[type="file"]::file-selector-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  margin-right: 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s var(--transition-apple);
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Form group styling */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-apple-gray-dark);
+  margin-bottom: 0.5rem;
+}
+
+.form-error {
+  display: block;
+  font-size: 0.875rem;
+  color: #ef4444;
+  margin-top: 0.25rem;
+}
+
+.form-help {
+  display: block;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* Responsive form styling */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="date"],
+  textarea,
+  select {
+    font-size: 1rem; /* Prevent zoom on iOS */
+    padding: 0.875rem 1rem;
+  }
+
+  select {
+    padding-right: 2.5rem;
+  }
+}

@@ -188,7 +188,6 @@ const WorkVisaApplicationForm = () => {
   const goToStep = (stepIndex) => {
     setCurrentStep(stepIndex);
   };
-
   // Validation
   const validate = () => {
     const newErrors = {};
@@ -216,6 +215,37 @@ const WorkVisaApplicationForm = () => {
       !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(formData.ContactInformation.email)
     ) {
       newErrors["ContactInformation.email"] = "Invalid email format.";
+    }
+
+    // Only validate other sections if they have been started/filled
+    // This prevents validation errors for sections the user hasn't reached yet
+
+    // Qualifications validation (only if education type is selected)
+    if (
+      formData.QualificationsAndExperience.educationType &&
+      !formData.QualificationsAndExperience.yearsOfProfessionalExperience
+    ) {
+      newErrors["QualificationsAndExperience.yearsOfProfessionalExperience"] =
+        "Years of professional experience is required.";
+    }
+
+    // Language Skills validation (only if German level is selected)
+    if (
+      formData.LanguageSkills.germanLanguageLevel &&
+      formData.LanguageSkills.germanLanguageLevel !== "None" &&
+      !formData.LanguageSkills.germanCertificate
+    ) {
+      // Optional: Only require certificate for certain levels
+      // newErrors["LanguageSkills.germanCertificate"] = "German certificate is required.";
+    }
+
+    // Financial Proof validation (only if financial means type is selected)
+    if (
+      formData.FinancialProof.FinancialMeansType &&
+      !formData.FinancialProof.CanEarnLivingInGermany
+    ) {
+      newErrors["FinancialProof.CanEarnLivingInGermany"] =
+        "Please specify if you can earn living in Germany.";
     }
 
     setErrors(newErrors);
