@@ -46,6 +46,7 @@ const WorkVisaApplicationForm = () => {
       country: "",
     },
     QualificationsAndExperience: {
+      educationType: "",
       bachelorOrMasterDegreeCertificate: null,
       vocationalTrainingCertificates: null,
       cv: null,
@@ -74,6 +75,15 @@ const WorkVisaApplicationForm = () => {
       aboutYouAndYourNeeds: "",
       preferredStartDate: "",
       targetSalaryRange: "",
+    },
+    FinancialProof: {
+      CanEarnLivingInGermany: "",
+      FinancialMeansType: "",
+      BlockedAccountAmount: "",
+      DeclarationOfCommitment: "",
+      SponsorDetails: "",
+      OtherFinancialMeans: "",
+      FinancialDocuments: null,
     },
   });
 
@@ -116,6 +126,13 @@ const WorkVisaApplicationForm = () => {
     },
     {
       id: 5,
+      title: "Financial Proof",
+      description: "Financial independence documentation",
+      icon: FaMoneyBillWave,
+      fields: ["FinancialProof"],
+    },
+    {
+      id: 6,
       title: "Application Details",
       description: "Additional information",
       icon: FaFileUpload,
@@ -171,7 +188,6 @@ const WorkVisaApplicationForm = () => {
   const goToStep = (stepIndex) => {
     setCurrentStep(stepIndex);
   };
-
   // Validation
   const validate = () => {
     const newErrors = {};
@@ -199,6 +215,37 @@ const WorkVisaApplicationForm = () => {
       !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(formData.ContactInformation.email)
     ) {
       newErrors["ContactInformation.email"] = "Invalid email format.";
+    }
+
+    // Only validate other sections if they have been started/filled
+    // This prevents validation errors for sections the user hasn't reached yet
+
+    // Qualifications validation (only if education type is selected)
+    if (
+      formData.QualificationsAndExperience.educationType &&
+      !formData.QualificationsAndExperience.yearsOfProfessionalExperience
+    ) {
+      newErrors["QualificationsAndExperience.yearsOfProfessionalExperience"] =
+        "Years of professional experience is required.";
+    }
+
+    // Language Skills validation (only if German level is selected)
+    if (
+      formData.LanguageSkills.germanLanguageLevel &&
+      formData.LanguageSkills.germanLanguageLevel !== "None" &&
+      !formData.LanguageSkills.germanCertificate
+    ) {
+      // Optional: Only require certificate for certain levels
+      // newErrors["LanguageSkills.germanCertificate"] = "German certificate is required.";
+    }
+
+    // Financial Proof validation (only if financial means type is selected)
+    if (
+      formData.FinancialProof.FinancialMeansType &&
+      !formData.FinancialProof.CanEarnLivingInGermany
+    ) {
+      newErrors["FinancialProof.CanEarnLivingInGermany"] =
+        "Please specify if you can earn living in Germany.";
     }
 
     setErrors(newErrors);
@@ -347,21 +394,19 @@ const WorkVisaApplicationForm = () => {
           <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-soft">
             <FaUserTie className="w-10 h-10 text-white" />
           </div>
-
           <h1 className="text-4xl lg:text-6xl font-bold text-appleGray-900 mb-6">
             Work Visa
             <span className="block text-gradient bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
               Application
             </span>
           </h1>
-
           <p className="text-xl text-appleGray-600 max-w-2xl mx-auto mb-8">
             Start your career journey abroad. Complete your work visa
             application in simple steps.
           </p>
 
           {/* Progress indicator */}
-          <div className="max-w-4xl mx-auto mb-8">
+          <div className="max-w-4xl mx-auto mb-2">
             <div className="flex items-center justify-between">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center">
@@ -372,6 +417,7 @@ const WorkVisaApplicationForm = () => {
                         : "bg-appleGray-200 text-appleGray-400"
                     }`}
                     onClick={() => goToStep(index)}
+                    title={step.title}
                   >
                     {index < currentStep ? (
                       <FaCheckCircle className="w-5 h-5" />
@@ -389,20 +435,12 @@ const WorkVisaApplicationForm = () => {
                 </div>
               ))}
             </div>
-            {/* <div className="mt-4 text-center">
-              <h3 className="text-lg font-semibold text-appleGray-800">
-                {steps[currentStep].title}
-              </h3>
-              <p className="text-appleGray-600">
-                {steps[currentStep].description}
-              </p>
-            </div> */}
           </div>
         </div>
       </section>
 
       {/* Form Section */}
-      <section className="py-4 relative">
+      <section className="py-8 relative">
         <div className="container-apple">
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-3xl shadow-large p-8 lg:p-12 relative overflow-hidden">
@@ -534,6 +572,8 @@ const WorkVisaApplicationForm = () => {
       case 4:
         return renderGermanyExperience();
       case 5:
+        return renderFinancialProof();
+      case 6:
         return renderApplicationDetails();
       default:
         return null;
@@ -781,112 +821,150 @@ const WorkVisaApplicationForm = () => {
             Your education and work background
           </p>
         </div>
-
         {/* Document Uploads */}
         <div className="grid grid-cols-1 gap-6">
+          {/* CV Upload - First */}
           <div className="bg-appleGray-50 p-6 rounded-2xl">
             <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-              Required Documents
+              1. CV (Resume) Upload
+            </h4>
+
+            <div>
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                CV/Resume *
+              </label>
+              <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
+                <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+                <input
+                  type="file"
+                  onChange={(e) =>
+                    handleFileChange(
+                      "QualificationsAndExperience",
+                      "cv",
+                      e.target.files[0]
+                    )
+                  }
+                  className="hidden"
+                  id="cv-upload"
+                  accept=".pdf,.doc,.docx"
+                />
+                <label
+                  htmlFor="cv-upload"
+                  className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+                >
+                  {formData.QualificationsAndExperience.cv?.name ||
+                    "Upload CV/Resume"}
+                </label>
+                <p className="text-sm text-appleGray-500 mt-2">
+                  PDF, DOC, DOCX up to 10MB
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Education Type Selection - Second */}
+          <div className="bg-appleGray-50 p-6 rounded-2xl">
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+              2. Education Qualification Upload
             </h4>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  Bachelor or Master Degree Certificate *
+                  Select Your Education Type *
                 </label>
-                <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
-                  <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
-                  <input
-                    type="file"
-                    onChange={(e) =>
-                      handleFileChange(
-                        "QualificationsAndExperience",
-                        "bachelorOrMasterDegreeCertificate",
-                        e.target.files[0]
-                      )
-                    }
-                    className="hidden"
-                    id="degree-upload"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                  />
-                  <label
-                    htmlFor="degree-upload"
-                    className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
-                  >
-                    {formData.QualificationsAndExperience
-                      .bachelorOrMasterDegreeCertificate?.name ||
-                      "Upload Degree Certificate"}
-                  </label>
-                  <p className="text-sm text-appleGray-500 mt-2">
-                    PDF, JPG, PNG up to 10MB
-                  </p>
-                </div>
+                <select
+                  value={formData.QualificationsAndExperience.educationType}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "QualificationsAndExperience",
+                      "educationType",
+                      e.target.value
+                    )
+                  }
+                  className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                >
+                  <option value="">Choose education type</option>
+                  <option value="university">
+                    University Bachelor or Masters
+                  </option>
+                  <option value="vocational">Vocational Training (NVQ)</option>
+                </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  CV/Resume *
-                </label>
-                <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
-                  <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
-                  <input
-                    type="file"
-                    onChange={(e) =>
-                      handleFileChange(
-                        "QualificationsAndExperience",
-                        "cv",
-                        e.target.files[0]
-                      )
-                    }
-                    className="hidden"
-                    id="cv-upload"
-                    accept=".pdf,.doc,.docx"
-                  />
-                  <label
-                    htmlFor="cv-upload"
-                    className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
-                  >
-                    {formData.QualificationsAndExperience.cv?.name ||
-                      "Upload CV/Resume"}
+              {/* University Degree Upload */}
+              {formData.QualificationsAndExperience.educationType ===
+                "university" && (
+                <div>
+                  <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                    Bachelor or Master Degree Certificate *
                   </label>
-                  <p className="text-sm text-appleGray-500 mt-2">
-                    PDF, DOC, DOCX up to 10MB
-                  </p>
+                  <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
+                    <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+                    <input
+                      type="file"
+                      onChange={(e) =>
+                        handleFileChange(
+                          "QualificationsAndExperience",
+                          "bachelorOrMasterDegreeCertificate",
+                          e.target.files[0]
+                        )
+                      }
+                      className="hidden"
+                      id="degree-upload"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+                    <label
+                      htmlFor="degree-upload"
+                      className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+                    >
+                      {formData.QualificationsAndExperience
+                        .bachelorOrMasterDegreeCertificate?.name ||
+                        "Upload Degree Certificate"}
+                    </label>
+                    <p className="text-sm text-appleGray-500 mt-2">
+                      PDF, JPG, PNG up to 10MB
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div>
-                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  Vocational Training Certificates (Optional)
-                </label>
-                <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
-                  <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
-                  <input
-                    type="file"
-                    onChange={(e) =>
-                      handleFileChange(
-                        "QualificationsAndExperience",
-                        "vocationalTrainingCertificates",
-                        e.target.files[0]
-                      )
-                    }
-                    className="hidden"
-                    id="vocational-upload"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                  />
-                  <label
-                    htmlFor="vocational-upload"
-                    className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
-                  >
-                    {formData.QualificationsAndExperience
-                      .vocationalTrainingCertificates?.name ||
-                      "Upload Vocational Certificates"}
+              {/* Vocational Training Upload */}
+              {formData.QualificationsAndExperience.educationType ===
+                "vocational" && (
+                <div>
+                  <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                    Vocational Training (NVQ) Certificates *
                   </label>
-                  <p className="text-sm text-appleGray-500 mt-2">
-                    PDF, JPG, PNG up to 10MB
-                  </p>
+                  <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
+                    <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+                    <input
+                      type="file"
+                      onChange={(e) =>
+                        handleFileChange(
+                          "QualificationsAndExperience",
+                          "vocationalTrainingCertificates",
+                          e.target.files[0]
+                        )
+                      }
+                      className="hidden"
+                      id="vocational-upload"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+                    <label
+                      htmlFor="vocational-upload"
+                      className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+                    >
+                      {formData.QualificationsAndExperience
+                        .vocationalTrainingCertificates?.name ||
+                        "Upload Vocational (NVQ) Certificates"}
+                    </label>
+                    <p className="text-sm text-appleGray-500 mt-2">
+                      PDF, JPG, PNG up to 10MB
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -1308,7 +1386,6 @@ const WorkVisaApplicationForm = () => {
               </select>
             </div>
           </div>
-
           <div className="space-y-4">
             <div className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200">
               <input
@@ -1375,7 +1452,6 @@ const WorkVisaApplicationForm = () => {
               </label>
             </div>
           </div>
-
           <div>
             <label className="block text-sm font-semibold text-appleGray-700 mb-2">
               About You and Your Needs
@@ -1396,6 +1472,231 @@ const WorkVisaApplicationForm = () => {
             <p className="text-sm text-appleGray-500 mt-2">
               This helps us provide you with the best possible assistance
             </p>
+          </div>{" "}
+        </div>
+      </div>
+    );
+  }
+
+  function renderFinancialProof() {
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-8">
+          <FaMoneyBillWave className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+            Financial Proof
+          </h3>
+          <p className="text-appleGray-600">
+            Prove your financial independence for working in Germany
+          </p>
+        </div>
+
+        {/* Can You Earn a Living in Germany */}
+        <div className="bg-appleGray-50 p-6 rounded-2xl">
+          <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+            Can you earn a living in Germany?
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {["Yes", "No"].map((option) => (
+              <label
+                key={option}
+                className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200"
+              >
+                <input
+                  type="radio"
+                  name="canEarnLivingWork"
+                  value={option}
+                  checked={
+                    formData.FinancialProof.CanEarnLivingInGermany === option
+                  }
+                  onChange={(e) =>
+                    handleInputChange(
+                      "FinancialProof",
+                      "CanEarnLivingInGermany",
+                      e.target.value
+                    )
+                  }
+                  className="w-4 h-4 text-sky-500 border-appleGray-300 focus:ring-sky-500"
+                />
+                <span className="text-appleGray-700 font-medium">{option}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Financial Means Type */}
+        <div className="bg-appleGray-50 p-6 rounded-2xl">
+          <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+            Type of Financial Means
+          </h4>
+          <p className="text-sm text-appleGray-600 mb-4">
+            Your financial independence is a basic prerequisite for receiving
+            the work visa. You can prove your financial independence with the
+            help of a blocked account, employment contract, or a Declaration of
+            Commitment, among other things.
+          </p>
+
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Select your financial means type *
+            </label>
+            <select
+              value={formData.FinancialProof.FinancialMeansType}
+              onChange={(e) =>
+                handleInputChange(
+                  "FinancialProof",
+                  "FinancialMeansType",
+                  e.target.value
+                )
+              }
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+            >
+              <option value="">Choose financial means type</option>
+              <option value="employment-contract">Employment Contract</option>
+              <option value="blocked-account">Blocked Account</option>
+              <option value="declaration-commitment">
+                Declaration of Commitment
+              </option>
+              <option value="personal-savings">Personal Savings</option>
+              <option value="sponsor">Family/Personal Sponsor</option>
+              <option value="other">Other Financial Means</option>
+            </select>
+          </div>
+
+          {/* Blocked Account Details */}
+          {formData.FinancialProof.FinancialMeansType === "blocked-account" && (
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                Blocked Account Amount (in EUR) *
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={formData.FinancialProof.BlockedAccountAmount}
+                onChange={(e) =>
+                  handleInputChange(
+                    "FinancialProof",
+                    "BlockedAccountAmount",
+                    e.target.value
+                  )
+                }
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder="e.g., 12,000 (recommended minimum for work visa)"
+              />
+              <p className="text-sm text-appleGray-500 mt-2">
+                Recommended minimum €12,000 for work visa applications
+              </p>
+            </div>
+          )}
+
+          {/* Declaration of Commitment Details */}
+          {formData.FinancialProof.FinancialMeansType ===
+            "declaration-commitment" && (
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                Declaration of Commitment Details *
+              </label>
+              <textarea
+                value={formData.FinancialProof.DeclarationOfCommitment}
+                onChange={(e) =>
+                  handleInputChange(
+                    "FinancialProof",
+                    "DeclarationOfCommitment",
+                    e.target.value
+                  )
+                }
+                rows={3}
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder="Provide details about the declaration of commitment..."
+              />
+            </div>
+          )}
+
+          {/* Sponsor Details */}
+          {formData.FinancialProof.FinancialMeansType === "sponsor" && (
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                Sponsor Details *
+              </label>
+              <textarea
+                value={formData.FinancialProof.SponsorDetails}
+                onChange={(e) =>
+                  handleInputChange(
+                    "FinancialProof",
+                    "SponsorDetails",
+                    e.target.value
+                  )
+                }
+                rows={3}
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder="Provide details about your sponsor (name, relationship, financial capacity)..."
+              />
+            </div>
+          )}
+
+          {/* Other Financial Means */}
+          {formData.FinancialProof.FinancialMeansType === "other" && (
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                Other Financial Means Details *
+              </label>
+              <textarea
+                value={formData.FinancialProof.OtherFinancialMeans}
+                onChange={(e) =>
+                  handleInputChange(
+                    "FinancialProof",
+                    "OtherFinancialMeans",
+                    e.target.value
+                  )
+                }
+                rows={3}
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder="Describe your other financial means..."
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Financial Documents Upload */}
+        <div className="bg-appleGray-50 p-6 rounded-2xl">
+          <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+            Financial Documents Upload
+          </h4>
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Upload Financial Proof Documents *
+            </label>
+            <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
+              <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+              <input
+                type="file"
+                onChange={(e) =>
+                  handleFileChange(
+                    "FinancialProof",
+                    "FinancialDocuments",
+                    e.target.files[0]
+                  )
+                }
+                className="hidden"
+                id="financial-documents-work-upload"
+                accept=".pdf,.jpg,.jpeg,.png"
+                multiple
+              />
+              <label
+                htmlFor="financial-documents-work-upload"
+                className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+              >
+                {formData.FinancialProof.FinancialDocuments?.name ||
+                  "Upload Financial Documents"}
+              </label>
+              <p className="text-sm text-appleGray-500 mt-2">
+                PDF, JPG, PNG up to 10MB each
+              </p>
+              <p className="text-xs text-appleGray-400 mt-2">
+                e.g., Bank statements, employment contract, blocked account
+                confirmation, etc.
+              </p>
+            </div>
           </div>
         </div>
       </div>

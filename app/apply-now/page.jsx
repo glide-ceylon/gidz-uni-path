@@ -116,7 +116,7 @@ export default function VisaOptionsPage() {
                     <div className="relative">
                       <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-soft">
                         <Image
-                          src="/student-visa.jpeg"
+                          src="/student-visa.png"
                           alt="Student Visa"
                           width={128}
                           height={128}
@@ -185,7 +185,7 @@ export default function VisaOptionsPage() {
                     <div className="relative">
                       <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-soft">
                         <Image
-                          src="/work-visa.jpeg"
+                          src="/work-visa.png"
                           alt="Work Visa"
                           width={128}
                           height={128}
@@ -372,8 +372,8 @@ export default function VisaOptionsPage() {
                     </h3>
                     <p className="text-appleGray-600 leading-relaxed flex-1">
                       Receive instant notifications as soon as your review is
-                      completed. Well guide you through the next steps for your
-                      successful application.
+                      completed. We&apos;ll guide you through the next steps for
+                      your successful application.
                     </p>
                   </div>
                 </div>

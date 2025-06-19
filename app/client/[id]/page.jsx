@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Icon} from "@iconify/react";
+import { Icon } from "@iconify/react";
 import { supabase } from "../../../lib/supabase";
 import Universities from "./components/Universities";
 import DocumentsToDownload from "./components/DocumentsToDownload";
@@ -10,6 +10,7 @@ import VerticalStepper from "./components/VerticalStepper";
 import ApplicationOptions from "./components/ApplicationOptions";
 import Message from "./components/Message";
 import AppointmentModal from "./components/AppointmentModal";
+import Image from "next/image";
 
 const ApplicantDetail = () => {
   const [applicant, setApplicant] = useState(null);
@@ -213,7 +214,7 @@ const ApplicantDetail = () => {
           <div className="mt-4">
             <div className="flex flex-col items-start justify-center">
               <h2 className="text-2xl font-semibold mb-4">Profile Picture</h2>
-              <img
+              <Image
                 src={profilePicUrl || "/logo.png"}
                 alt="profile"
                 className="w-24 h-24 rounded-full object-cover"
@@ -293,66 +294,74 @@ const ApplicantDetail = () => {
           title="First Semester Fees for the University"
         />
         <section className="mb-6">
-
-            <div className="flex items-center">
+          <div className="flex items-center">
             <h2 className="text-2xl font-semibold mb-4">VISA APPLICATION</h2>
             <Icon
-                    icon={applicant.lock_1 ? "solar:lock-bold" : "solar:lock-unlocked-bold"} // Render lock or unlock based on state
-                    width="32"
-                    color="#FF8A65"
-                  />
-          </div>
-        {!applicant.lock_1 && <div>
-          <div>
-            <strong>Payment 2 Status:</strong>{" "}
-            {applicant.payment2 ? "Yes" : "No"}
-          </div>
-          <ApplicationOptions
-            applicationId={id}
-            optionsToCheck={[
-              { name: "APPLICATION FORM", option: false },
-              { name: "3 PASSPORT PHOTOS", option: false },
-              { name: "PHOTOCOPY OF ALL PASSPORT PAGES", option: false },
-              { name: "MOTIVATION LETTER", option: false },
-              { name: "CV", option: false },
-              { name: "O/L AND A/L CERTIFICATE", option: false },
-              {
-                name: "BACHELOR CERTIFICATE/ TRANSCRIPT ( MASTERS)",
-                option: false,
-              },
-              { name: "ADMISSION LETTER", option: false },
-              { name: "ENROLMENT LETTER", option: false },
-              { name: "LANGUAGE CERTIFICATE ( IELTS) / GERMAN", option: false },
-              { name: "BLOCKED ACCOUNT/ SPONSOR", option: false },
-              { name: "PAYMENT OF SEMESTER FEES", option: false },
-              { name: "HEALTH INSURANCE", option: false },
-              { name: "TRAVEL HEALTH INSURANCE", option: false },
-              { name: "BIRTH CERTIFICATE ( ENGLISH)", option: false },
-              { name: "ACCOMMODATION", option: false },
-            ]}
-            title="DOCUMENTS FOR VISA APPLICATION"
-          />
-          <div className="pl-3">
-            <ApplicationOptions
-              applicationId={id}
-              optionsToCheck={[
-                { name: "TRAVEL INSURANCE", option: false },
-                { name: "FLIGHT TICKET ( DUMMY)", option: false },
-              ]}
-              title=" "
-            />
-            <ApplicationOptions
-              applicationId={id}
-              optionsToCheck={[
-                {
-                  name: "INTERVIEW SECTION WITH GIDZ UNI PATH TEAM",
-                  option: false,
-                },
-              ]}
-              title="FINALIZATION"
+              icon={
+                applicant.lock_1
+                  ? "solar:lock-bold"
+                  : "solar:lock-unlocked-bold"
+              } // Render lock or unlock based on state
+              width="32"
+              color="#FF8A65"
             />
           </div>
-          </div>}
+          {!applicant.lock_1 && (
+            <div>
+              <div>
+                <strong>Payment 2 Status:</strong>{" "}
+                {applicant.payment2 ? "Yes" : "No"}
+              </div>
+              <ApplicationOptions
+                applicationId={id}
+                optionsToCheck={[
+                  { name: "APPLICATION FORM", option: false },
+                  { name: "3 PASSPORT PHOTOS", option: false },
+                  { name: "PHOTOCOPY OF ALL PASSPORT PAGES", option: false },
+                  { name: "MOTIVATION LETTER", option: false },
+                  { name: "CV", option: false },
+                  { name: "O/L AND A/L CERTIFICATE", option: false },
+                  {
+                    name: "BACHELOR CERTIFICATE/ TRANSCRIPT ( MASTERS)",
+                    option: false,
+                  },
+                  { name: "ADMISSION LETTER", option: false },
+                  { name: "ENROLMENT LETTER", option: false },
+                  {
+                    name: "LANGUAGE CERTIFICATE ( IELTS) / GERMAN",
+                    option: false,
+                  },
+                  { name: "BLOCKED ACCOUNT/ SPONSOR", option: false },
+                  { name: "PAYMENT OF SEMESTER FEES", option: false },
+                  { name: "HEALTH INSURANCE", option: false },
+                  { name: "TRAVEL HEALTH INSURANCE", option: false },
+                  { name: "BIRTH CERTIFICATE ( ENGLISH)", option: false },
+                  { name: "ACCOMMODATION", option: false },
+                ]}
+                title="DOCUMENTS FOR VISA APPLICATION"
+              />
+              <div className="pl-3">
+                <ApplicationOptions
+                  applicationId={id}
+                  optionsToCheck={[
+                    { name: "TRAVEL INSURANCE", option: false },
+                    { name: "FLIGHT TICKET ( DUMMY)", option: false },
+                  ]}
+                  title=" "
+                />
+                <ApplicationOptions
+                  applicationId={id}
+                  optionsToCheck={[
+                    {
+                      name: "INTERVIEW SECTION WITH GIDZ UNI PATH TEAM",
+                      option: false,
+                    },
+                  ]}
+                  title="FINALIZATION"
+                />
+              </div>
+            </div>
+          )}
         </section>
       </div>
     </div>

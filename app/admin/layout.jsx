@@ -8,7 +8,6 @@ export default function RootLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname(); // Get the current page route
-
   useEffect(() => {
     const checkUser = async () => {
       const {

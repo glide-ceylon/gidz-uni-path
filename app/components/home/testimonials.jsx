@@ -68,17 +68,18 @@ export default function TestimonialsCarousel() {
       prevIndex === testimonialsData.length - 1 ? 0 : prevIndex + 1
     );
   };
-
   // Auto-play functionality
   useEffect(() => {
     if (!isAutoPlaying) return;
 
     const interval = setInterval(() => {
-      handleNext();
+      setActiveIndex((prevIndex) =>
+        prevIndex === testimonialsData.length - 1 ? 0 : prevIndex + 1
+      );
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [activeIndex, isAutoPlaying]);
+  }, [isAutoPlaying]);
 
   const handleDotClick = (index) => {
     setActiveIndex(index);
@@ -227,12 +228,12 @@ export default function TestimonialsCarousel() {
             <div key={index} className="group">
               <div className="text-3xl lg:text-4xl font-bold text-german-red mb-2 group-hover:text-german-gold transition-colors duration-300">
                 {stat.value}
-              </div>
+              </div>{" "}
               <div className="text-appleGray-600 text-sm lg:text-base">
                 {stat.label}
               </div>
             </div>
-          ))}
+          ))}{" "}
         </div>
       </div>
     </section>

@@ -1,14 +1,9 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import {
-  FaGraduationCap,
-  FaChevronDown,
-  FaBars,
-  FaTimes,
-} from "react-icons/fa";
+import { FaChevronDown, FaBars, FaTimes } from "react-icons/fa";
+import Image from "next/image";
 
 export default function Nav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -106,16 +101,16 @@ export default function Nav() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            {/* <div className="w-10 h-10 bg-gradient-to-br from-german-red to-german-gold rounded-xl flex items-center justify-center shadow-soft transition-all duration-300 group-hover:scale-110"> */}{" "}
-            <Link href="/" className="flex items-center">
+            {/* <div className="w-10 h-10 bg-gradient-to-br from-german-red to-german-gold rounded-xl flex items-center justify-center shadow-soft transition-all duration-300 group-hover:scale-110"> */}
+            <button className="flex items-center">
               <Image
-                src="/gidz-transperant.png"
-                alt="Gidzuni Education Pathways Logo"
                 width={40}
                 height={40}
+                src="/gidz-transperant.png"
+                alt="Gidzuni Education Pathways Logo"
                 className="h-10 w-10 object-contain"
               />
-            </Link>
+            </button>
             {/* </div> */}
             <div className="hidden sm:block">
               <div className="text-xl font-bold text-appleGray-800">
