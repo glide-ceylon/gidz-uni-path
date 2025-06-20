@@ -2,6 +2,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaLock,
+  FaEnvelope,
+  FaShieldAlt,
+  FaUserTie,
+  FaCrown,
+} from "react-icons/fa";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -38,98 +47,163 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
-
   return (
-    <div className="min-h-screen flex items-center justify-center p-2 bg-gray-100">
-      <div className="bg-white p-3 rounded-lg shadow-lg w-full max-w-md">
-        <div className="flex justify-center mb-6">
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={80}
-            height={80}
-            className="w-20 h-20 object-contain"
-          />
-        </div>
-        <h1 className="mb-6 text-2xl font-semibold text-center">Admin Login</h1>
-        <form onSubmit={handleLogin}>
-          <div className="mb-6">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
+    <div className="min-h-screen bg-gradient-to-br from-appleGray-50 via-white to-sky-50 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
+
+      {/* Floating Background Elements */}
+      <div className="absolute top-20 left-10 w-32 h-32 bg-sky-400/10 rounded-full animate-float"></div>
+      <div
+        className="absolute top-40 right-20 w-24 h-24 bg-sky-500/20 rounded-2xl animate-float"
+        style={{ animationDelay: "1s" }}
+      ></div>
+      <div
+        className="absolute bottom-40 left-20 w-20 h-20 bg-sky-600/15 rounded-full animate-float"
+        style={{ animationDelay: "2s" }}
+      ></div>
+      <div
+        className="absolute top-60 right-40 w-16 h-16 bg-sky-400/25 rounded-full animate-float"
+        style={{ animationDelay: "3s" }}
+      ></div>
+
+      <div className="relative flex items-center justify-center min-h-screen px-4 py-12">
+        <div className="w-full max-w-md">
+          {/* Hero Section */}
+          <div className="text-center mb-8 animate-fade-in-up">
+            {" "}
+            {/* Admin Badge */}
+            <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-soft">
+              <FaCrown className="w-10 h-10 text-white" />
+            </div>
+            {/* Admin Logo */}
+            {/* <div className="w-32 h-32 mx-auto mb-6 rounded-2xl overflow-hidden shadow-soft">
+              <Image
+                src="/logo.png"
+                alt="GIDZ Admin Portal"
+                width={128}
+                height={128}
+                className="w-full h-full object-cover"
+              />
+            </div> */}
+            <h1 className="text-3xl lg:text-4xl font-bold text-appleGray-800 mb-2">
+              Admin Portal
+            </h1>
+            <p className="text-lg text-appleGray-600">
+              Secure access to administrative dashboard
+            </p>
           </div>
-          <div className="mb-6 relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md text-base pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <div
-              className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+
+          {/* Admin Login Form */}
+          <div className="bg-white rounded-3xl p-8 shadow-large border border-appleGray-200">
+            <form onSubmit={handleLogin} className="space-y-6">
+              {/* Email Field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-appleGray-700"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.958 9.958 0 012.293-3.452m3.356-2.723A9.956 9.956 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.956 9.956 0 01-4.142 5.73M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  Administrator Email
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <FaEnvelope className="w-4 h-4 text-appleGray-400" />
+                  </div>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter admin email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="block w-full pl-11 pr-4 py-3 text-sm border border-appleGray-300 rounded-2xl shadow-soft bg-appleGray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
                   />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3l18 18"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-appleGray-700"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <FaLock className="w-4 h-4 text-appleGray-400" />
+                  </div>
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter admin password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="block w-full pl-11 pr-12 py-3 text-sm border border-appleGray-300 rounded-2xl shadow-soft bg-appleGray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
                   />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                  />
-                </svg>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-appleGray-400 hover:text-appleGray-600 focus:outline-none transition-colors duration-200"
+                    aria-label="Toggle password visibility"
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash className="w-4 h-4" />
+                    ) : (
+                      <FaEye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-2xl">
+                  <p className="text-sm text-red-600 font-medium">{error}</p>
+                </div>
               )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`w-full py-3 px-4 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-sky-600 rounded-2xl shadow-soft hover:from-sky-600 hover:to-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition-all duration-300 ${
+                  isLoading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "btn-apple-hover"
+                }`}
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Authenticating...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center space-x-2">
+                    <FaUserTie className="w-4 h-4" />
+                    <span>Access Admin Panel</span>
+                  </div>
+                )}
+              </button>
+            </form>
+
+            {/* Security Badge */}
+            <div className="mt-6 pt-6 border-t border-appleGray-200">
+              <div className="flex items-center justify-center space-x-2 text-sm text-appleGray-500">
+                <FaShieldAlt className="w-4 h-4" />
+                <span>Administrator access - Highest security level</span>
+              </div>
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {isLoading ? "Logging in..." : "Login"}
-          </button>
-          {error && <p className="text-red-500 mt-6">{error}</p>}
-        </form>
+
+          {/* Additional Info */}
+          <div className="mt-8 text-center">
+            <p className="text-sm text-appleGray-500">
+              Authorized personnel only • All access is logged
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
