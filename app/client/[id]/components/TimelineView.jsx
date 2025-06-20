@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   FaCheckCircle,
   FaClock,
@@ -21,11 +21,7 @@ const TimelineView = ({ applicantData, applicationId }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [userNotes, setUserNotes] = useState({});
 
-  useEffect(() => {
-    generateTimelineData();
-  }, [applicantData]);
-
-  const generateTimelineData = () => {
+  const generateTimelineData = useCallback(() => {
     const currentStep = parseInt(applicantData?.status?.slice(-1)) || 1;
     const currentDate = new Date();
 
@@ -138,13 +134,16 @@ const TimelineView = ({ applicantData, applicationId }) => {
         color: "gold",
       });
     }
-
     setTimelineData({
       past: pastEvents,
       present: presentEvents,
       future: futureEvents,
     });
-  };
+  }, [applicantData]);
+
+  useEffect(() => {
+    generateTimelineData();
+  }, [generateTimelineData]);
 
   const formatDate = (date) => {
     return date.toLocaleDateString("en-US", {

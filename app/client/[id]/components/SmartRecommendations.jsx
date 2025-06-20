@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   FaLightbulb,
   FaArrowRight,
@@ -23,11 +23,7 @@ const SmartRecommendations = ({
   const [completedActions, setCompletedActions] = useState(new Set());
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    generateRecommendations();
-  }, [applicantData, dashboardStats]);
-
-  const generateRecommendations = () => {
+  const generateRecommendations = useCallback(() => {
     setLoading(true);
     const recs = [];
     const currentStep = parseInt(applicantData?.status?.slice(-1)) || 1;
@@ -205,14 +201,16 @@ const SmartRecommendations = ({
           "Update pending actions",
         ],
       });
-    }
-
-    // Sort by priority (1 = highest)
+    } // Sort by priority (1 = highest)
     recs.sort((a, b) => a.priority - b.priority);
 
     setRecommendations(recs);
     setLoading(false);
-  };
+  }, [applicantData, dashboardStats]);
+
+  useEffect(() => {
+    generateRecommendations();
+  }, [generateRecommendations]);
 
   const handleActionClick = (recId) => {
     setCompletedActions((prev) => new Set([...prev, recId]));
@@ -293,7 +291,7 @@ const SmartRecommendations = ({
             All Caught Up!
           </h4>
           <p className="text-green-600">
-            You're on track. Keep up the great work!
+            You&apos;re on track. Keep up the great work!
           </p>
         </div>
       ) : (

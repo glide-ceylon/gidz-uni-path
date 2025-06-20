@@ -55,7 +55,7 @@ export default function AppointmentModal({ onClose }) {
       </a>
 
       <p className="text-xs text-appleGray-500 mt-4">
-        You'll be redirected to our scheduling platform
+        You&apos;ll be redirected to our scheduling platform
       </p>
     </div>
   );

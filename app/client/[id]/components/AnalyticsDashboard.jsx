@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   FaChartLine,
   FaChartBar,
@@ -27,11 +27,7 @@ const AnalyticsDashboard = ({
   const [timeframe, setTimeframe] = useState("30days");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    generateAnalytics();
-  }, [applicantData, dashboardStats, timeframe]);
-
-  const generateAnalytics = () => {
+  const generateAnalytics = useCallback(() => {
     setLoading(true);
 
     // Mock analytics data - in real app, this would come from backend
@@ -126,12 +122,14 @@ const AnalyticsDashboard = ({
         avgSessionTime: 18, // minutes
         peakActivityTime: "14:00-16:00",
         documentsPerWeek: 2.1,
-      },
-    };
-
+      },    };
     setAnalyticsData(analytics);
     setLoading(false);
-  };
+  }, [applicantData, dashboardStats]);
+
+  useEffect(() => {
+    generateAnalytics();
+  }, [generateAnalytics]);
 
   const formatDate = (date) => {
     return new Intl.DateTimeFormat("en-US", {

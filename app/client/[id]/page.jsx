@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   FaUser,
   FaEnvelope,
@@ -66,12 +66,7 @@ const ApplicantDetail = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (id) {
-      fetchApplicant(id);
-    }
-  }, [id]);
-  const fetchApplicant = async (applicantId) => {
+  const fetchApplicant = useCallback(async (applicantId) => {
     try {
       const { data, error } = await supabase
         .from("applications")
@@ -94,11 +89,16 @@ const ApplicantDetail = () => {
 
         // Generate notifications based on application status
         generateNotifications(data);
-      }
-    } catch (error) {
+      }    } catch (error) {
       console.error("Error fetching applicant:", error.message);
     }
-  };
+  }, [calculateDashboardStats]);
+
+  useEffect(() => {
+    if (id) {
+      fetchApplicant(id);
+    }
+  }, [id, fetchApplicant]);
 
   const generateNotifications = (applicantData) => {
     const newNotifications = [];
@@ -157,8 +157,7 @@ const ApplicantDetail = () => {
   const dismissNotification = (notificationId) => {
     setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
   };
-
-  const calculateDashboardStats = async (applicantData) => {
+  const calculateDashboardStats = useCallback(async (applicantData) => {
     try {
       // Get universities data
       const { data: universities, error: uniError } = await supabase
@@ -207,7 +206,7 @@ const ApplicantDetail = () => {
     } catch (error) {
       console.error("Error calculating dashboard stats:", error);
     }
-  };
+  }, [id]);
 
   const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
