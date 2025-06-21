@@ -152,6 +152,79 @@ html {
   }
 }
 
+/* Dashboard Enhancements - Phase 1 */
+
+/* Fade in up animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Progress bar animation */
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--progress-width);
+  }
+}
+
+.progress-bar-animated {
+  animation: progressFill 1s ease-out 0.5s both;
+}
+
+/* Dashboard card hover effects */
+.dashboard-card {
+  transition: all 0.3s var(--transition-apple);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-large);
+}
+
+/* Status indicator pulse animation */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-indicator-red {
+  animation: pulse 2s infinite;
+}
+
+/* Quick stats counter animation */
+@keyframes countUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.stats-counter {
+  animation: countUp 0.8s ease-out;
+}
+
 /* Utility Classes */
 .animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out;
@@ -438,16 +511,254 @@ html {
   border-color: rgba(221, 0, 0, 0.1);
 }
 
-/* Responsive design helpers */
+/* Dashboard specific styles */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.progress-banner {
+  background: var(--color-primary);
+  color: white;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-banner h2 {
+  font-size: 1.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.progress-banner .progress {
+  height: 0.5rem;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-banner .progress .progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #2563eb, #1d4ed8);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  animation: progressFill 1s ease-out forwards;
+}
+
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.quick-stats .stat {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s ease;
+}
+
+.quick-stats .stat:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-large);
+}
+
+.quick-stats .stat .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.quick-stats .stat .label {
+  font-size: 0.875rem;
+  color: var(--color-apple-gray);
+}
+
+/* Mobile responsiveness for dashboard */
 @media (max-width: 768px) {
-  .btn-german-primary,
-  .btn-german-secondary {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.9rem;
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
-  .card-german {
-    border-radius: 1rem;
+  .progress-banner {
+    padding: 1.5rem;
+  }
+
+  .quick-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-banner h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Phase 2 Enhancements - Tabbed Interface */
+
+/* Tab Navigation Styles */
+.tab-navigation {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.tab-navigation::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* Tab Content Transitions */
+.tab-content {
+  animation: fadeInContent 0.3s ease-in-out;
+}
+
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced Card Hover Effects for Tabs */
+.tab-card {
+  transition: all 0.3s var(--transition-apple);
+}
+
+.tab-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Document Category Styling */
+.document-category-header {
+  position: relative;
+}
+
+.document-category-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-primary-light)
+  );
+  border-radius: 1px;
+}
+
+/* Status Badge Animations */
+.status-badge {
+  transition: all 0.2s ease-in-out;
+}
+
+.status-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Activity Timeline Styling */
+.activity-item {
+  position: relative;
+  transition: all 0.2s ease-in-out;
+}
+
+.activity-item:hover {
+  transform: translateX(4px);
+}
+
+/* Tab Badge Animations */
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.tab-badge-urgent {
+  animation: badgePulse 2s infinite;
+}
+
+/* University Overview Cards */
+.university-stats-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.university-stats-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.university-stats-card:hover::before {
+  left: 100%;
+}
+
+/* Support Section Enhancements */
+.support-action-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.support-action-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Enhanced Responsive Design for Tabs */
+@media (max-width: 768px) {
+  .tab-content {
+    min-height: 400px;
+  }
+
+  .tab-navigation {
+    padding: 0 1rem;
+  }
+
+  .tab-navigation button {
+    font-size: 0.875rem;
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-navigation button span {
+    display: none;
+  }
+
+  .tab-navigation button {
+    padding: 0.75rem;
   }
 }
 
@@ -506,7 +817,7 @@ textarea {
   background-color: white;
   border: 1px solid #d1d5db;
   border-radius: 1rem;
-  padding: 0.75rem 1rem;
+  /* padding: 0.75rem 1rem; */
   font-size: 1rem;
   line-height: 1.5;
   color: var(--color-apple-gray-dark);
@@ -741,4 +1052,271 @@ input[type="file"]::file-selector-button:hover {
   select {
     padding-right: 2.5rem;
   }
+}
+
+/* === ANALYTICS DASHBOARD STYLES === */
+.analytics-card {
+  background: white;
+  border: 1px solid #e8e8ed;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.analytics-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.analytics-stat {
+  background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe);
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid #bae6fd;
+}
+
+.analytics-chart {
+  width: 100%;
+  height: 16rem;
+  background: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-bar-animated {
+  transition: all 1s ease-out;
+  animation: progressGrow 2s ease-out;
+}
+
+@keyframes progressGrow {
+  from {
+    width: 0%;
+  }
+}
+
+.benchmark-line {
+  border: 2px dashed #86868b;
+  background: transparent;
+}
+
+/* === SMART RECOMMENDATIONS STYLES === */
+.recommendation-card {
+  background: white;
+  border: 1px solid #e8e8ed;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.recommendation-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: scale(1.02);
+}
+
+.recommendation-urgent {
+  background: linear-gradient(to bottom right, #fef2f2, #fee2e2);
+  border-color: #fecaca;
+  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.1);
+  animation: pulseRed 2s infinite;
+}
+
+.recommendation-high {
+  background: linear-gradient(to bottom right, #fff7ed, #ffedd5);
+  border-color: #fed7aa;
+}
+
+.recommendation-medium {
+  background: linear-gradient(to bottom right, #fefce8, #fef3c7);
+  border-color: #fde68a;
+}
+
+.recommendation-low {
+  background: linear-gradient(to bottom right, #eff6ff, #dbeafe);
+  border-color: #bfdbfe;
+}
+
+@keyframes pulseRed {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+}
+
+.recommendation-action-btn {
+  background: #0ea5e9;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.recommendation-action-btn:hover {
+  background: #0284c7;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.recommendation-action-btn:active {
+  transform: scale(0.95);
+}
+
+.recommendation-completed {
+  background: linear-gradient(to bottom right, #f0fdf4, #dcfce7);
+  border-color: #bbf7d0;
+  opacity: 0.75;
+}
+
+/* === TIMELINE ENHANCEMENTS === */
+.timeline-event {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.timeline-event:hover {
+  transform: scale(1.02);
+}
+
+.timeline-event::before {
+  content: "";
+  position: absolute;
+  left: 1.5rem;
+  top: 4rem;
+  width: 0.125rem;
+  height: 100%;
+  background: linear-gradient(to bottom, #7dd3fc, transparent);
+}
+
+.timeline-event:last-child::before {
+  display: none;
+}
+
+.timeline-past {
+  background: linear-gradient(to bottom right, #f0fdf4, #dcfce7);
+  border-color: #bbf7d0;
+}
+
+.timeline-present {
+  background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe);
+  border-color: #bae6fd;
+  animation: timelinePulse 2s infinite;
+}
+
+.timeline-future {
+  background: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
+  border-color: #d1d5db;
+}
+
+@keyframes timelinePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 8px rgba(14, 165, 233, 0);
+  }
+}
+
+/* === ANALYTICS SPECIFIC ANIMATIONS === */
+.stats-counter {
+  animation: countUp 1.5s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.analytics-prediction {
+  background: linear-gradient(to bottom right, #faf5ff, #f3e8ff);
+  border: 1px solid #e9d5ff;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  animation: predictionGlow 3s infinite alternate;
+}
+
+@keyframes predictionGlow {
+  from {
+    box-shadow: 0 4px 6px -1px rgba(147, 51, 234, 0.1);
+  }
+  to {
+    box-shadow: 0 10px 15px -3px rgba(147, 51, 234, 0.2);
+  }
+}
+
+.risk-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.risk-high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.risk-medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.risk-low {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* === ENHANCED TAB STYLES === */
+.tab-navigation {
+  position: relative;
+}
+
+.tab-navigation::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0.125rem;
+  background: linear-gradient(to right, #60a5fa, #0ea5e9, #0284c7);
+}
+
+.analytics-tab-active {
+  position: relative;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.analytics-tab-active::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0.25rem;
+  background: linear-gradient(to right, #a855f7, #0ea5e9);
+  border-radius: 0.25rem 0.25rem 0 0;
 }
