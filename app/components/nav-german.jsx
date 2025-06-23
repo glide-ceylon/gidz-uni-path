@@ -4,24 +4,24 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaChevronDown, FaBars, FaTimes } from "react-icons/fa";
 import Image from "next/image";
+import { useAuthSystem, AUTH_TYPES } from "../../hooks/useAuthSystem";
 
 export default function Nav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVisaDropdownOpen, setIsVisaDropdownOpen] = useState(false);
   const [isMobileVisaOpen, setIsMobileVisaOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const visaDropdownRef = useRef(null);
-  const dropdownTimeoutRef = useRef(null);
-
-  // Check localStorage on mount
-  useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (userId) {
-      setIsLoggedIn(true);
-    }
-  }, []);
+  const dropdownTimeoutRef = useRef(null); // Use the comprehensive auth system
+  const {
+    type: authType,
+    user,
+    loading: authLoading,
+    getNavConfig,
+  } = useAuthSystem();
+  // Get navigation configuration based on auth state
+  const navConfig = getNavConfig();
 
   // Handle scroll effect
   useEffect(() => {
@@ -32,12 +32,6 @@ export default function Nav() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Handle logout
-  const handleLogout = () => {
-    localStorage.removeItem("userId");
-    setIsLoggedIn(false);
-  };
 
   // Toggle mobile menu
   const toggleMobileMenu = () => {
@@ -130,99 +124,134 @@ export default function Nav() {
               className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
             >
               Home
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>{" "}
             </Link>{" "}
-            {/* Visa Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={openDropdown}
-              onMouseLeave={closeDropdownWithDelay}
-              ref={visaDropdownRef}
-            >
-              <Link
-                href="/apply-now"
-                onClick={() => setIsVisaDropdownOpen(!isVisaDropdownOpen)}
-                className="flex items-center space-x-1 text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
-                aria-haspopup="true"
-                aria-expanded={isVisaDropdownOpen}
+            {/* Visa Dropdown - Show based on auth state */}
+            {navConfig.showVisaServices && (
+              <div
+                className="relative"
+                onMouseEnter={openDropdown}
+                onMouseLeave={closeDropdownWithDelay}
+                ref={visaDropdownRef}
               >
-                <span>Visa Services</span>
-                <FaChevronDown
-                  className={`w-3 h-3 transition-transform duration-200 ${
-                    isVisaDropdownOpen ? "rotate-180" : ""
-                  }`}
-                />
+                <Link
+                  href="/apply-now"
+                  onClick={() => setIsVisaDropdownOpen(!isVisaDropdownOpen)}
+                  className="flex items-center space-x-1 text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
+                  aria-haspopup="true"
+                  aria-expanded={isVisaDropdownOpen}
+                >
+                  <span>Visa Services</span>
+                  <FaChevronDown
+                    className={`w-3 h-3 transition-transform duration-200 ${
+                      isVisaDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
+                </Link>
+                {isVisaDropdownOpen && (
+                  <div
+                    className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-large border border-appleGray-200 overflow-hidden animate-scale-in z-50"
+                    onMouseEnter={openDropdown}
+                    onMouseLeave={closeDropdownWithDelay}
+                  >
+                    <div className="p-2">
+                      <Link
+                        href="/apply-now/student"
+                        className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
+                        onClick={() => setIsVisaDropdownOpen(false)}
+                      >
+                        <div className="font-medium">Student Visa</div>
+                        <div className="text-sm text-appleGray-500">
+                          For university applications
+                        </div>
+                      </Link>
+                      <Link
+                        href="/apply-now/work"
+                        className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
+                        onClick={() => setIsVisaDropdownOpen(false)}
+                      >
+                        <div className="font-medium">Work Visa</div>
+                        <div className="text-sm text-appleGray-500">
+                          For professional opportunities
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}{" "}
+            {/* Applications - Show based on auth state (Admin only) */}
+            {navConfig.showApplications && (
+              <Link
+                href="/applications"
+                className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
+              >
+                Applications
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
               </Link>
-              {isVisaDropdownOpen && (
-                <div
-                  className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-large border border-appleGray-200 overflow-hidden animate-scale-in z-50"
-                  onMouseEnter={openDropdown}
-                  onMouseLeave={closeDropdownWithDelay}
-                >
-                  <div className="p-2">
-                    <Link
-                      href="/apply-now/student"
-                      className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
-                      onClick={() => setIsVisaDropdownOpen(false)}
-                    >
-                      <div className="font-medium">Student Visa</div>
-                      <div className="text-sm text-appleGray-500">
-                        For university applications
-                      </div>
-                    </Link>
-                    <Link
-                      href="/apply-now/work"
-                      className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
-                      onClick={() => setIsVisaDropdownOpen(false)}
-                    >
-                      <div className="font-medium">Work Visa</div>
-                      <div className="text-sm text-appleGray-500">
-                        For professional opportunities
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>{" "}
-            {/* <Link
-              href="/applications"
-              className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
-            >
-              Applications
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
-            </Link> */}
-            <Link
-              href="/contact"
-              className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
-            >
-              Contact
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
-            </Link>
-            {/* Authentication */}
-            {isLoggedIn ? (
-              <div className="flex items-center space-x-4">
-                {" "}
-                <Link
-                  href="/my-admin"
-                  className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200"
-                >
-                  Dashboard
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="bg-appleGray-100 text-appleGray-700 px-4 py-2 rounded-xl font-medium hover:bg-appleGray-200 transition-colors duration-200"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
+            )}
+            {/* Application Status - Show based on auth state */}
+            {navConfig.showCheckStatus && (
               <Link
-                href="/login"
-                className="bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-xl font-semibold btn-apple-hover shadow-soft"
+                href="/application"
+                className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
               >
-                Login
+                Check Status
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
               </Link>
+            )}
+            {/* Contact - Show based on auth state */}
+            {navConfig.showContact && (
+              <Link
+                href="/contact"
+                className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
+              >
+                Contact
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
+              </Link>
+            )}
+            {/* Authentication - Dynamic based on auth state */}
+            {navConfig.secondaryAction ? (
+              <div className="flex items-center space-x-4">
+                {navConfig.primaryAction.type === "link" ? (
+                  <Link
+                    href={navConfig.primaryAction.href}
+                    className={navConfig.primaryAction.className}
+                  >
+                    {navConfig.primaryAction.label}
+                  </Link>
+                ) : (
+                  <button
+                    onClick={navConfig.primaryAction.onClick}
+                    className={navConfig.primaryAction.className}
+                  >
+                    {navConfig.primaryAction.label}
+                  </button>
+                )}
+                {navConfig.secondaryAction.type === "button" && (
+                  <button
+                    onClick={navConfig.secondaryAction.onClick}
+                    className={navConfig.secondaryAction.className}
+                  >
+                    {navConfig.secondaryAction.label}
+                  </button>
+                )}
+              </div>
+            ) : navConfig.primaryAction.type === "link" ? (
+              <Link
+                href={navConfig.primaryAction.href}
+                className={navConfig.primaryAction.className}
+              >
+                {navConfig.primaryAction.label}
+              </Link>
+            ) : (
+              <button
+                onClick={navConfig.primaryAction.onClick}
+                className={navConfig.primaryAction.className}
+              >
+                {navConfig.primaryAction.label}
+              </button>
             )}
           </nav>
 
@@ -249,86 +278,128 @@ export default function Nav() {
                 className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Home
-              </Link>
-              {/* Mobile Visa Dropdown */}
-              <div>
-                {" "}
-                <button
-                  onClick={toggleMobileVisa}
-                  className="flex items-center justify-between w-full text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
-                >
-                  <span>Visa Services</span>
-                  <FaChevronDown
-                    className={`w-3 h-3 transition-transform duration-200 ${
-                      isMobileVisaOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {isMobileVisaOpen && (
-                  <div className="pl-4 mt-2 space-y-2 animate-fade-in-up">
-                    {" "}
-                    <Link
-                      href="/apply-now/student"
-                      className="block text-appleGray-600 hover:text-sky-500 py-2 transition-colors duration-200 text-sm"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Student Visa
-                    </Link>
-                    <Link
-                      href="/apply-now/work"
-                      className="block text-appleGray-600 hover:text-sky-500 py-2 transition-colors duration-200 text-sm"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Work Visa
-                    </Link>
-                  </div>
-                )}
-              </div>{" "}
-              <Link
-                href="/applications"
-                className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Applications
+                Home{" "}
               </Link>{" "}
-              <Link
-                href="/contact"
-                className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
+              {/* Mobile Visa Dropdown - Show based on auth state */}
+              {navConfig.showVisaServices && (
+                <div>
+                  {" "}
+                  <button
+                    onClick={toggleMobileVisa}
+                    className="flex items-center justify-between w-full text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
+                  >
+                    <span>Visa Services</span>
+                    <FaChevronDown
+                      className={`w-3 h-3 transition-transform duration-200 ${
+                        isMobileVisaOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  {isMobileVisaOpen && (
+                    <div className="pl-4 mt-2 space-y-2 animate-fade-in-up">
+                      {" "}
+                      <Link
+                        href="/apply-now/student"
+                        className="block text-appleGray-600 hover:text-sky-500 py-2 transition-colors duration-200 text-sm"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Student Visa
+                      </Link>
+                      <Link
+                        href="/apply-now/work"
+                        className="block text-appleGray-600 hover:text-sky-500 py-2 transition-colors duration-200 text-sm"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Work Visa
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}{" "}
+              {/* Applications - Show based on auth state (Admin only) */}
+              {navConfig.showApplications && (
+                <Link
+                  href="/applications"
+                  className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Applications
+                </Link>
+              )}
+              {/* Application Status - Show based on auth state */}
+              {navConfig.showCheckStatus && (
+                <Link
+                  href="/application"
+                  className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Check Status
+                </Link>
+              )}
+              {/* Contact - Show based on auth state */}
+              {navConfig.showContact && (
+                <Link
+                  href="/contact"
+                  className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Contact
+                </Link>
+              )}
               {/* Mobile Authentication */}
               <div className="pt-4 border-t border-appleGray-200">
-                {isLoggedIn ? (
+                {navConfig.secondaryAction ? (
                   <div className="space-y-2">
                     {" "}
-                    <Link
-                      href="/my-admin"
-                      className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Dashboard
-                    </Link>
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block w-full text-left text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
-                    >
-                      Logout
-                    </button>
+                    {navConfig.primaryAction.type === "link" ? (
+                      <Link
+                        href={navConfig.primaryAction.href}
+                        className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {navConfig.primaryAction.label}
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          navConfig.primaryAction.onClick();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="block w-full text-left text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
+                      >
+                        {navConfig.primaryAction.label}
+                      </button>
+                    )}
+                    {navConfig.secondaryAction.type === "button" && (
+                      <button
+                        onClick={() => {
+                          navConfig.secondaryAction.onClick();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="block w-full text-left text-red-600 hover:text-red-700 font-medium py-2 transition-colors duration-200"
+                      >
+                        {navConfig.secondaryAction.label}
+                      </button>
+                    )}
                   </div>
-                ) : (
+                ) : navConfig.primaryAction.type === "link" ? (
                   <Link
-                    href="/login"
+                    href={navConfig.primaryAction.href}
                     className="block bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-xl font-semibold text-center btn-apple-hover shadow-soft"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Login
+                    {navConfig.primaryAction.label}
                   </Link>
+                ) : (
+                  <button
+                    onClick={() => {
+                      navConfig.primaryAction.onClick();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="block w-full bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-xl font-semibold text-center btn-apple-hover shadow-soft"
+                  >
+                    {navConfig.primaryAction.label}
+                  </button>
                 )}
               </div>
             </div>
