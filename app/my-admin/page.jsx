@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
+import { useAuthSystem, AUTH_TYPES } from "../../hooks/useAuthSystem";
 import {
   FaEye,
   FaEyeSlash,
@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { adminLogin } = useAuthSystem();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,18 +28,12 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword(
-        {
-          email,
-          password,
-        }
-      );
+      const result = await adminLogin(email, password);
 
-      if (authError) {
-        console.error("Login error:", authError);
-        setError(authError.message);
-      } else {
+      if (result.success) {
         router.replace("/admin/");
+      } else {
+        setError(result.error || "Login failed");
       }
     } catch (err) {
       console.error("Unexpected login error:", err);

@@ -24,8 +24,11 @@ import {
   FaTasks,
   FaLifeRing,
   FaChartLine,
+  FaSignOutAlt, // Add logout icon
 } from "react-icons/fa";
 import { supabase } from "../../../lib/supabase";
+import { useRouter } from "next/navigation"; // Add useRouter
+import { useAuthSystem, AUTH_TYPES } from "../../../hooks/useAuthSystem";
 import Universities from "./components/Universities";
 import DocumentsToDownload from "./components/DocumentsToDownload";
 import DocumentsToUpload from "./components/DocumentsToUpload";
@@ -58,41 +61,129 @@ const ApplicantDetail = () => {
     nextDeadline: null,
   });
 
+  const router = useRouter();
+  const {
+    type: authType,
+    user,
+    isAuthenticated,
+    loading: authLoading,
+    logout,
+  } = useAuthSystem();
+  // Authentication check - ensure user can only access their own data
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const pathParts = window.location.pathname.split("/");
-      const lastPart = pathParts[pathParts.length - 1];
-      setId(lastPart);
+    console.log("Client portal auth check:", {
+      authLoading,
+      isAuthenticated,
+      authType,
+      user,
+    });
+
+    if (!authLoading) {
+      const urlId = window.location.pathname.split("/").pop();
+      console.log("URL ID:", urlId, "User ID:", user?.id);
+
+      if (!isAuthenticated || authType !== AUTH_TYPES.CLIENT) {
+        console.log("Not authenticated or wrong type, redirecting to login");
+        router.push("/login");
+        return;
+      }
+
+      if (user?.id !== urlId) {
+        console.log("User ID mismatch, redirecting to login");
+        router.push("/login");
+        return;
+      }
+
+      console.log("Authentication check passed, setting ID");
+      setId(urlId);
     }
-  }, []);
+  }, [authLoading, isAuthenticated, authType, user, router]);
 
-  const fetchApplicant = useCallback(async (applicantId) => {
-    try {
-      const { data, error } = await supabase
-        .from("applications")
-        .select("*, documents(*)")
-        .eq("id", applicantId)
-        .single();
+  const calculateDashboardStats = useCallback(
+    async (applicantData) => {
+      try {
+        // Get universities data
+        const { data: universities, error: uniError } = await supabase
+          .from("universities")
+          .select("*")
+          .eq("application_id", id);
 
-      if (error) throw error;
-      if (data) {
-        setApplicant(data);
+        if (uniError) console.error("Error fetching universities:", uniError);
 
-        // Find and set profile picture if available
-        const profileDoc = data.documents?.find(
-          (doc) => doc.name === "Profile Picture"
-        );
-        if (profileDoc) {
-          setProfilePicUrl(profileDoc.url);
-        } // Calculate dashboard statistics
-        calculateDashboardStats(data);
+        // Calculate progress based on current status
+        const statusToProgress = {
+          1: 25,
+          2: 50,
+          3: 75,
+          4: 100,
+        };
 
-        // Generate notifications based on application status
-        generateNotifications(data);
-      }    } catch (error) {
-      console.error("Error fetching applicant:", error.message);
-    }
-  }, [calculateDashboardStats]);
+        const currentStep = applicantData.status?.slice(-1) || "1";
+        const progressPercentage = statusToProgress[currentStep] || 0;
+
+        // Calculate document statistics
+        const documents = applicantData.documents || [];
+        const documentsUploaded = documents.length;
+        const documentsTotal = 15; // Approximate total required documents
+
+        // Calculate urgent tasks
+        let urgentTasks = 0;
+        if (!applicantData.payment1) urgentTasks++;
+        if (!applicantData.payment2) urgentTasks++;
+        if (documentsUploaded < 5) urgentTasks++;
+
+        // Calculate next deadline (mock for now - you can enhance this with real deadlines)
+        const nextDeadline =
+          universities && universities.length > 0
+            ? universities[0].deadline
+            : null;
+
+        setDashboardStats({
+          progressPercentage,
+          documentsUploaded,
+          documentsTotal,
+          universitiesApplied: universities?.length || 0,
+          urgentTasks,
+          nextDeadline,
+        });
+      } catch (error) {
+        console.error("Error calculating dashboard stats:", error);
+      }
+    },
+    [id]
+  );
+
+  const fetchApplicant = useCallback(
+    async (applicantId) => {
+      try {
+        const { data, error } = await supabase
+          .from("applications")
+          .select("*, documents(*)")
+          .eq("id", applicantId)
+          .single();
+
+        if (error) throw error;
+        if (data) {
+          setApplicant(data);
+
+          // Find and set profile picture if available
+          const profileDoc = data.documents?.find(
+            (doc) => doc.name === "Profile Picture"
+          );
+          if (profileDoc) {
+            setProfilePicUrl(profileDoc.url);
+          } // Calculate dashboard statistics
+          calculateDashboardStats(data);
+
+          // Generate notifications based on application status
+          generateNotifications(data);
+        }
+      } catch (error) {
+        console.error("Error fetching applicant:", error.message);
+      }
+    },
+    [calculateDashboardStats]
+  );
 
   useEffect(() => {
     if (id) {
@@ -153,60 +244,9 @@ const ApplicantDetail = () => {
 
     setNotifications(newNotifications);
   };
-
   const dismissNotification = (notificationId) => {
     setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
   };
-  const calculateDashboardStats = useCallback(async (applicantData) => {
-    try {
-      // Get universities data
-      const { data: universities, error: uniError } = await supabase
-        .from("universities")
-        .select("*")
-        .eq("application_id", id);
-
-      if (uniError) console.error("Error fetching universities:", uniError);
-
-      // Calculate progress based on current status
-      const statusToProgress = {
-        1: 25,
-        2: 50,
-        3: 75,
-        4: 100,
-      };
-
-      const currentStep = applicantData.status?.slice(-1) || "1";
-      const progressPercentage = statusToProgress[currentStep] || 0;
-
-      // Calculate document statistics
-      const documents = applicantData.documents || [];
-      const documentsUploaded = documents.length;
-      const documentsTotal = 15; // Approximate total required documents
-
-      // Calculate urgent tasks
-      let urgentTasks = 0;
-      if (!applicantData.payment1) urgentTasks++;
-      if (!applicantData.payment2) urgentTasks++;
-      if (documentsUploaded < 5) urgentTasks++;
-
-      // Calculate next deadline (mock for now - you can enhance this with real deadlines)
-      const nextDeadline =
-        universities && universities.length > 0
-          ? universities[0].deadline
-          : null;
-
-      setDashboardStats({
-        progressPercentage,
-        documentsUploaded,
-        documentsTotal,
-        universitiesApplied: universities?.length || 0,
-        urgentTasks,
-        nextDeadline,
-      });
-    } catch (error) {
-      console.error("Error calculating dashboard stats:", error);
-    }
-  }, [id]);
 
   const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
@@ -284,6 +324,27 @@ const ApplicantDetail = () => {
       </div>
     );
   };
+  // Show loading or redirect if not authenticated
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-appleGray-50 via-white to-sky-50 flex items-center justify-center">
+        <div className="text-center space-y-4 animate-fade-in-up">
+          <div className="w-16 h-16 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <h2 className="text-xl font-semibold text-appleGray-800">
+            Authenticating...
+          </h2>
+          <p className="text-appleGray-600">
+            Please wait while we verify your access
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // Will redirect via useEffect
+  }
+
   if (!applicant) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-appleGray-50 via-white to-sky-50 flex items-center justify-center">
@@ -331,19 +392,34 @@ const ApplicantDetail = () => {
         {" "}
         {/* Header Section */}
         <div className="max-w-7xl mx-auto mb-8">
-          <div className="text-center space-y-6 animate-fade-in-up">
-            {/* Student Badge */}
-            <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto shadow-soft">
-              <FaUserGraduate className="w-10 h-10 text-white" />
-            </div>
+          <div className="relative">
+            {" "}
+            {/* Logout Button */}
+            {/* <div className="absolute top-0 right-0 z-10">
+              <button
+                onClick={logout}
+                className="flex items-center space-x-2 px-4 py-2 bg-white border border-appleGray-300 rounded-xl shadow-soft hover:shadow-medium transition-all duration-300 hover:border-red-300 group"
+              >
+                <FaSignOutAlt className="w-4 h-4 text-appleGray-600 group-hover:text-red-600 transition-colors duration-300" />
+                <span className="text-sm font-medium text-appleGray-700 group-hover:text-red-600 transition-colors duration-300">
+                  Logout
+                </span>
+              </button>
+            </div> */}
+            <div className="text-center space-y-6 animate-fade-in-up">
+              {/* Student Badge */}
+              <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto shadow-soft">
+                <FaUserGraduate className="w-10 h-10 text-white" />
+              </div>
 
-            <div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-2">
-                Student Portal
-              </h1>
-              <p className="text-xl text-appleGray-600">
-                Welcome back, {applicant.first_name} {applicant.last_name}
-              </p>
+              <div>
+                <h1 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-2">
+                  Student Portal
+                </h1>
+                <p className="text-xl text-appleGray-600">
+                  Welcome back, {applicant.first_name} {applicant.last_name}
+                </p>
+              </div>
             </div>
           </div>
         </div>

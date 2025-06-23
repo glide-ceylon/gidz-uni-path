@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
+import { useAuthSystem, AUTH_TYPES } from "../../hooks/useAuthSystem";
 import {
   FaEye,
   FaEyeSlash,
@@ -20,14 +21,28 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const {
+    type: authType,
+    user,
+    isAuthenticated,
+    clientLogin,
+  } = useAuthSystem();
 
-  // Check localStorage on mount; if user is logged in, redirect automatically
+  // Only check for existing auth on mount, not on every auth change
   useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) {
-      router.push("/client/" + storedUserId);
-    }
-  }, [router]);
+    const checkExistingAuth = () => {
+      if (isAuthenticated && authType === AUTH_TYPES.CLIENT && user?.id) {
+        console.log(
+          "Already authenticated on mount, redirecting to client portal:",
+          user.id
+        );
+        router.replace("/client/" + user.id);
+      }
+    };
+
+    // Only run this check once on mount
+    checkExistingAuth();
+  }, []); // Empty dependency array - only run on mount
 
   // Toggle password visibility
   const toggleShowPassword = () => {
@@ -39,22 +54,32 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Query the "applications" table with the provided credentials
-      const { data, error } = await supabase
-        .from("applications")
-        .select("*")
-        .eq("email", email)
-        .eq("password", password);
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setErrorMsg("Please enter a valid email address");
+        setLoading(false);
+        return;
+      }
 
-      if (error) {
-        console.error("Error fetching data from Supabase:", error);
-        setErrorMsg("An unexpected error occurred. Please try again.");
-      } else if (data && data.length > 0) {
-        // Save the user id in local storage for persistent login
-        localStorage.setItem("userId", data[0].id);
-        router.push("/client/" + data[0].id);
+      // Use the auth system's client login function
+      console.log("Attempting login with email:", email);
+      const result = await clientLogin(email, password);
+      console.log("Login result:", result);
+
+      if (result.success) {
+        console.log(
+          "Login successful, redirecting to:",
+          "/client/" + result.user.id
+        );
+        // Use replace instead of push to avoid back button issues
+        router.replace("/client/" + result.user.id);
       } else {
-        setErrorMsg("Invalid email or password");
+        console.log("Login failed:", result.error);
+        setErrorMsg(
+          result.error ||
+            "Invalid email or password. Please check your credentials and try again."
+        );
       }
     } catch (err) {
       console.error("Login error:", err);
