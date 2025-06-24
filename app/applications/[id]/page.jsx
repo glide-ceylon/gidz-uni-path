@@ -716,7 +716,7 @@ export default function ApplicationDetails() {
                           />
                         </div>
                         <p className="text-indigo-900 leading-relaxed text-lg italic">
-                          "{application.aboutYouAndYourNeeds}"
+                          &quot;{application.aboutYouAndYourNeeds}&quot;
                         </p>
                       </div>
                     </div>
