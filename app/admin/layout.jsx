@@ -1,9 +1,10 @@
 "use client";
 
 import { useAdminAuth } from "../../hooks/useAdminAuth";
+import Nav from "../components/nav-german";
 
 export default function AdminLayout({ children }) {
-  const { loading, isAuthenticated, admin } = useAdminAuth();
+  const { loading, isAuthenticated } = useAdminAuth();
 
   if (loading) {
     return (
@@ -38,34 +39,32 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-appleGray-50">
-      {/* Optional: Admin Header with user info */}
-      {admin && (
-        <div className="bg-white border-b border-appleGray-200 px-6 py-3">
-          <div className="flex items-center justify-between">
+      {/* Use the existing navigation */}
+      <Nav />
+
+      {/* Admin Sub-Navigation */}
+      <div className="pt-20 bg-white border-b border-appleGray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center space-x-8 py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-sky-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-semibold">
-                  {admin.first_name
-                    ? admin.first_name[0]
-                    : admin.email[0].toUpperCase()}
-                </span>
+              <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-semibold">A</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-appleGray-900">
-                  {admin.first_name && admin.last_name
-                    ? `${admin.first_name} ${admin.last_name}`
-                    : admin.email}
-                </p>
-                <p className="text-xs text-appleGray-500">
-                  {admin.role} {admin.department && `• ${admin.department}`}
+                <h1 className="text-lg font-semibold text-appleGray-800">
+                  Admin Panel
+                </h1>
+                <p className="text-sm text-appleGray-500">
+                  Management Dashboard
                 </p>
               </div>
             </div>
-            <div className="text-xs text-appleGray-500">Admin Panel</div>
           </div>
         </div>
-      )}
-      {children}
+      </div>
+
+      {/* Page Content */}
+      <main className="min-h-screen pt-4">{children}</main>
     </div>
   );
 }

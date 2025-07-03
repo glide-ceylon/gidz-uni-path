@@ -13,7 +13,7 @@ import {
   FaChartLine,
   FaBolt,
   FaUserFriends,
-  FaBank,
+  FaUniversity as FaBank,
   FaEnvelope,
   FaHome,
   FaLanguage,

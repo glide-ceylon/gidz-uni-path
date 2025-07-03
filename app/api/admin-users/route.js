@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { requireAdminAuth } from "../../../lib/adminAuth";
 
 // Create service role client for admin operations
 const supabaseAdmin = createClient(
@@ -14,88 +15,20 @@ const isValidUUID = (uuid) => {
   return uuidRegex.test(uuid);
 };
 
-// Helper function to validate admin authentication with database
-const validateAdminAuth = async (request) => {
-  const adminAuth = request.headers.get("x-admin-auth");
-  const adminData = request.headers.get("x-admin-data");
-
-  if (!adminAuth || adminAuth !== "true" || !adminData) {
-    return { isValid: false, adminData: null, permissions: [] };
-  }
-
-  try {
-    const parsedAdminData = JSON.parse(adminData);
-    const adminEmail = parsedAdminData.email;
-
-    if (!adminEmail) {
-      return { isValid: false, adminData: null, permissions: [] };
-    }
-
-    // Check if admin exists and is active in database
-    const { data: adminUser, error: adminError } = await supabaseAdmin
-      .from("admin_users")
-      .select(
-        "id, email, first_name, last_name, role, department, is_active, permissions"
-      )
-      .eq("email", adminEmail)
-      .eq("is_active", true)
-      .single();
-
-    if (adminError || !adminUser) {
-      return { isValid: false, adminData: null, permissions: [] };
-    }
-
-    // Get admin permissions
-    const { data: permissions, error: permError } = await supabaseAdmin.rpc(
-      "get_admin_permissions",
-      { admin_email: adminEmail }
-    );
-
-    if (permError) {
-      console.error("Error fetching admin permissions:", permError);
-      return { isValid: false, adminData: null, permissions: [] };
-    }
-
-    return {
-      isValid: true,
-      adminData: {
-        ...adminUser,
-        ...parsedAdminData,
-      },
-      permissions: permissions || [],
-    };
-  } catch (error) {
-    console.error("Admin validation error:", error);
-    return { isValid: false, adminData: null, permissions: [] };
-  }
-};
-
-// Helper function to check specific permission
-const hasPermission = (permissions, permissionName) => {
-  return permissions.some((p) => p.permission_name === permissionName);
-};
-
-// GET /api/admin-users - Get all admin users (super admin only)
+// GET /api/admin-users - Get all admin users
 export async function GET(request) {
   try {
-    const adminAuth = await validateAdminAuth(request);
+    // Verify admin authentication and permissions
+    const adminAuth = await requireAdminAuth(request, [
+      "admin.read",
+      "can_manage_admins",
+    ]);
 
-    if (!adminAuth.isValid) {
-      return NextResponse.json(
-        { error: "Admin authentication required" },
-        { status: 401 }
-      );
+    if (!adminAuth.isAuthorized) {
+      return adminAuth.response;
     }
 
-    // Check if admin has permission to view admin users
-    if (!hasPermission(adminAuth.permissions, "admins.read")) {
-      return NextResponse.json(
-        { error: "Insufficient permissions to view admin users" },
-        { status: 403 }
-      );
-    }
-
-    const { data, error } = await supabaseAdmin
+    const { data: adminUsers, error } = await supabaseAdmin
       .from("admin_users")
       .select(
         `
@@ -106,16 +39,15 @@ export async function GET(request) {
         role,
         department,
         is_active,
-        permissions,
-        last_login,
         created_at,
-        updated_at
+        last_login,
+        permissions
       `
       )
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Database error:", error);
+      console.error("Error fetching admin users:", error);
       return NextResponse.json(
         { error: "Failed to fetch admin users" },
         { status: 500 }
@@ -124,14 +56,10 @@ export async function GET(request) {
 
     return NextResponse.json({
       success: true,
-      data,
-      metadata: {
-        total: data.length,
-        requestedBy: adminAuth.adminData.email,
-      },
+      data: adminUsers,
     });
   } catch (error) {
-    console.error("API error:", error);
+    console.error("Admin users fetch error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -139,113 +67,176 @@ export async function GET(request) {
   }
 }
 
-// POST /api/admin-users - Create new admin user (super admin only)
+// POST /api/admin-users - Create new admin user
 export async function POST(request) {
   try {
-    const adminAuth = await validateAdminAuth(request);
+    // Verify admin authentication and permissions
+    const adminAuth = await requireAdminAuth(request, [
+      "admin.create",
+      "can_manage_admins",
+    ]);
 
-    if (!adminAuth.isValid) {
-      return NextResponse.json(
-        { error: "Admin authentication required" },
-        { status: 401 }
-      );
-    }
-
-    // Check if admin has permission to create admin users
-    if (!hasPermission(adminAuth.permissions, "admins.create")) {
-      return NextResponse.json(
-        { error: "Insufficient permissions to create admin users" },
-        { status: 403 }
-      );
+    if (!adminAuth.isAuthorized) {
+      return adminAuth.response;
     }
 
     const body = await request.json();
-
-    // Validate required fields
     const {
       email,
       first_name,
       last_name,
-      role = "staff",
+      role,
       department,
-      permissions = {},
-      is_active = true,
+      password,
+      permissions,
+      create_auth_user = false,
     } = body;
 
-    if (!email || !first_name || !last_name) {
+    // Validate required fields
+    if (!email || !first_name || !last_name || !role) {
       return NextResponse.json(
-        { error: "email, first_name, and last_name are required" },
+        { error: "Email, first name, last name, and role are required" },
         { status: 400 }
       );
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: "Invalid email format" },
-        { status: 400 }
-      );
-    }
-
-    // Validate role
-    const validRoles = ["super_admin", "admin", "manager", "staff"];
-    if (!validRoles.includes(role)) {
-      return NextResponse.json(
-        { error: `Invalid role. Must be one of: ${validRoles.join(", ")}` },
-        { status: 400 }
-      );
-    }
-
-    // Check if email already exists
+    // Check if admin already exists
     const { data: existingAdmin, error: checkError } = await supabaseAdmin
       .from("admin_users")
-      .select("id")
-      .eq("email", email)
+      .select("id, email")
+      .eq("email", email.toLowerCase().trim())
       .single();
 
     if (existingAdmin) {
       return NextResponse.json(
         { error: "Admin user with this email already exists" },
-        { status: 409 }
+        { status: 400 }
       );
     }
 
-    // Create the admin user
+    // Default permissions based on role
+    const defaultPermissions = {
+      super_admin: {
+        "timeline.read": true,
+        "timeline.create": true,
+        "timeline.update": true,
+        "timeline.delete": true,
+        "admin.read": true,
+        "admin.create": true,
+        "admin.update": true,
+        "admin.delete": true,
+        can_manage_admins: true,
+        can_access_all_data: true,
+      },
+      admin: {
+        "timeline.read": true,
+        "timeline.create": true,
+        "timeline.update": true,
+        "timeline.delete": true,
+        "admin.read": true,
+        can_manage_timeline: true,
+      },
+      manager: {
+        "timeline.read": true,
+        "timeline.create": true,
+        "timeline.update": true,
+        "admin.read": true,
+        can_manage_timeline: true,
+      },
+      staff: {
+        "timeline.read": true,
+        can_view_basic_data: true,
+      },
+    };
+
     const adminData = {
       email: email.toLowerCase().trim(),
       first_name: first_name.trim(),
       last_name: last_name.trim(),
-      role,
-      department: department?.trim(),
-      permissions,
-      is_active,
+      role: role,
+      department: department?.trim() || null,
+      is_active: true,
+      permissions:
+        permissions || defaultPermissions[role] || defaultPermissions.staff,
+      created_at: new Date().toISOString(),
     };
 
-    const { data, error } = await supabaseAdmin
+    // Create Supabase Auth user if requested and password provided
+    let authUserId = null;
+    if (create_auth_user && password) {
+      try {
+        const { data: authData, error: authError } =
+          await supabaseAdmin.auth.admin.createUser({
+            email: email.toLowerCase().trim(),
+            password: password,
+            email_confirm: true,
+          });
+
+        if (authError) {
+          console.error("Failed to create auth user:", authError);
+          return NextResponse.json(
+            {
+              error: `Failed to create authentication account: ${authError.message}`,
+            },
+            { status: 400 }
+          );
+        }
+
+        authUserId = authData.user.id;
+        adminData.auth_user_id = authUserId;
+      } catch (authCreateError) {
+        console.error("Auth user creation error:", authCreateError);
+        return NextResponse.json(
+          { error: "Failed to create authentication account" },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Create admin user record
+    const { data: newAdmin, error: createError } = await supabaseAdmin
       .from("admin_users")
       .insert([adminData])
-      .select()
+      .select(
+        `
+        id,
+        email,
+        first_name,
+        last_name,
+        role,
+        department,
+        is_active,
+        created_at,
+        permissions
+      `
+      )
       .single();
 
-    if (error) {
-      console.error("Database error:", error);
+    if (createError) {
+      console.error("Error creating admin user:", createError);
+
+      // If admin creation failed but auth user was created, clean up auth user
+      if (authUserId) {
+        try {
+          await supabaseAdmin.auth.admin.deleteUser(authUserId);
+        } catch (cleanupError) {
+          console.error("Failed to cleanup auth user:", cleanupError);
+        }
+      }
+
       return NextResponse.json(
         { error: "Failed to create admin user" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json(
-      {
-        success: true,
-        data,
-        message: "Admin user created successfully",
-      },
-      { status: 201 }
-    );
+    return NextResponse.json({
+      success: true,
+      data: newAdmin,
+      message: "Admin user created successfully",
+    });
   } catch (error) {
-    console.error("API error:", error);
+    console.error("Admin user creation error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

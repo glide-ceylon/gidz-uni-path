@@ -9,10 +9,13 @@ import { useAuthSystem, AUTH_TYPES } from "../../hooks/useAuthSystem";
 export default function Nav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVisaDropdownOpen, setIsVisaDropdownOpen] = useState(false);
+  const [isAdminDropdownOpen, setIsAdminDropdownOpen] = useState(false);
   const [isMobileVisaOpen, setIsMobileVisaOpen] = useState(false);
+  const [isMobileAdminOpen, setIsMobileAdminOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const visaDropdownRef = useRef(null);
+  const adminDropdownRef = useRef(null);
   const dropdownTimeoutRef = useRef(null); // Use the comprehensive auth system
   const {
     type: authType,
@@ -43,6 +46,11 @@ export default function Nav() {
     setIsMobileVisaOpen(!isMobileVisaOpen);
   };
 
+  // Toggle mobile admin dropdown
+  const toggleMobileAdmin = () => {
+    setIsMobileAdminOpen(!isMobileAdminOpen);
+  };
+
   // Handle dropdown with delay
   const openDropdown = () => {
     if (dropdownTimeoutRef.current) {
@@ -54,7 +62,21 @@ export default function Nav() {
   const closeDropdownWithDelay = () => {
     dropdownTimeoutRef.current = setTimeout(() => {
       setIsVisaDropdownOpen(false);
-    }, 150); // 500ms delay
+    }, 150);
+  };
+
+  // Handle admin dropdown with delay
+  const openAdminDropdown = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+    }
+    setIsAdminDropdownOpen(true);
+  };
+
+  const closeAdminDropdownWithDelay = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setIsAdminDropdownOpen(false);
+    }, 150);
   };
 
   // Cleanup timeout on unmount
@@ -74,6 +96,12 @@ export default function Nav() {
         !visaDropdownRef.current.contains(event.target)
       ) {
         setIsVisaDropdownOpen(false);
+      }
+      if (
+        adminDropdownRef.current &&
+        !adminDropdownRef.current.contains(event.target)
+      ) {
+        setIsAdminDropdownOpen(false);
       }
     };
 
@@ -214,7 +242,55 @@ export default function Nav() {
             {/* Authentication - Dynamic based on auth state */}
             {navConfig.secondaryAction ? (
               <div className="flex items-center space-x-4">
-                {navConfig.primaryAction.type === "link" ? (
+                {navConfig.primaryAction.type === "admin-dropdown" ? (
+                  <div
+                    className="relative"
+                    onMouseEnter={openAdminDropdown}
+                    onMouseLeave={closeAdminDropdownWithDelay}
+                    ref={adminDropdownRef}
+                  >
+                    <Link
+                      href={navConfig.primaryAction.href}
+                      onClick={() =>
+                        setIsAdminDropdownOpen(!isAdminDropdownOpen)
+                      }
+                      className="flex items-center space-x-1 text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
+                      aria-haspopup="true"
+                      aria-expanded={isAdminDropdownOpen}
+                    >
+                      <span>{navConfig.primaryAction.label}</span>
+                      <FaChevronDown
+                        className={`w-3 h-3 transition-transform duration-200 ${
+                          isAdminDropdownOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
+                    </Link>
+                    {isAdminDropdownOpen && (
+                      <div
+                        className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-large border border-appleGray-200 overflow-hidden animate-scale-in z-50"
+                        onMouseEnter={openAdminDropdown}
+                        onMouseLeave={closeAdminDropdownWithDelay}
+                      >
+                        <div className="p-2">
+                          {navConfig.adminDropdownItems?.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
+                              onClick={() => setIsAdminDropdownOpen(false)}
+                            >
+                              <div className="font-medium">{item.label}</div>
+                              <div className="text-sm text-appleGray-500">
+                                {item.description}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : navConfig.primaryAction.type === "link" ? (
                   <Link
                     href={navConfig.primaryAction.href}
                     className={navConfig.primaryAction.className}
@@ -236,6 +312,52 @@ export default function Nav() {
                   >
                     {navConfig.secondaryAction.label}
                   </button>
+                )}
+              </div>
+            ) : navConfig.primaryAction.type === "admin-dropdown" ? (
+              <div
+                className="relative"
+                onMouseEnter={openAdminDropdown}
+                onMouseLeave={closeAdminDropdownWithDelay}
+                ref={adminDropdownRef}
+              >
+                <Link
+                  href={navConfig.primaryAction.href}
+                  onClick={() => setIsAdminDropdownOpen(!isAdminDropdownOpen)}
+                  className="flex items-center space-x-1 text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
+                  aria-haspopup="true"
+                  aria-expanded={isAdminDropdownOpen}
+                >
+                  <span>{navConfig.primaryAction.label}</span>
+                  <FaChevronDown
+                    className={`w-3 h-3 transition-transform duration-200 ${
+                      isAdminDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
+                </Link>
+                {isAdminDropdownOpen && (
+                  <div
+                    className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-large border border-appleGray-200 overflow-hidden animate-scale-in z-50"
+                    onMouseEnter={openAdminDropdown}
+                    onMouseLeave={closeAdminDropdownWithDelay}
+                  >
+                    <div className="p-2">
+                      {navConfig.adminDropdownItems?.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-4 py-3 rounded-xl text-appleGray-700 hover:bg-sky-500/10 hover:text-sky-500 transition-colors duration-200"
+                          onClick={() => setIsAdminDropdownOpen(false)}
+                        >
+                          <div className="font-medium">{item.label}</div>
+                          <div className="text-sm text-appleGray-500">
+                            {item.description}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             ) : navConfig.primaryAction.type === "link" ? (
@@ -350,8 +472,38 @@ export default function Nav() {
               <div className="pt-4 border-t border-appleGray-200">
                 {navConfig.secondaryAction ? (
                   <div className="space-y-2">
-                    {" "}
-                    {navConfig.primaryAction.type === "link" ? (
+                    {navConfig.primaryAction.type === "admin-dropdown" ? (
+                      <div>
+                        <button
+                          onClick={toggleMobileAdmin}
+                          className="flex items-center justify-between w-full text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
+                        >
+                          <span>{navConfig.primaryAction.label}</span>
+                          <FaChevronDown
+                            className={`w-3 h-3 transition-transform duration-200 ${
+                              isMobileAdminOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                        {isMobileAdminOpen && (
+                          <div className="pl-4 space-y-1 mt-2">
+                            {navConfig.adminDropdownItems?.map((item) => (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                className="block text-appleGray-600 hover:text-sky-500 py-2 transition-colors duration-200 text-sm"
+                                onClick={() => {
+                                  setIsMobileMenuOpen(false);
+                                  setIsMobileAdminOpen(false);
+                                }}
+                              >
+                                {item.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : navConfig.primaryAction.type === "link" ? (
                       <Link
                         href={navConfig.primaryAction.href}
                         className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
@@ -380,6 +532,37 @@ export default function Nav() {
                       >
                         {navConfig.secondaryAction.label}
                       </button>
+                    )}
+                  </div>
+                ) : navConfig.primaryAction.type === "admin-dropdown" ? (
+                  <div>
+                    <button
+                      onClick={toggleMobileAdmin}
+                      className="flex items-center justify-between w-full text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
+                    >
+                      <span>{navConfig.primaryAction.label}</span>
+                      <FaChevronDown
+                        className={`w-3 h-3 transition-transform duration-200 ${
+                          isMobileAdminOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {isMobileAdminOpen && (
+                      <div className="pl-4 space-y-1 mt-2">
+                        {navConfig.adminDropdownItems?.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className="block text-appleGray-600 hover:text-sky-500 py-2 transition-colors duration-200 text-sm"
+                            onClick={() => {
+                              setIsMobileMenuOpen(false);
+                              setIsMobileAdminOpen(false);
+                            }}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
                     )}
                   </div>
                 ) : navConfig.primaryAction.type === "link" ? (

@@ -339,10 +339,33 @@ export const useAuthSystem = () => {
           showApplications: true,
           showCheckStatus: false, // Hide Check Status for admin
           showContact: false, // Hide Contact for admin
+          showAdminDropdown: true, // Add admin-specific dropdown
+          adminDropdownItems: [
+            {
+              href: "/admin",
+              label: "Dashboard",
+              description: "Overview and analytics",
+            },
+            {
+              href: "/admin/admins",
+              label: "Admin Management",
+              description: "Manage admin users",
+            },
+            {
+              href: "/admin/entries",
+              label: "Timeline Management",
+              description: "Manage timeline events",
+            },
+            {
+              href: "/admin/messages",
+              label: "Messages",
+              description: "Communication center",
+            },
+          ],
           primaryAction: {
-            type: "link",
+            type: "admin-dropdown",
             href: "/admin",
-            label: "Admin Dashboard",
+            label: "Admin Panel",
             className:
               "text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200",
           },
