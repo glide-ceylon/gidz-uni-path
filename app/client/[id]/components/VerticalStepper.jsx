@@ -7,26 +7,45 @@ import {
   FaUniversity,
   FaPassport,
   FaTrophy,
+  FaCalendarAlt,
+  FaGraduationCap,
 } from "react-icons/fa";
 
 export default function HorizontalStepper({ currentStep = 1 }) {
-  // Define your four steps with icons:
+  // Define your six steps with icons:
   const steps = [
     {
       id: 1,
-      title: "Documents",
-      subtitle: "Upload required documents",
-      icon: FaFileAlt,
+      title: "University Documents",
+      subtitle: "Upload academic documents",
+      icon: FaGraduationCap,
     },
     {
       id: 2,
       title: "University",
-      subtitle: "Application processing",
+      subtitle: "Apply to universities",
       icon: FaUniversity,
     },
-    { id: 3, title: "Visa", subtitle: "Visa application", icon: FaPassport },
+    {
+      id: 3,
+      title: "Visa Documents",
+      subtitle: "Upload visa documents",
+      icon: FaFileAlt,
+    },
     {
       id: 4,
+      title: "Visa",
+      subtitle: "Visa application",
+      icon: FaPassport,
+    },
+    {
+      id: 5,
+      title: "Visa Appointment",
+      subtitle: "Schedule appointment",
+      icon: FaCalendarAlt,
+    },
+    {
+      id: 6,
       title: "Successful",
       subtitle: "Journey complete",
       icon: FaTrophy,

@@ -2,29 +2,23 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import {
-  FaUser,
   FaEnvelope,
   FaPhone,
-  FaMapMarkerAlt,
   FaPassport,
   FaCalendarAlt,
   FaGraduationCap,
   FaFileAlt,
   FaCreditCard,
   FaUniversity,
-  FaShieldAlt,
   FaUpload,
   FaComments,
   FaCheckCircle,
   FaTimes,
-  FaLock,
-  FaLockOpen,
   FaUserGraduate,
   FaExclamationTriangle,
   FaTasks,
   FaLifeRing,
-  FaChartLine,
-  FaSignOutAlt, // Add logout icon
+  FaChartLine, // Add logout icon
 } from "react-icons/fa";
 import { supabase } from "../../../lib/supabase";
 import { useRouter } from "next/navigation"; // Add useRouter
@@ -54,10 +48,11 @@ const ApplicantDetail = () => {
   const [notifications, setNotifications] = useState([]);
   const [dashboardStats, setDashboardStats] = useState({
     progressPercentage: 0,
-    documentsUploaded: 0,
-    documentsTotal: 0,
+    universityDocumentsUploaded: 0,
+    universityDocumentsTotal: 10,
+    visaDocumentsUploaded: 0,
+    visaDocumentsTotal: 8,
     universitiesApplied: 0,
-    urgentTasks: 0,
     nextDeadline: null,
   });
 
@@ -112,10 +107,12 @@ const ApplicantDetail = () => {
 
         // Calculate progress based on current status
         const statusToProgress = {
-          1: 25,
-          2: 50,
-          3: 75,
-          4: 100,
+          1: 16.67, // Step 1: University Documents
+          2: 33.33, // Step 2: University
+          3: 50, // Step 3: Visa Documents
+          4: 66.67, // Step 4: Visa
+          5: 83.33, // Step 5: Visa Appointment
+          6: 100, // Step 6: Successful
         };
 
         const currentStep = applicantData.status?.slice(-1) || "1";
@@ -123,14 +120,47 @@ const ApplicantDetail = () => {
 
         // Calculate document statistics
         const documents = applicantData.documents || [];
-        const documentsUploaded = documents.length;
-        const documentsTotal = 15; // Approximate total required documents
 
-        // Calculate urgent tasks
-        let urgentTasks = 0;
-        if (!applicantData.payment1) urgentTasks++;
-        if (!applicantData.payment2) urgentTasks++;
-        if (documentsUploaded < 5) urgentTasks++;
+        // Define university documents
+        const universityDocumentNames = [
+          "Academic Transcripts",
+          "Degree Certificate",
+          "Language Proficiency Test",
+          "Statement of Purpose",
+          "Letters of Recommendation",
+          "CV/Resume",
+          "Academic Certificates",
+          "Portfolio",
+          "Research Proposal",
+          "Academic References",
+        ];
+
+        // Define visa documents
+        const visaDocumentNames = [
+          "Passport",
+          "Passport Photos",
+          "Financial Statements",
+          "Bank Statements",
+          "Sponsor Documents",
+          "Medical Certificate",
+          "Police Clearance",
+          "Birth Certificate",
+        ];
+
+        const universityDocumentsUploaded = documents.filter((doc) =>
+          universityDocumentNames.some((name) =>
+            doc.name?.toLowerCase().includes(name.toLowerCase())
+          )
+        ).length;
+
+        const visaDocumentsUploaded = documents.filter((doc) =>
+          visaDocumentNames.some((name) =>
+            doc.name?.toLowerCase().includes(name.toLowerCase())
+          )
+        ).length;
+
+        const universityDocumentsTotal = 10;
+        const visaDocumentsTotal = 8;
 
         // Calculate next deadline (mock for now - you can enhance this with real deadlines)
         const nextDeadline =
@@ -140,10 +170,11 @@ const ApplicantDetail = () => {
 
         setDashboardStats({
           progressPercentage,
-          documentsUploaded,
-          documentsTotal,
+          universityDocumentsUploaded,
+          universityDocumentsTotal,
+          visaDocumentsUploaded,
+          visaDocumentsTotal,
           universitiesApplied: universities?.length || 0,
-          urgentTasks,
           nextDeadline,
         });
       } catch (error) {
@@ -457,42 +488,77 @@ const ApplicantDetail = () => {
               <FaCheckCircle className="w-4 h-4 mr-2 flex-shrink-0" />
               <span>
                 Next:{" "}
-                {dashboardStats.progressPercentage < 50
-                  ? "Upload remaining documents"
-                  : dashboardStats.progressPercentage < 75
-                  ? "Complete university applications"
+                {dashboardStats.progressPercentage < 20
+                  ? "Upload university documents"
+                  : dashboardStats.progressPercentage < 40
+                  ? "Apply to universities"
+                  : dashboardStats.progressPercentage < 60
+                  ? "Upload visa documents"
+                  : dashboardStats.progressPercentage < 80
+                  ? "Complete visa application"
                   : dashboardStats.progressPercentage < 100
-                  ? "Prepare for visa application"
+                  ? "Schedule visa appointment"
                   : "Journey complete!"}
               </span>
             </div>
           </div>{" "}
           {/* Quick Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 quick-stats-grid">
-            {/* Documents Status */}
+            {/* University Documents Status */}
             <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-                  <FaFileAlt className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+                  <FaUniversity className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                 </div>
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    dashboardStats.documentsUploaded >= 10
+                    dashboardStats.universityDocumentsUploaded >= 8
                       ? "bg-green-100 text-green-700"
                       : "bg-yellow-100 text-yellow-700"
                   }`}
                 >
-                  {dashboardStats.documentsUploaded >= 10
+                  {dashboardStats.universityDocumentsUploaded >= 8
                     ? "On Track"
                     : "In Progress"}
                 </span>
               </div>
               <div className="text-xl sm:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
-                {dashboardStats.documentsUploaded}/
-                {dashboardStats.documentsTotal}
+                {dashboardStats.universityDocumentsUploaded}/
+                {dashboardStats.universityDocumentsTotal}
               </div>
               <div className="text-xs sm:text-sm text-appleGray-600">
-                Documents Uploaded
+                University Documents
+              </div>
+            </div>
+
+            {/* Visa Documents Status */}
+            <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
+                  <FaPassport className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
+                </div>
+                <span
+                  className={`text-xs font-medium px-2 py-1 rounded-full ${
+                    dashboardStats.visaDocumentsUploaded >= 6
+                      ? "bg-green-100 text-green-700"
+                      : dashboardStats.visaDocumentsUploaded >= 3
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {dashboardStats.visaDocumentsUploaded >= 6
+                    ? "On Track"
+                    : dashboardStats.visaDocumentsUploaded >= 3
+                    ? "In Progress"
+                    : "Action Needed"}
+                </span>
+              </div>
+              <div className="text-xl sm:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
+                {dashboardStats.visaDocumentsUploaded}/
+                {dashboardStats.visaDocumentsTotal}
+              </div>
+              <div className="text-xs sm:text-sm text-appleGray-600">
+                Visa Documents
               </div>
             </div>
 
@@ -500,7 +566,7 @@ const ApplicantDetail = () => {
             <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-2xl flex items-center justify-center">
-                  <FaUniversity className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+                  <FaGraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                 </div>
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -548,51 +614,11 @@ const ApplicantDetail = () => {
                 Payments Complete
               </div>
             </div>
-
-            {/* Urgent Tasks */}
-            <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
-              <div className="flex items-center justify-between mb-3">
-                <div
-                  className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center ${
-                    dashboardStats.urgentTasks > 0
-                      ? "bg-red-100"
-                      : "bg-green-100"
-                  }`}
-                >
-                  <FaCheckCircle
-                    className={`w-5 h-5 sm:w-6 sm:h-6 ${
-                      dashboardStats.urgentTasks > 0
-                        ? "text-red-600"
-                        : "text-green-600"
-                    }`}
-                  />
-                </div>
-                <span
-                  className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    dashboardStats.urgentTasks > 0
-                      ? "bg-red-100 text-red-700"
-                      : "bg-green-100 text-green-700"
-                  }`}
-                >
-                  {dashboardStats.urgentTasks > 0
-                    ? "Action Needed"
-                    : "All Good"}
-                </span>
-              </div>
-              <div
-                className={`text-xl sm:text-2xl font-bold text-appleGray-800 mb-1 stats-counter ${
-                  dashboardStats.urgentTasks > 0 ? "status-indicator-red" : ""
-                }`}
-              >
-                {dashboardStats.urgentTasks}
-              </div>
-              <div className="text-xs sm:text-sm text-appleGray-600">
-                Urgent Tasks
-              </div>
-            </div>
           </div>{" "}
           {/* Critical Alerts */}
-          {dashboardStats.urgentTasks > 0 && (
+          {(dashboardStats.visaDocumentsUploaded < 3 ||
+            !applicant?.payment1 ||
+            !applicant?.payment2) && (
             <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-3xl p-4 sm:p-6 mb-6 animate-fade-in-up">
               <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-2xl flex items-center justify-center flex-shrink-0">
@@ -615,10 +641,10 @@ const ApplicantDetail = () => {
                         <span>Complete Payment 2</span>
                       </div>
                     )}
-                    {dashboardStats.documentsUploaded < 5 && (
+                    {dashboardStats.visaDocumentsUploaded < 3 && (
                       <div className="flex items-center text-xs sm:text-sm text-red-700">
-                        <FaFileAlt className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-                        <span>Upload more required documents</span>
+                        <FaPassport className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+                        <span>Upload more visa documents</span>
                       </div>
                     )}
                   </div>
@@ -675,9 +701,12 @@ const ApplicantDetail = () => {
               <div className="absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 bg-yellow-500 rounded-full"></div>
             </button>
 
-            <div className="group bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 relative dashboard-card">
+            <button
+              onClick={() => setActiveTab("documents")}
+              className="group bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 hover:shadow-medium transition-all duration-300 card-apple-hover relative dashboard-card"
+            >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-2xl flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-300">
                   <FaFileAlt className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                 </div>
                 <div className="text-left">
@@ -685,48 +714,65 @@ const ApplicantDetail = () => {
                     Documents
                   </h4>
                   <p className="text-xs sm:text-sm text-appleGray-600">
-                    {dashboardStats.documentsUploaded} uploaded
+                    {dashboardStats.universityDocumentsUploaded +
+                      dashboardStats.visaDocumentsUploaded}{" "}
+                    uploaded
                   </p>
                 </div>
               </div>
               {/* Status indicator */}
               <div
                 className={`absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 rounded-full ${
-                  dashboardStats.documentsUploaded >= 10
+                  dashboardStats.universityDocumentsUploaded +
+                    dashboardStats.visaDocumentsUploaded >=
+                  14
                     ? "bg-green-500"
-                    : dashboardStats.documentsUploaded >= 5
+                    : dashboardStats.universityDocumentsUploaded +
+                        dashboardStats.visaDocumentsUploaded >=
+                      8
                     ? "bg-yellow-500"
                     : "bg-red-500"
                 } ${
-                  dashboardStats.documentsUploaded < 5
+                  dashboardStats.universityDocumentsUploaded +
+                    dashboardStats.visaDocumentsUploaded <
+                  8
                     ? "status-indicator-red"
                     : ""
                 }`}
               ></div>
-            </div>
+            </button>
 
             <div className="group bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 relative dashboard-card">
               <div className="flex items-center space-x-3 sm:space-x-4">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-2xl flex items-center justify-center">
-                  <FaUniversity className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+                  <FaFileAlt className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                 </div>
                 <div className="text-left">
                   <h4 className="text-base sm:text-lg font-semibold text-appleGray-800">
-                    Universities
+                    CVs
                   </h4>
                   <p className="text-xs sm:text-sm text-appleGray-600">
-                    {dashboardStats.universitiesApplied} applied
+                    {applicant?.documents?.filter(
+                      (doc) =>
+                        doc.name?.toLowerCase().includes("cv") ||
+                        doc.name?.toLowerCase().includes("resume")
+                    ).length || 0}{" "}
+                    uploaded
                   </p>
                 </div>
               </div>
               {/* Status indicator */}
               <div
                 className={`absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 rounded-full ${
-                  dashboardStats.universitiesApplied > 0
+                  applicant?.documents?.filter(
+                    (doc) =>
+                      doc.name?.toLowerCase().includes("cv") ||
+                      doc.name?.toLowerCase().includes("resume")
+                  ).length > 0
                     ? "bg-green-500"
                     : "bg-gray-400"
                 }`}
-              ></div>{" "}
+              ></div>
             </div>
           </div>
         </div>
@@ -763,13 +809,18 @@ const ApplicantDetail = () => {
                     <tab.icon className="w-4 h-4" />
                     <span>{tab.label}</span>
                     {/* Tab badge for urgent items */}
-                    {tab.id === "tasks" && dashboardStats.urgentTasks > 0 && (
-                      <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center tab-badge-urgent">
-                        {dashboardStats.urgentTasks}
-                      </span>
-                    )}
+                    {tab.id === "tasks" &&
+                      (dashboardStats.visaDocumentsUploaded < 3 ||
+                        !applicant?.payment1 ||
+                        !applicant?.payment2) && (
+                        <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center tab-badge-urgent">
+                          !
+                        </span>
+                      )}
                     {tab.id === "documents" &&
-                      dashboardStats.documentsUploaded < 5 && (
+                      dashboardStats.universityDocumentsUploaded +
+                        dashboardStats.visaDocumentsUploaded <
+                        8 && (
                         <span className="bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                           !
                         </span>
@@ -867,12 +918,16 @@ const ApplicantDetail = () => {
                             Next Step
                           </span>
                           <span className="text-sm font-bold text-sky-600">
-                            {dashboardStats.progressPercentage < 50
-                              ? "Documents"
-                              : dashboardStats.progressPercentage < 75
+                            {dashboardStats.progressPercentage < 20
+                              ? "University Documents"
+                              : dashboardStats.progressPercentage < 40
                               ? "Universities"
+                              : dashboardStats.progressPercentage < 60
+                              ? "Visa Documents"
+                              : dashboardStats.progressPercentage < 80
+                              ? "Visa Application"
                               : dashboardStats.progressPercentage < 100
-                              ? "Visa"
+                              ? "Visa Appointment"
                               : "Complete"}
                           </span>{" "}
                         </div>
@@ -1030,7 +1085,9 @@ const ApplicantDetail = () => {
                     </h3>
 
                     {/* Priority Tasks */}
-                    {dashboardStats.urgentTasks > 0 && (
+                    {(dashboardStats.visaDocumentsUploaded < 3 ||
+                      !applicant?.payment1 ||
+                      !applicant?.payment2) && (
                       <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-3xl p-6 mb-6">
                         <h4 className="text-lg font-semibold text-red-800 mb-4">
                           🚨 Urgent Tasks
@@ -1059,6 +1116,19 @@ const ApplicantDetail = () => {
                               </div>
                               <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
                                 Due Soon
+                              </span>
+                            </div>
+                          )}
+                          {dashboardStats.visaDocumentsUploaded < 3 && (
+                            <div className="flex items-center justify-between p-3 bg-white rounded-xl">
+                              <div className="flex items-center space-x-3">
+                                <FaPassport className="w-4 h-4 text-red-600" />
+                                <span className="font-medium">
+                                  Upload Visa Documents
+                                </span>
+                              </div>
+                              <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
+                                Required
                               </span>
                             </div>
                           )}

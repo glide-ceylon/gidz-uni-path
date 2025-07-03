@@ -305,28 +305,10 @@ const StudentApplicationForm = () => {
     },
     EducationalQualification: {
       OLevel: {
-        IndexNumber: "",
-        MediumOfExam: "",
-        YearOfExam: "",
-        SchoolName: "",
-        SubjectResults: [
-          { Subject: "", Grade: "" },
-          { Subject: "", Grade: "" },
-          { Subject: "", Grade: "" },
-          { Subject: "", Grade: "" },
-          { Subject: "", Grade: "" },
-          { Subject: "", Grade: "" },
-          { Subject: "", Grade: "" },
-          { Subject: "", Grade: "" },
-          { Subject: "", Grade: "" },
-        ],
+        ResultsDocument: null,
       },
       ALevel: {
-        SubjectResults: [
-          { Subject: "", Result: "" },
-          { Subject: "", Result: "" },
-          { Subject: "", Result: "" },
-        ],
+        ResultsDocument: null,
         GPA: {
           RequiredForMasters: false,
           Value: "",
@@ -409,7 +391,8 @@ const StudentApplicationForm = () => {
     {
       id: 5,
       title: "Financial Proof",
-      description: "Financial independence documentation",
+      description:
+        "Germany wants to make sure student can afford to live there without financial problems",
       icon: FaMoneyBillWave,
       fields: ["FinancialProof"],
     },
@@ -518,7 +501,6 @@ const StudentApplicationForm = () => {
         className="absolute top-80 right-32 w-8 h-8 bg-sky-400/25 rounded-full animate-float"
         style={{ animationDelay: "3s" }}
       ></div>
-
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
@@ -527,7 +509,6 @@ const StudentApplicationForm = () => {
           <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-soft">
             <FaGraduationCap className="w-10 h-10 text-white" />
           </div>
-
           <h1 className="text-4xl lg:text-6xl font-bold text-appleGray-900 mb-6">
             Student Visa
             <span className="block text-gradient bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
@@ -944,163 +925,40 @@ const StudentApplicationForm = () => {
         <div className="bg-appleGray-50 p-6 rounded-2xl">
           <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
             G.C.E. Ordinary Level (O/L) Results
-          </h4>{" "}
-          {/* Basic O-Level Information */}
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div>
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Index Number *
-              </label>
-              <input
-                type="text"
-                value={formData.EducationalQualification.OLevel.IndexNumber}
-                onChange={(e) =>
-                  handleInputChange(
-                    "EducationalQualification",
-                    "OLevel.IndexNumber",
-                    e.target.value
-                  )
-                }
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your O/L index number"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Medium of Exam *
-              </label>
-              <select
-                value={formData.EducationalQualification.OLevel.MediumOfExam}
-                onChange={(e) =>
-                  handleInputChange(
-                    "EducationalQualification",
-                    "OLevel.MediumOfExam",
-                    e.target.value
-                  )
-                }
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-              >
-                <option value="">Select medium</option>
-                <option value="Sinhala">Sinhala</option>
-                <option value="Tamil">Tamil</option>
-                <option value="English">English</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Year of Exam *
-              </label>
-              <input
-                type="number"
-                min="1990"
-                max="2030"
-                value={formData.EducationalQualification.OLevel.YearOfExam}
-                onChange={(e) =>
-                  handleInputChange(
-                    "EducationalQualification",
-                    "OLevel.YearOfExam",
-                    e.target.value
-                  )
-                }
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="e.g., 2023"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                School Name *
-              </label>
-              <input
-                type="text"
-                value={formData.EducationalQualification.OLevel.SchoolName}
-                onChange={(e) =>
-                  handleInputChange(
-                    "EducationalQualification",
-                    "OLevel.SchoolName",
-                    e.target.value
-                  )
-                }
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your school name"
-              />
-            </div>
-          </div> */}
-          {/* O-Level Subject Results */}
-          <div>
-            <h5 className="text-md font-semibold text-appleGray-700 mb-4">
-              Subject Results (Select up to 9 subjects) *
-            </h5>
-            <div className="space-y-3">
-              {formData.EducationalQualification.OLevel.SubjectResults.map(
-                (subject, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                  >
-                    <div>
-                      <label className="block text-xs font-medium text-appleGray-600 mb-1">
-                        Subject {index + 1}
-                      </label>
-                      <select
-                        value={subject.Subject}
-                        onChange={(e) => {
-                          const newSubjects = [
-                            ...formData.EducationalQualification.OLevel
-                              .SubjectResults,
-                          ];
-                          newSubjects[index].Subject = e.target.value;
-                          handleInputChange(
-                            "EducationalQualification",
-                            "OLevel.SubjectResults",
-                            newSubjects
-                          );
-                        }}
-                        className="w-full px-4 py-3 border border-appleGray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 text-sm"
-                      >
-                        <option value="">Select subject</option>
-                        {oLevelSubjects.map((subj) => (
-                          <option key={subj} value={subj}>
-                            {subj}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-medium text-appleGray-600 mb-1">
-                        Grade
-                      </label>
-                      <select
-                        value={subject.Grade}
-                        onChange={(e) => {
-                          const newSubjects = [
-                            ...formData.EducationalQualification.OLevel
-                              .SubjectResults,
-                          ];
-                          newSubjects[index].Grade = e.target.value;
-                          handleInputChange(
-                            "EducationalQualification",
-                            "OLevel.SubjectResults",
-                            newSubjects
-                          );
-                        }}
-                        className="w-full px-4 py-3 border border-appleGray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 text-sm"
-                      >
-                        <option value="">Select grade</option>
-                        <option value="A">A - Distinction</option>
-                        <option value="B">B - Very Good</option>
-                        <option value="C">C - Credit Pass</option>
-                        <option value="S">S - Ordinary Pass</option>
-                        <option value="W">W - Fail</option>
-                      </select>
-                    </div>
-                  </div>
+          </h4>
+          <p className="text-sm text-appleGray-600 mb-4">
+            Upload your O/L results document or certificate
+          </p>
+          <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
+            <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+            <input
+              type="file"
+              onChange={(e) =>
+                handleInputChange(
+                  "EducationalQualification",
+                  "OLevel.ResultsDocument",
+                  e.target.files[0]
                 )
-              )}
-            </div>
+              }
+              className="hidden"
+              id="olevel-upload"
+              accept=".pdf,.jpg,.jpeg,.png"
+            />
+            <label
+              htmlFor="olevel-upload"
+              className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+            >
+              Upload O/L Results Document
+            </label>
+            <p className="text-sm text-appleGray-500 mt-2">
+              PDF, JPG, PNG up to 10MB
+            </p>
+            {formData.EducationalQualification.OLevel.ResultsDocument && (
+              <p className="text-sm text-green-600 mt-2">
+                ✓{" "}
+                {formData.EducationalQualification.OLevel.ResultsDocument.name}
+              </p>
+            )}
           </div>
         </div>
 
@@ -1109,72 +967,40 @@ const StudentApplicationForm = () => {
           <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
             G.C.E. Advanced Level (A/L) Results
           </h4>
-
-          {formData.EducationalQualification.ALevel.SubjectResults.map(
-            (subject, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
-              >
-                <div>
-                  <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                    Subject {index + 1}
-                  </label>
-                  <select
-                    value={subject.Subject}
-                    onChange={(e) => {
-                      const newSubjects = [
-                        ...formData.EducationalQualification.ALevel
-                          .SubjectResults,
-                      ];
-                      newSubjects[index].Subject = e.target.value;
-                      handleInputChange(
-                        "EducationalQualification",
-                        "ALevel.SubjectResults",
-                        newSubjects
-                      );
-                    }}
-                    className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                  >
-                    <option value="">Select subject</option>
-                    {subjectsList.map((subj) => (
-                      <option key={subj} value={subj}>
-                        {subj}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                    Grade
-                  </label>
-                  <select
-                    value={subject.Result}
-                    onChange={(e) => {
-                      const newSubjects = [
-                        ...formData.EducationalQualification.ALevel
-                          .SubjectResults,
-                      ];
-                      newSubjects[index].Result = e.target.value;
-                      handleInputChange(
-                        "EducationalQualification",
-                        "ALevel.SubjectResults",
-                        newSubjects
-                      );
-                    }}
-                    className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                  >
-                    <option value="">Select grade</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="S">S</option>
-                  </select>
-                </div>
-              </div>
-            )
-          )}
+          <p className="text-sm text-appleGray-600 mb-4">
+            Upload your A/L results document or certificate
+          </p>
+          <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
+            <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+            <input
+              type="file"
+              onChange={(e) =>
+                handleInputChange(
+                  "EducationalQualification",
+                  "ALevel.ResultsDocument",
+                  e.target.files[0]
+                )
+              }
+              className="hidden"
+              id="alevel-upload"
+              accept=".pdf,.jpg,.jpeg,.png"
+            />
+            <label
+              htmlFor="alevel-upload"
+              className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+            >
+              Upload A/L Results Document
+            </label>
+            <p className="text-sm text-appleGray-500 mt-2">
+              PDF, JPG, PNG up to 10MB
+            </p>
+            {formData.EducationalQualification.ALevel.ResultsDocument && (
+              <p className="text-sm text-green-600 mt-2">
+                ✓{" "}
+                {formData.EducationalQualification.ALevel.ResultsDocument.name}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="bg-appleGray-50 p-6 rounded-2xl">
@@ -1704,10 +1530,10 @@ const StudentApplicationForm = () => {
             Prove your financial independence for studying in Germany
           </p>
         </div>
-        {/* Can You Earn a Living in Germany */}
+        {/* Do You Know About Blocked Account */}
         <div className="bg-appleGray-50 p-6 rounded-2xl">
           <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-            Can you earn a living in Germany?
+            Do you know about Blocked Account?
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {["Yes", "No"].map((option) => (
@@ -1736,179 +1562,6 @@ const StudentApplicationForm = () => {
             ))}
           </div>
         </div>
-        {/* Financial Means Type */}
-        <div className="bg-appleGray-50 p-6 rounded-2xl">
-          <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-            Type of Financial Means
-          </h4>
-          <p className="text-sm text-appleGray-600 mb-4">
-            Your financial independence is a basic prerequisite for receiving
-            the Opportunity Card. You can prove your financial independence with
-            the help of a blocked account or a Declaration of Commitment, among
-            other things.
-          </p>
-
-          <div>
-            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-              Select your financial means type *
-            </label>
-            <select
-              value={formData.FinancialProof.FinancialMeansType}
-              onChange={(e) =>
-                handleInputChange(
-                  "FinancialProof",
-                  "FinancialMeansType",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-            >
-              <option value="">Choose financial means type</option>
-              <option value="blocked-account">Blocked Account</option>
-              <option value="declaration-commitment">
-                Declaration of Commitment
-              </option>
-              <option value="scholarship">Scholarship</option>
-              <option value="sponsor">Family/Personal Sponsor</option>
-              <option value="other">Other Financial Means</option>
-            </select>
-          </div>
-
-          {/* Blocked Account Details */}
-          {formData.FinancialProof.FinancialMeansType === "blocked-account" && (
-            <div className="mt-4">
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Blocked Account Amount (in EUR) *
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={formData.FinancialProof.BlockedAccountAmount}
-                onChange={(e) =>
-                  handleInputChange(
-                    "FinancialProof",
-                    "BlockedAccountAmount",
-                    e.target.value
-                  )
-                }
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="e.g., 11,208 (minimum required for students)"
-              />
-              <p className="text-sm text-appleGray-500 mt-2">
-                Minimum €11,208 per year for students in Germany
-              </p>
-            </div>
-          )}
-
-          {/* Declaration of Commitment Details */}
-          {formData.FinancialProof.FinancialMeansType ===
-            "declaration-commitment" && (
-            <div className="mt-4">
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Declaration of Commitment Details *
-              </label>
-              <textarea
-                value={formData.FinancialProof.DeclarationOfCommitment}
-                onChange={(e) =>
-                  handleInputChange(
-                    "FinancialProof",
-                    "DeclarationOfCommitment",
-                    e.target.value
-                  )
-                }
-                rows={3}
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="Provide details about the declaration of commitment..."
-              />
-            </div>
-          )}
-
-          {/* Sponsor Details */}
-          {formData.FinancialProof.FinancialMeansType === "sponsor" && (
-            <div className="mt-4">
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Sponsor Details *
-              </label>
-              <textarea
-                value={formData.FinancialProof.SponsorDetails}
-                onChange={(e) =>
-                  handleInputChange(
-                    "FinancialProof",
-                    "SponsorDetails",
-                    e.target.value
-                  )
-                }
-                rows={3}
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="Provide details about your sponsor (name, relationship, financial capacity)..."
-              />
-            </div>
-          )}
-
-          {/* Other Financial Means */}
-          {formData.FinancialProof.FinancialMeansType === "other" && (
-            <div className="mt-4">
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Other Financial Means Details *
-              </label>
-              <textarea
-                value={formData.FinancialProof.OtherFinancialMeans}
-                onChange={(e) =>
-                  handleInputChange(
-                    "FinancialProof",
-                    "OtherFinancialMeans",
-                    e.target.value
-                  )
-                }
-                rows={3}
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="Describe your other financial means..."
-              />
-            </div>
-          )}
-        </div>
-        {/* Financial Documents Upload */}
-        <div className="bg-appleGray-50 p-6 rounded-2xl">
-          <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-            Financial Documents Upload
-          </h4>
-          <div>
-            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-              Upload Financial Proof Documents *
-            </label>
-            <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
-              <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
-              <input
-                type="file"
-                onChange={(e) =>
-                  handleInputChange(
-                    "FinancialProof",
-                    "FinancialDocuments",
-                    e.target.files[0]
-                  )
-                }
-                className="hidden"
-                id="financial-documents-upload"
-                accept=".pdf,.jpg,.jpeg,.png"
-                multiple
-              />
-              <label
-                htmlFor="financial-documents-upload"
-                className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
-              >
-                {formData.FinancialProof.FinancialDocuments?.name ||
-                  "Upload Financial Documents"}
-              </label>
-              <p className="text-sm text-appleGray-500 mt-2">
-                PDF, JPG, PNG up to 10MB each
-              </p>
-              <p className="text-xs text-appleGray-400 mt-2">
-                e.g., Bank statements, blocked account confirmation, scholarship
-                letter, etc.
-              </p>{" "}
-            </div>
-          </div>
-        </div>{" "}
       </div>
     );
   }

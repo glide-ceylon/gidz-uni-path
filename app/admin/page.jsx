@@ -356,10 +356,12 @@ const EditApplicationModal = ({ application, onClose, onUpdate }) => {
                   setFormData({ ...formData, status: e.target.value })
                 }
               >
-                <option value="Step1">Documents</option>
+                <option value="Step1">University Documents</option>
                 <option value="Step2">University</option>
-                <option value="Step3">Visa</option>
-                <option value="Step4">Successful</option>
+                <option value="Step3">Visa Documents</option>
+                <option value="Step4">Visa</option>
+                <option value="Step5">Visa Appointment</option>
+                <option value="Step6">Successful</option>
               </select>
             </div>
 
@@ -399,24 +401,36 @@ const ChangeStatusModal = ({ application, onClose, onChangeStatus }) => {
   const statusOptions = [
     {
       value: "Step1",
-      label: "Documents",
-      color: "bg-orange-100 text-orange-700",
-      icon: "material-symbols:description",
+      label: "University Documents",
+      color: "bg-blue-100 text-blue-700",
+      icon: "material-symbols:school",
     },
     {
       value: "Step2",
       label: "University",
       color: "bg-purple-100 text-purple-700",
-      icon: "material-symbols:school",
+      icon: "material-symbols:account-balance",
     },
     {
       value: "Step3",
-      label: "Visa",
-      color: "bg-blue-100 text-blue-700",
-      icon: "material-symbols:passport",
+      label: "Visa Documents",
+      color: "bg-orange-100 text-orange-700",
+      icon: "material-symbols:description",
     },
     {
       value: "Step4",
+      label: "Visa",
+      color: "bg-red-100 text-red-700",
+      icon: "material-symbols:passport",
+    },
+    {
+      value: "Step5",
+      label: "Visa Appointment",
+      color: "bg-yellow-100 text-yellow-700",
+      icon: "material-symbols:event",
+    },
+    {
+      value: "Step6",
       label: "Successful",
       color: "bg-green-100 text-green-700",
       icon: "material-symbols:check-circle",
@@ -538,10 +552,12 @@ const ChangeStatusModal = ({ application, onClose, onChangeStatus }) => {
 // Helper function to map backend steps to labels
 const getStatusLabel = (status) => {
   const statusMap = {
-    Step1: "Documents",
+    Step1: "University Documents",
     Step2: "University",
-    Step3: "Visa",
-    Step4: "Successful",
+    Step3: "Visa Documents",
+    Step4: "Visa",
+    Step5: "Visa Appointment",
+    Step6: "Successful",
   };
   return statusMap[status] || status;
 };
@@ -598,11 +614,13 @@ const AdminHomePage = () => {
       const step2 = data.filter((app) => app.status === "Step2").length;
       const step3 = data.filter((app) => app.status === "Step3").length;
       const step4 = data.filter((app) => app.status === "Step4").length;
+      const step5 = data.filter((app) => app.status === "Step5").length;
+      const step6 = data.filter((app) => app.status === "Step6").length;
 
       setDashboardStats({
         totalApplications: total,
-        activeApplications: step1 + step2 + step3,
-        completedApplications: step4,
+        activeApplications: step1 + step2 + step3 + step4 + step5,
+        completedApplications: step6,
         pendingApplications: step1,
       });
     }
@@ -744,10 +762,12 @@ const AdminHomePage = () => {
   // Define the Steps for tabs with user-friendly labels
   const Steps = [
     { value: "all", label: "All" },
-    { value: "Step1", label: "Documents" },
+    { value: "Step1", label: "University Documents" },
     { value: "Step2", label: "University" },
-    { value: "Step3", label: "Visa" },
-    { value: "Step4", label: "Successful" },
+    { value: "Step3", label: "Visa Documents" },
+    { value: "Step4", label: "Visa" },
+    { value: "Step5", label: "Visa Appointment" },
+    { value: "Step6", label: "Successful" },
   ];
   return (
     <div className="min-h-screen bg-appleGray-50">
