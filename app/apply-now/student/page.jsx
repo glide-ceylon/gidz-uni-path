@@ -1029,33 +1029,102 @@ const StudentApplicationForm = () => {
           </div>
 
           {formData.EducationalQualification.ALevel.GPA.RequiredForMasters && (
-            <div>
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                GPA Value
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="4.0"
-                value={formData.EducationalQualification.ALevel.GPA.Value}
-                onChange={(e) =>
-                  handleInputChange(
-                    "EducationalQualification",
-                    "ALevel.GPA.Value",
-                    e.target.value
-                  )
-                }
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your GPA (e.g., 3.75)"
-              />
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                  GPA Value
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="4.0"
+                  value={formData.EducationalQualification.ALevel.GPA.Value}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "EducationalQualification",
+                      "ALevel.GPA.Value",
+                      e.target.value
+                    )
+                  }
+                  className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter your GPA (e.g., 3.75)"
+                />
+              </div>
+
+              <div className="bg-white p-6 rounded-2xl border border-appleGray-200">
+                <h5 className="text-md font-semibold text-appleGray-800 mb-4">
+                  For Master&apos;s Degree Applications
+                </h5>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                      Bachelor&apos;s Certificate
+                    </label>
+                    <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
+                      <input
+                        type="file"
+                        onChange={(e) =>
+                          handleInputChange(
+                            "WhenApplyingMaster",
+                            "BachelorsCertificate",
+                            e.target.files[0]
+                          )
+                        }
+                        className="hidden"
+                        id="bachelors-upload-edu"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                      />
+                      <label
+                        htmlFor="bachelors-upload-edu"
+                        className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+                      >
+                        Upload Bachelor&apos;s Certificate
+                      </label>
+                      <p className="text-sm text-appleGray-500 mt-2">
+                        PDF, JPG, PNG up to 10MB
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                      Academic Transcript
+                    </label>
+                    <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
+                      <input
+                        type="file"
+                        onChange={(e) =>
+                          handleInputChange(
+                            "WhenApplyingMaster",
+                            "Transcript",
+                            e.target.files[0]
+                          )
+                        }
+                        className="hidden"
+                        id="masters-transcript-upload-edu"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                      />
+                      <label
+                        htmlFor="masters-transcript-upload-edu"
+                        className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+                      >
+                        Upload Academic Transcript
+                      </label>
+                      <p className="text-sm text-appleGray-500 mt-2">
+                        PDF, JPG, PNG up to 10MB
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
 
         <div>
           <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-            Transcript or Additional Documents
+            Additional Documents
           </label>
           <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
             <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
@@ -1076,7 +1145,7 @@ const StudentApplicationForm = () => {
               htmlFor="transcript-upload"
               className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
             >
-              Click to upload transcript
+              Click to upload additional documents
             </label>
             <p className="text-sm text-appleGray-500 mt-2">
               PDF, JPG, PNG up to 10MB
@@ -1229,73 +1298,6 @@ const StudentApplicationForm = () => {
               <p className="text-sm text-appleGray-500 mt-2">
                 PDF, DOC, DOCX up to 10MB
               </p>
-            </div>
-          </div>
-
-          <div className="bg-appleGray-50 p-6 rounded-2xl">
-            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-              For Master&apos;s Degree Applications
-            </h4>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  Bachelor&apos;s Certificate
-                </label>
-                <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
-                  <input
-                    type="file"
-                    onChange={(e) =>
-                      handleInputChange(
-                        "WhenApplyingMaster",
-                        "BachelorsCertificate",
-                        e.target.files[0]
-                      )
-                    }
-                    className="hidden"
-                    id="bachelors-upload"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                  />{" "}
-                  <label
-                    htmlFor="bachelors-upload"
-                    className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
-                  >
-                    Upload Bachelor&apos;s Certificate
-                  </label>
-                  <p className="text-sm text-appleGray-500 mt-2">
-                    PDF, JPG, PNG up to 10MB
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  Academic Transcript
-                </label>
-                <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
-                  <input
-                    type="file"
-                    onChange={(e) =>
-                      handleInputChange(
-                        "WhenApplyingMaster",
-                        "Transcript",
-                        e.target.files[0]
-                      )
-                    }
-                    className="hidden"
-                    id="masters-transcript-upload"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                  />
-                  <label
-                    htmlFor="masters-transcript-upload"
-                    className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
-                  >
-                    Upload Academic Transcript
-                  </label>
-                  <p className="text-sm text-appleGray-500 mt-2">
-                    PDF, JPG, PNG up to 10MB
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
