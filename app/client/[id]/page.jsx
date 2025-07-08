@@ -18,7 +18,9 @@ import {
   FaExclamationTriangle,
   FaTasks,
   FaLifeRing,
-  FaChartLine, // Add logout icon
+  FaChartLine,
+  FaClock,
+  FaSearch, // Add logout icon
 } from "react-icons/fa";
 import { supabase } from "../../../lib/supabase";
 import { useRouter } from "next/navigation"; // Add useRouter
@@ -953,39 +955,28 @@ const ApplicantDetail = () => {
                       Document Management
                     </h3>
                     {/* Document Categories */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                       <div className="space-y-6 tab-card">
                         <h4 className="text-lg font-semibold text-appleGray-800 border-b border-appleGray-200 pb-2 document-category-header">
                           📚 Academic Documents
                         </h4>
                         <div className="space-y-3">
                           {[
-                            "Transcripts",
-                            "Certificates",
-                            "Degree Certificate",
-                          ].map((doc, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between p-3 bg-appleGray-50 rounded-xl tab-card"
-                            >
-                              <span className="text-sm font-medium text-appleGray-800">
-                                {doc}
-                              </span>
-                              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full status-badge">
-                                Uploaded
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="space-y-6 tab-card">
-                        <h4 className="text-lg font-semibold text-appleGray-800 border-b border-appleGray-200 pb-2 document-category-header">
-                          📝 Personal Documents
-                        </h4>
-                        <div className="space-y-3">
-                          {["Passport", "ID Card", "Photos"].map(
-                            (doc, index) => (
+                            "Proof of Language Proficiency (IELTS - Academic)",
+                            "G.C.E. O-Level Certificate",
+                            "G.C.E. A-Level Certificate",
+                            "School Leaving Certificate",
+                            "Bachelor's Degree Certificate",
+                            "Bachelor's Degree Transcript",
+                            "Academic Certificates",
+                          ].map((doc, index) => {
+                            const isUploaded = applicant?.documents?.some(
+                              (document) =>
+                                document.name
+                                  ?.toLowerCase()
+                                  .includes(doc.toLowerCase())
+                            );
+                            return (
                               <div
                                 key={index}
                                 className="flex items-center justify-between p-3 bg-appleGray-50 rounded-xl tab-card"
@@ -995,16 +986,97 @@ const ApplicantDetail = () => {
                                 </span>
                                 <span
                                   className={`text-xs px-2 py-1 rounded-full status-badge ${
-                                    index === 0
+                                    isUploaded
                                       ? "bg-green-100 text-green-700"
                                       : "bg-yellow-100 text-yellow-700"
                                   }`}
                                 >
-                                  {index === 0 ? "Uploaded" : "Pending"}
+                                  {isUploaded ? "Uploaded" : "Pending"}
                                 </span>
                               </div>
-                            )
-                          )}
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="space-y-6 tab-card">
+                        <h4 className="text-lg font-semibold text-appleGray-800 border-b border-appleGray-200 pb-2 document-category-header">
+                          📋 Visa Documents
+                        </h4>
+                        <div className="space-y-3">
+                          {[
+                            "Copy of Valid Passport",
+                            "Proof of Secured Livelihood",
+                            "Birth Certificate in English Translation",
+                          ].map((doc, index) => {
+                            const isUploaded = applicant?.documents?.some(
+                              (document) =>
+                                document.name
+                                  ?.toLowerCase()
+                                  .includes(doc.toLowerCase())
+                            );
+                            return (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between p-3 bg-appleGray-50 rounded-xl tab-card"
+                              >
+                                <span className="text-sm font-medium text-appleGray-800">
+                                  {doc}
+                                </span>
+                                <span
+                                  className={`text-xs px-2 py-1 rounded-full status-badge ${
+                                    isUploaded
+                                      ? "bg-green-100 text-green-700"
+                                      : "bg-yellow-100 text-yellow-700"
+                                  }`}
+                                >
+                                  {isUploaded ? "Uploaded" : "Pending"}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="space-y-6 tab-card">
+                        <h4 className="text-lg font-semibold text-appleGray-800 border-b border-appleGray-200 pb-2 document-category-header">
+                          👤 Personal Documents
+                        </h4>
+                        <div className="space-y-3">
+                          {[
+                            "National ID",
+                            "Driving License",
+                            "Address Proof",
+                            "Birth Certificate in English Translation",
+                            "Curriculum Vitae (CV) in Europass Format",
+                            "Recommendation Letter / MOI Letter / Internship / Work",
+                          ].map((doc, index) => {
+                            const isUploaded = applicant?.documents?.some(
+                              (document) =>
+                                document.name
+                                  ?.toLowerCase()
+                                  .includes(doc.toLowerCase())
+                            );
+                            return (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between p-3 bg-appleGray-50 rounded-xl tab-card"
+                              >
+                                <span className="text-sm font-medium text-appleGray-800">
+                                  {doc}
+                                </span>
+                                <span
+                                  className={`text-xs px-2 py-1 rounded-full status-badge ${
+                                    isUploaded
+                                      ? "bg-green-100 text-green-700"
+                                      : "bg-yellow-100 text-yellow-700"
+                                  }`}
+                                >
+                                  {isUploaded ? "Uploaded" : "Pending"}
+                                </span>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
@@ -1080,7 +1152,7 @@ const ApplicantDetail = () => {
                   <div>
                     <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
                       <FaTasks className="w-5 h-5 text-sky-500 mr-3" />
-                      Current Tasks & Requirements
+                      Visa Application Tracker
                     </h3>
 
                     {/* Priority Tasks */}
@@ -1134,6 +1206,105 @@ const ApplicantDetail = () => {
                         </div>
                       </div>
                     )}
+
+                    {/* Visa Application Tracker Steps */}
+                    <div className="bg-gradient-to-r from-sky-50 to-sky-100 border border-sky-200 rounded-3xl p-6 mb-6">
+                      <h4 className="text-lg font-semibold text-sky-800 mb-6 flex items-center">
+                        <FaPassport className="w-5 h-5 text-sky-600 mr-3" />
+                        Visa Application Progress
+                      </h4>
+
+                      <div className="space-y-4">
+                        {[
+                          {
+                            step: 1,
+                            title: "Application Document",
+                            description:
+                              "Complete and submit your visa application documents",
+                            status: "completed", // can be: completed, current, pending
+                            icon: FaFileAlt,
+                          },
+                          {
+                            step: 2,
+                            title: "Document Submitted on waiting list",
+                            description:
+                              "Your documents are submitted and in the processing queue",
+                            status: "current",
+                            icon: FaClock,
+                          },
+                          {
+                            step: 3,
+                            title: "Under Preliminary Review",
+                            description:
+                              "Embassy is conducting preliminary review of your application",
+                            status: "pending",
+                            icon: FaSearch,
+                          },
+                          {
+                            step: 4,
+                            title: "Interview Preparation",
+                            description:
+                              "Prepare for your visa interview if required",
+                            status: "pending",
+                            icon: FaComments,
+                          },
+                          {
+                            step: 5,
+                            title: "Appointment Date",
+                            description:
+                              "Schedule and attend your visa appointment",
+                            status: "pending",
+                            icon: FaCalendarAlt,
+                          },
+                        ].map((item, index) => (
+                          <div
+                            key={index}
+                            className="flex items-start space-x-4 p-4 bg-white rounded-xl shadow-sm"
+                          >
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                item.status === "completed"
+                                  ? "bg-green-100 text-green-600"
+                                  : item.status === "current"
+                                  ? "bg-blue-100 text-blue-600"
+                                  : "bg-gray-100 text-gray-400"
+                              }`}
+                            >
+                              {item.status === "completed" ? (
+                                <FaCheckCircle className="w-5 h-5" />
+                              ) : (
+                                <item.icon className="w-5 h-5" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <h5 className="text-sm font-semibold text-appleGray-800">
+                                  Step {item.step}: {item.title}
+                                </h5>
+                                <span
+                                  className={`text-xs px-2 py-1 rounded-full ${
+                                    item.status === "completed"
+                                      ? "bg-green-100 text-green-700"
+                                      : item.status === "current"
+                                      ? "bg-blue-100 text-blue-700"
+                                      : "bg-gray-100 text-gray-600"
+                                  }`}
+                                >
+                                  {item.status === "completed"
+                                    ? "Completed"
+                                    : item.status === "current"
+                                    ? "In Progress"
+                                    : "Pending"}
+                                </span>
+                              </div>
+                              <p className="text-sm text-appleGray-600 mt-1">
+                                {item.description}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
                     {/* All Application Options */}
                     <div className="space-y-8">
