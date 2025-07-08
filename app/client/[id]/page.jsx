@@ -120,49 +120,27 @@ const ApplicantDetail = () => {
         const currentStep = applicantData.status?.slice(-1) || "1";
         const progressPercentage = statusToProgress[currentStep] || 0;
 
-        // Calculate document statistics
+        // Calculate document statistics using the type column
         const documents = applicantData.documents || [];
 
-        // Define university documents
-        const universityDocumentNames = [
-          "Academic Transcripts",
-          "Degree Certificate",
-          "Language Proficiency Test",
-          "Statement of Purpose",
-          "Letters of Recommendation",
-          "CV/Resume",
-          "Academic Certificates",
-          "Portfolio",
-          "Research Proposal",
-          "Academic References",
-        ];
-
-        // Define visa documents
-        const visaDocumentNames = [
-          "Passport",
-          "Passport Photos",
-          "Financial Statements",
-          "Bank Statements",
-          "Sponsor Documents",
-          "Medical Certificate",
-          "Police Clearance",
-          "Birth Certificate",
-        ];
-
-        const universityDocumentsUploaded = documents.filter((doc) =>
-          universityDocumentNames.some((name) =>
-            doc.name?.toLowerCase().includes(name.toLowerCase())
-          )
+        // Count university documents that have URLs (uploaded)
+        const universityDocumentsUploaded = documents.filter(
+          (doc) => doc.type === "university" && doc.url && doc.url.trim() !== ""
         ).length;
 
-        const visaDocumentsUploaded = documents.filter((doc) =>
-          visaDocumentNames.some((name) =>
-            doc.name?.toLowerCase().includes(name.toLowerCase())
-          )
+        // Count visa documents that have URLs (uploaded)
+        const visaDocumentsUploaded = documents.filter(
+          (doc) => doc.type === "visa" && doc.url && doc.url.trim() !== ""
         ).length;
 
-        const universityDocumentsTotal = 10;
-        const visaDocumentsTotal = 8;
+        // Count total documents by type (including those without URLs)
+        const universityDocumentsTotal = documents.filter(
+          (doc) => doc.type === "university"
+        ).length;
+
+        const visaDocumentsTotal = documents.filter(
+          (doc) => doc.type === "visa"
+        ).length;
 
         // Calculate next deadline (mock for now - you can enhance this with real deadlines)
         const nextDeadline =
@@ -170,12 +148,17 @@ const ApplicantDetail = () => {
             ? universities[0].deadline
             : null;
 
+        // Set default totals if no documents exist yet
+        const finalUniversityTotal =
+          universityDocumentsTotal > 0 ? universityDocumentsTotal : 10;
+        const finalVisaTotal = visaDocumentsTotal > 0 ? visaDocumentsTotal : 8;
+
         setDashboardStats({
           progressPercentage,
           universityDocumentsUploaded,
-          universityDocumentsTotal,
+          universityDocumentsTotal: finalUniversityTotal,
           visaDocumentsUploaded,
-          visaDocumentsTotal,
+          visaDocumentsTotal: finalVisaTotal,
           universitiesApplied: universities?.length || 0,
           nextDeadline,
         });
@@ -249,14 +232,18 @@ const ApplicantDetail = () => {
       });
     }
 
-    // Check document status
+    // Check document status using type column
     const documents = applicantData.documents || [];
-    if (documents.length < 5) {
+    const uploadedDocuments = documents.filter(
+      (doc) => doc.url && doc.url.trim() !== ""
+    );
+
+    if (uploadedDocuments.length < 5) {
       newNotifications.push({
         id: `documents-${now}`,
         type: "info",
         title: "Documents Needed",
-        message: `You have uploaded ${documents.length} documents. Upload more to complete your application.`,
+        message: `You have uploaded ${uploadedDocuments.length} documents. Upload more to complete your application.`,
         timestamp: now,
       });
     }
@@ -447,7 +434,7 @@ const ApplicantDetail = () => {
 
               <div>
                 <h1 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-2">
-                  Student Portal
+                  Client Portal
                 </h1>
                 <p className="text-xl text-appleGray-600">
                   Welcome back, {applicant.first_name} {applicant.last_name}
@@ -514,14 +501,24 @@ const ApplicantDetail = () => {
                 </div>
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    dashboardStats.universityDocumentsUploaded >= 8
+                    dashboardStats.universityDocumentsUploaded >=
+                    Math.floor(dashboardStats.universityDocumentsTotal * 0.8)
                       ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
+                      : dashboardStats.universityDocumentsUploaded >=
+                        Math.floor(
+                          dashboardStats.universityDocumentsTotal * 0.5
+                        )
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
                   }`}
                 >
-                  {dashboardStats.universityDocumentsUploaded >= 8
+                  {dashboardStats.universityDocumentsUploaded >=
+                  Math.floor(dashboardStats.universityDocumentsTotal * 0.8)
                     ? "On Track"
-                    : "In Progress"}
+                    : dashboardStats.universityDocumentsUploaded >=
+                      Math.floor(dashboardStats.universityDocumentsTotal * 0.5)
+                    ? "In Progress"
+                    : "Action Needed"}
                 </span>
               </div>
               <div className="text-xl sm:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
@@ -541,16 +538,20 @@ const ApplicantDetail = () => {
                 </div>
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    dashboardStats.visaDocumentsUploaded >= 6
+                    dashboardStats.visaDocumentsUploaded >=
+                    Math.floor(dashboardStats.visaDocumentsTotal * 0.75)
                       ? "bg-green-100 text-green-700"
-                      : dashboardStats.visaDocumentsUploaded >= 3
+                      : dashboardStats.visaDocumentsUploaded >=
+                        Math.floor(dashboardStats.visaDocumentsTotal * 0.4)
                       ? "bg-yellow-100 text-yellow-700"
                       : "bg-red-100 text-red-700"
                   }`}
                 >
-                  {dashboardStats.visaDocumentsUploaded >= 6
+                  {dashboardStats.visaDocumentsUploaded >=
+                  Math.floor(dashboardStats.visaDocumentsTotal * 0.75)
                     ? "On Track"
-                    : dashboardStats.visaDocumentsUploaded >= 3
+                    : dashboardStats.visaDocumentsUploaded >=
+                      Math.floor(dashboardStats.visaDocumentsTotal * 0.4)
                     ? "In Progress"
                     : "Action Needed"}
                 </span>
@@ -618,7 +619,10 @@ const ApplicantDetail = () => {
             </div>
           </div>{" "}
           {/* Critical Alerts */}
-          {(dashboardStats.visaDocumentsUploaded < 3 ||
+          {(dashboardStats.visaDocumentsUploaded <
+            Math.floor(dashboardStats.visaDocumentsTotal * 0.4) ||
+            dashboardStats.universityDocumentsUploaded <
+              Math.floor(dashboardStats.universityDocumentsTotal * 0.5) ||
             !applicant?.payment1 ||
             !applicant?.payment2) && (
             <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-3xl p-4 sm:p-6 mb-6 animate-fade-in-up">
@@ -643,10 +647,28 @@ const ApplicantDetail = () => {
                         <span>Complete Payment 2</span>
                       </div>
                     )}
-                    {dashboardStats.visaDocumentsUploaded < 3 && (
+                    {dashboardStats.visaDocumentsUploaded <
+                      Math.floor(dashboardStats.visaDocumentsTotal * 0.4) && (
                       <div className="flex items-center text-xs sm:text-sm text-red-700">
                         <FaPassport className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-                        <span>Upload more visa documents</span>
+                        <span>
+                          Upload more visa documents (
+                          {dashboardStats.visaDocumentsUploaded}/
+                          {dashboardStats.visaDocumentsTotal})
+                        </span>
+                      </div>
+                    )}
+                    {dashboardStats.universityDocumentsUploaded <
+                      Math.floor(
+                        dashboardStats.universityDocumentsTotal * 0.5
+                      ) && (
+                      <div className="flex items-center text-xs sm:text-sm text-red-700">
+                        <FaUniversity className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+                        <span>
+                          Upload more university documents (
+                          {dashboardStats.universityDocumentsUploaded}/
+                          {dashboardStats.universityDocumentsTotal})
+                        </span>
                       </div>
                     )}
                   </div>
@@ -702,80 +724,6 @@ const ApplicantDetail = () => {
               {/* Status indicator */}
               <div className="absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 bg-yellow-500 rounded-full"></div>
             </button>
-
-            <button
-              onClick={() => setActiveTab("documents")}
-              className="group bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 hover:shadow-medium transition-all duration-300 card-apple-hover relative dashboard-card"
-            >
-              <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-2xl flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-300">
-                  <FaFileAlt className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
-                </div>
-                <div className="text-left">
-                  <h4 className="text-base sm:text-lg font-semibold text-appleGray-800">
-                    Documents
-                  </h4>
-                  <p className="text-xs sm:text-sm text-appleGray-600">
-                    {dashboardStats.universityDocumentsUploaded +
-                      dashboardStats.visaDocumentsUploaded}{" "}
-                    uploaded
-                  </p>
-                </div>
-              </div>
-              {/* Status indicator */}
-              <div
-                className={`absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 rounded-full ${
-                  dashboardStats.universityDocumentsUploaded +
-                    dashboardStats.visaDocumentsUploaded >=
-                  14
-                    ? "bg-green-500"
-                    : dashboardStats.universityDocumentsUploaded +
-                        dashboardStats.visaDocumentsUploaded >=
-                      8
-                    ? "bg-yellow-500"
-                    : "bg-red-500"
-                } ${
-                  dashboardStats.universityDocumentsUploaded +
-                    dashboardStats.visaDocumentsUploaded <
-                  8
-                    ? "status-indicator-red"
-                    : ""
-                }`}
-              ></div>
-            </button>
-
-            <div className="group bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 relative dashboard-card">
-              <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-2xl flex items-center justify-center">
-                  <FaFileAlt className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
-                </div>
-                <div className="text-left">
-                  <h4 className="text-base sm:text-lg font-semibold text-appleGray-800">
-                    CVs
-                  </h4>
-                  <p className="text-xs sm:text-sm text-appleGray-600">
-                    {applicant?.documents?.filter(
-                      (doc) =>
-                        doc.name?.toLowerCase().includes("cv") ||
-                        doc.name?.toLowerCase().includes("resume")
-                    ).length || 0}{" "}
-                    uploaded
-                  </p>
-                </div>
-              </div>
-              {/* Status indicator */}
-              <div
-                className={`absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 rounded-full ${
-                  applicant?.documents?.filter(
-                    (doc) =>
-                      doc.name?.toLowerCase().includes("cv") ||
-                      doc.name?.toLowerCase().includes("resume")
-                  ).length > 0
-                    ? "bg-green-500"
-                    : "bg-gray-400"
-                }`}
-              ></div>
-            </div>
           </div>
         </div>
         {/* Tabbed Navigation */}
@@ -811,7 +759,8 @@ const ApplicantDetail = () => {
                     <span>{tab.label}</span>
                     {/* Tab badge for urgent items */}
                     {tab.id === "tasks" &&
-                      (dashboardStats.visaDocumentsUploaded < 3 ||
+                      (dashboardStats.visaDocumentsUploaded <
+                        Math.floor(dashboardStats.visaDocumentsTotal * 0.4) ||
                         !applicant?.payment1 ||
                         !applicant?.payment2) && (
                         <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center tab-badge-urgent">
@@ -819,9 +768,14 @@ const ApplicantDetail = () => {
                         </span>
                       )}
                     {tab.id === "documents" &&
-                      dashboardStats.universityDocumentsUploaded +
+                      (dashboardStats.universityDocumentsUploaded <
+                        Math.floor(
+                          dashboardStats.universityDocumentsTotal * 0.5
+                        ) ||
                         dashboardStats.visaDocumentsUploaded <
-                        8 && (
+                          Math.floor(
+                            dashboardStats.visaDocumentsTotal * 0.4
+                          )) && (
                         <span className="bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                           !
                         </span>
@@ -844,55 +798,6 @@ const ApplicantDetail = () => {
                       <VerticalStepper
                         currentStep={applicant.status.slice(-1)}
                       />
-                    </div>
-                  </div>
-
-                  {/* Recent Activity */}
-                  <div>
-                    <h3 className="text-xl font-bold text-appleGray-800 mb-4 flex items-center">
-                      <FaCalendarAlt className="w-5 h-5 text-sky-500 mr-3" />
-                      Recent Activity
-                    </h3>{" "}
-                    <div className="space-y-3">
-                      <div className="flex items-start space-x-3 p-4 bg-appleGray-50 rounded-2xl activity-item">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mt-1">
-                          <FaCheckCircle className="w-4 h-4 text-green-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-appleGray-800">
-                            Profile updated
-                          </p>
-                          <p className="text-xs text-appleGray-600">
-                            2 hours ago
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-3 p-4 bg-appleGray-50 rounded-2xl activity-item">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mt-1">
-                          <FaFileAlt className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-appleGray-800">
-                            Document submitted
-                          </p>
-                          <p className="text-xs text-appleGray-600">
-                            1 day ago
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-3 p-4 bg-appleGray-50 rounded-2xl activity-item">
-                        <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mt-1">
-                          <FaUniversity className="w-4 h-4 text-purple-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-appleGray-800">
-                            University application sent
-                          </p>
-                          <p className="text-xs text-appleGray-600">
-                            3 days ago
-                          </p>
-                        </div>
-                      </div>
                     </div>
                   </div>
 
@@ -949,185 +854,14 @@ const ApplicantDetail = () => {
 
               {activeTab === "documents" && (
                 <div className="p-6 sm:p-8 space-y-8">
-                  <div>
-                    <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
-                      <FaFileAlt className="w-5 h-5 text-sky-500 mr-3" />
-                      Document Management
-                    </h3>
-                    {/* Document Categories */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                      <div className="space-y-6 tab-card">
-                        <h4 className="text-lg font-semibold text-appleGray-800 border-b border-appleGray-200 pb-2 document-category-header">
-                          📚 Academic Documents
-                        </h4>
-                        <div className="space-y-3">
-                          {[
-                            "Proof of Language Proficiency (IELTS - Academic)",
-                            "G.C.E. O-Level Certificate",
-                            "G.C.E. A-Level Certificate",
-                            "School Leaving Certificate",
-                            "Bachelor's Degree Certificate",
-                            "Bachelor's Degree Transcript",
-                            "Academic Certificates",
-                          ].map((doc, index) => {
-                            const isUploaded = applicant?.documents?.some(
-                              (document) =>
-                                document.name
-                                  ?.toLowerCase()
-                                  .includes(doc.toLowerCase())
-                            );
-                            return (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between p-3 bg-appleGray-50 rounded-xl tab-card"
-                              >
-                                <span className="text-sm font-medium text-appleGray-800">
-                                  {doc}
-                                </span>
-                                <span
-                                  className={`text-xs px-2 py-1 rounded-full status-badge ${
-                                    isUploaded
-                                      ? "bg-green-100 text-green-700"
-                                      : "bg-yellow-100 text-yellow-700"
-                                  }`}
-                                >
-                                  {isUploaded ? "Uploaded" : "Pending"}
-                                </span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="space-y-6 tab-card">
-                        <h4 className="text-lg font-semibold text-appleGray-800 border-b border-appleGray-200 pb-2 document-category-header">
-                          📋 Visa Documents
-                        </h4>
-                        <div className="space-y-3">
-                          {[
-                            "Copy of Valid Passport",
-                            "Proof of Secured Livelihood",
-                            "Birth Certificate in English Translation",
-                          ].map((doc, index) => {
-                            const isUploaded = applicant?.documents?.some(
-                              (document) =>
-                                document.name
-                                  ?.toLowerCase()
-                                  .includes(doc.toLowerCase())
-                            );
-                            return (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between p-3 bg-appleGray-50 rounded-xl tab-card"
-                              >
-                                <span className="text-sm font-medium text-appleGray-800">
-                                  {doc}
-                                </span>
-                                <span
-                                  className={`text-xs px-2 py-1 rounded-full status-badge ${
-                                    isUploaded
-                                      ? "bg-green-100 text-green-700"
-                                      : "bg-yellow-100 text-yellow-700"
-                                  }`}
-                                >
-                                  {isUploaded ? "Uploaded" : "Pending"}
-                                </span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="space-y-6 tab-card">
-                        <h4 className="text-lg font-semibold text-appleGray-800 border-b border-appleGray-200 pb-2 document-category-header">
-                          👤 Personal Documents
-                        </h4>
-                        <div className="space-y-3">
-                          {[
-                            "National ID",
-                            "Driving License",
-                            "Address Proof",
-                            "Birth Certificate in English Translation",
-                            "Curriculum Vitae (CV) in Europass Format",
-                            "Recommendation Letter / MOI Letter / Internship / Work",
-                          ].map((doc, index) => {
-                            const isUploaded = applicant?.documents?.some(
-                              (document) =>
-                                document.name
-                                  ?.toLowerCase()
-                                  .includes(doc.toLowerCase())
-                            );
-                            return (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between p-3 bg-appleGray-50 rounded-xl tab-card"
-                              >
-                                <span className="text-sm font-medium text-appleGray-800">
-                                  {doc}
-                                </span>
-                                <span
-                                  className={`text-xs px-2 py-1 rounded-full status-badge ${
-                                    isUploaded
-                                      ? "bg-green-100 text-green-700"
-                                      : "bg-yellow-100 text-yellow-700"
-                                  }`}
-                                >
-                                  {isUploaded ? "Uploaded" : "Pending"}
-                                </span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-8">
-                      <DocumentsToUpload applicationId={id} />
-                      <DocumentsToDownload applicationId={id} />
-                    </div>
-                  </div>
+                  <DocumentsToUpload applicationId={id} />
+                  <DocumentsToDownload applicationId={id} />
                 </div>
               )}
 
               {activeTab === "universities" && (
                 <div className="p-6 sm:p-8 space-y-8">
-                  <div>
-                    <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
-                      <FaUniversity className="w-5 h-5 text-sky-500 mr-3" />
-                      University Applications
-                    </h3>
-                    {/* Application Status Overview */}
-                    <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-6 rounded-3xl mb-6 university-stats-card">
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-purple-800 stats-counter">
-                            {dashboardStats.universitiesApplied}
-                          </div>
-                          <div className="text-sm text-purple-600">
-                            Applications Sent
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-green-800 stats-counter">
-                            0
-                          </div>
-                          <div className="text-sm text-green-600">
-                            Offers Received
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-blue-800 stats-counter">
-                            2
-                          </div>
-                          <div className="text-sm text-blue-600">
-                            Pending Review
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Universities applicationId={id} />
-                  </div>
+                  <Universities applicationId={id} />
                 </div>
               )}
 
@@ -1154,58 +888,6 @@ const ApplicantDetail = () => {
                       <FaTasks className="w-5 h-5 text-sky-500 mr-3" />
                       Visa Application Tracker
                     </h3>
-
-                    {/* Priority Tasks */}
-                    {(dashboardStats.visaDocumentsUploaded < 3 ||
-                      !applicant?.payment1 ||
-                      !applicant?.payment2) && (
-                      <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-3xl p-6 mb-6">
-                        <h4 className="text-lg font-semibold text-red-800 mb-4">
-                          🚨 Urgent Tasks
-                        </h4>
-                        <div className="space-y-3">
-                          {!applicant?.payment1 && (
-                            <div className="flex items-center justify-between p-3 bg-white rounded-xl">
-                              <div className="flex items-center space-x-3">
-                                <FaCreditCard className="w-4 h-4 text-red-600" />
-                                <span className="font-medium">
-                                  Complete Payment 1
-                                </span>
-                              </div>
-                              <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
-                                Due Now
-                              </span>
-                            </div>
-                          )}
-                          {!applicant?.payment2 && (
-                            <div className="flex items-center justify-between p-3 bg-white rounded-xl">
-                              <div className="flex items-center space-x-3">
-                                <FaCreditCard className="w-4 h-4 text-red-600" />
-                                <span className="font-medium">
-                                  Complete Payment 2
-                                </span>
-                              </div>
-                              <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
-                                Due Soon
-                              </span>
-                            </div>
-                          )}
-                          {dashboardStats.visaDocumentsUploaded < 3 && (
-                            <div className="flex items-center justify-between p-3 bg-white rounded-xl">
-                              <div className="flex items-center space-x-3">
-                                <FaPassport className="w-4 h-4 text-red-600" />
-                                <span className="font-medium">
-                                  Upload Visa Documents
-                                </span>
-                              </div>
-                              <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
-                                Required
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
 
                     {/* Visa Application Tracker Steps */}
                     <div className="bg-gradient-to-r from-sky-50 to-sky-100 border border-sky-200 rounded-3xl p-6 mb-6">
