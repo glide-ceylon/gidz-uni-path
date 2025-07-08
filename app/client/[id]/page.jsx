@@ -793,8 +793,7 @@ const ApplicantDetail = () => {
                     label: "Universities",
                     icon: FaUniversity,
                   },
-                  { id: "analytics", label: "Analytics", icon: FaChartLine },
-                  { id: "tasks", label: "Tasks", icon: FaTasks },
+                  { id: "tasks", label: "Visa", icon: FaPassport },
                   { id: "support", label: "Support", icon: FaLifeRing },
                 ].map((tab) => (
                   <button
