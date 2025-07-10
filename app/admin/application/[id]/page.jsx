@@ -23,29 +23,29 @@ const EDUCATIONAL_BACKGROUNDS = [
 // ----------------------
 const YesNoButtonGroup = ({ value, onChange }) => {
   return (
-    <div className="flex space-x-3">
+    <div className="flex space-x-2">
       <button
         type="button"
-        className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+        className={`px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 min-w-[80px] ${
           value
-            ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl"
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+            : "bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200"
         }`}
         onClick={() => onChange(true)}
       >
-        <Icon icon="mdi:check" className="inline mr-1" />
+        <Icon icon="mdi:check" className="inline mr-1.5 text-sm" />
         Yes
       </button>
       <button
         type="button"
-        className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+        className={`px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 min-w-[80px] ${
           !value
-            ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg hover:shadow-xl"
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+            : "bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200"
         }`}
         onClick={() => onChange(false)}
       >
-        <Icon icon="mdi:close" className="inline mr-1" />
+        <Icon icon="mdi:close" className="inline mr-1.5 text-sm" />
         No
       </button>
     </div>
@@ -76,19 +76,23 @@ const EditableField = ({
   };
 
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-100 hover:border-gray-200 transition-all duration-200">
-      <div className="flex items-center justify-between">
+    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200 group">
+      <div className="flex items-start justify-between">
         <div className="flex-1">
-          <label className="text-sm font-medium text-gray-600 mb-1 block">
+          <label className="text-sm font-semibold text-gray-700 mb-2 block">
             {label}
           </label>
           {!isEditing ? (
-            <span className="text-gray-900 font-medium">{value || "N/A"}</span>
+            <div className="min-h-[40px] flex items-center">
+              <span className="text-gray-900 font-medium text-base">
+                {value || "Not provided"}
+              </span>
+            </div>
           ) : type === "select" ? (
             <select
               value={tempValue}
               onChange={(e) => setTempValue(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
             >
               <option value="" disabled>
                 Select {label}
@@ -104,14 +108,14 @@ const EditableField = ({
               type="date"
               value={tempValue}
               onChange={(e) => setTempValue(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
             />
           ) : (
             <input
               type={type}
               value={tempValue}
               onChange={(e) => setTempValue(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
             />
           )}
         </div>
@@ -119,7 +123,8 @@ const EditableField = ({
           {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
-              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+              className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 opacity-0 group-hover:opacity-100"
+              title="Edit field"
             >
               <Icon icon="mdi:pencil" className="text-lg" />
             </button>
@@ -127,15 +132,17 @@ const EditableField = ({
             <div className="flex space-x-1">
               <button
                 onClick={handleSave}
-                className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
+                className="p-2.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
+                title="Save changes"
               >
-                <Icon icon="mdi:content-save" className="text-lg" />
+                <Icon icon="mdi:check" className="text-lg" />
               </button>
               <button
                 onClick={handleCancel}
-                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                className="p-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                title="Cancel editing"
               >
-                <Icon icon="mdi:cancel" className="text-lg" />
+                <Icon icon="mdi:close" className="text-lg" />
               </button>
             </div>
           )}
@@ -546,9 +553,9 @@ const ApplicantDetail = () => {
       {/* Top spacing for navbar */}
       <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto space-y-8">
-          {/* Header Section - More compact and organized */}
-          <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-lg border border-white/20 p-6 lg:p-8">
-            <div className="flex flex-col lg:flex-row justify-between items-start gap-6">
+          {/* Header Section */}
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6 lg:p-8">
+            <div className="flex flex-col xl:flex-row justify-between items-start gap-6">
               <div className="flex-1">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
@@ -558,7 +565,7 @@ const ApplicantDetail = () => {
                     />
                   </div>
                   <div className="flex-1">
-                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
+                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
                       {applicant.first_name} {applicant.last_name}
                     </h1>
                     <p className="text-gray-600 text-sm mb-3">
@@ -566,11 +573,11 @@ const ApplicantDetail = () => {
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <div className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                        <Icon icon="mdi:email" className="inline mr-1" />
+                        <Icon icon="mdi:email" className="inline mr-1.5" />
                         {applicant.email}
                       </div>
                       <div className="px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                        <Icon icon="mdi:phone" className="inline mr-1" />
+                        <Icon icon="mdi:phone" className="inline mr-1.5" />
                         {applicant.telephone || "N/A"}
                       </div>
                     </div>
@@ -578,16 +585,16 @@ const ApplicantDetail = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+              <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
                 <button
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm font-medium"
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm font-semibold"
                   onClick={handleOpenPasswordModal}
                 >
                   <Icon icon="mdi:key-plus" className="text-lg" />
                   Create Password
                 </button>
                 <button
-                  className={`px-5 py-2.5 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm font-medium ${
+                  className={`px-6 py-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm font-semibold ${
                     lockstate
                       ? "bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700"
                       : "bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700"
@@ -606,132 +613,65 @@ const ApplicantDetail = () => {
             </div>
           </div>
 
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column */}
-            <div className="space-y-6">
-              {/* Personal Information Card */}
-              <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <Icon icon="mdi:account" className="text-lg text-white" />
-                  </div>
-                  <h2 className="text-xl font-bold text-gray-900">
-                    Personal Information
-                  </h2>
-                </div>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <EditableField
-                      label="First Name"
-                      value={applicant.first_name}
-                      onSave={(value) => handleFieldSave("first_name", value)}
-                    />
-                    <EditableField
-                      label="Last Name"
-                      value={applicant.last_name}
-                      onSave={(value) => handleFieldSave("last_name", value)}
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <EditableField
-                      label="Date of Birth"
-                      value={applicant.date_of_birth}
-                      type="date"
-                      onSave={(value) =>
-                        handleFieldSave("date_of_birth", value)
-                      }
-                    />
-                    <EditableField
-                      label="Passport Number"
-                      value={applicant.passport_number}
-                      onSave={(value) =>
-                        handleFieldSave("passport_number", value)
-                      }
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <EditableField
-                      label="Telephone"
-                      value={applicant.telephone}
-                      onSave={(value) => handleFieldSave("telephone", value)}
-                    />
-                    <EditableField
-                      label="Email"
-                      value={applicant.email}
-                      type="email"
-                      onSave={(value) => handleFieldSave("email", value)}
-                    />
-                  </div>
+          {/* Personal Information Section */}
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6 lg:p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                <Icon icon="mdi:account" className="text-xl text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Personal Information
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Basic Info */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <EditableField
-                    label="Address"
-                    value={applicant.address}
-                    onSave={(value) => handleFieldSave("address", value)}
+                    label="First Name"
+                    value={applicant.first_name}
+                    onSave={(value) => handleFieldSave("first_name", value)}
                   />
-                  {applicant.password && (
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-100">
-                      <label className="text-sm font-medium text-gray-600 mb-2 block">
-                        Password
-                      </label>
-                      <div className="flex items-center gap-3">
-                        <span className="text-gray-900 font-medium flex-1">
-                          {showPassword ? applicant.password : "••••••••"}
-                        </span>
-                        <button
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-                        >
-                          <Icon
-                            icon={showPassword ? "mdi:eye-off" : "mdi:eye"}
-                            className="text-lg"
-                          />
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <EditableField
+                    label="Last Name"
+                    value={applicant.last_name}
+                    onSave={(value) => handleFieldSave("last_name", value)}
+                  />
                 </div>
-              </div>
-
-              {/* Profile Picture Card */}
-              <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                    <Icon icon="mdi:camera" className="text-lg text-white" />
-                  </div>
-                  <h2 className="text-xl font-bold text-gray-900">
-                    Profile Picture
-                  </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <EditableField
+                    label="Date of Birth"
+                    value={applicant.date_of_birth}
+                    type="date"
+                    onSave={(value) => handleFieldSave("date_of_birth", value)}
+                  />
+                  <EditableField
+                    label="Passport Number"
+                    value={applicant.passport_number}
+                    onSave={(value) =>
+                      handleFieldSave("passport_number", value)
+                    }
+                  />
                 </div>
-                <div className="flex flex-col items-center gap-4">
-                  <div className="relative">
-                    <Image
-                      src={getDocumentUrl(
-                        applicant.documents,
-                        "Profile Picture"
-                      )}
-                      alt="profile"
-                      width={120}
-                      height={120}
-                      className="w-30 h-30 rounded-2xl object-cover border-4 border-white shadow-lg"
-                    />
-                    <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <Icon icon="mdi:camera" className="text-white text-xs" />
-                    </div>
-                  </div>
-                  <ProfilePic applicationId={id} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <EditableField
+                    label="Telephone"
+                    value={applicant.telephone}
+                    onSave={(value) => handleFieldSave("telephone", value)}
+                  />
+                  <EditableField
+                    label="Email"
+                    value={applicant.email}
+                    type="email"
+                    onSave={(value) => handleFieldSave("email", value)}
+                  />
                 </div>
-              </div>
-
-              {/* Educational Background Card */}
-              <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                    <Icon icon="mdi:school" className="text-lg text-white" />
-                  </div>
-                  <h2 className="text-xl font-bold text-gray-900">
-                    Educational Background
-                  </h2>
-                </div>
+                <EditableField
+                  label="Address"
+                  value={applicant.address}
+                  onSave={(value) => handleFieldSave("address", value)}
+                />
                 <EditableField
                   label="Educational Background"
                   value={applicant.educational_background}
@@ -741,109 +681,149 @@ const ApplicantDetail = () => {
                     handleFieldSave("educational_background", value)
                   }
                 />
-              </div>
-
-              {/* Payments Card */}
-              <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
-                    <Icon
-                      icon="mdi:credit-card"
-                      className="text-lg text-white"
-                    />
-                  </div>
-                  <h2 className="text-xl font-bold text-gray-900">Payments</h2>
-                </div>
-                <div className="space-y-4">
-                  <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-100">
+                {applicant.password && (
+                  <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200 group">
+                    <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                      Password
+                    </label>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-base font-semibold text-gray-900 mb-1">
-                          Payment 1
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          Initial application payment
-                        </p>
+                      <div className="flex-1">
+                        <div className="min-h-[40px] flex items-center">
+                          <span className="text-gray-900 font-medium text-base font-mono">
+                            {showPassword ? applicant.password : "••••••••"}
+                          </span>
+                        </div>
                       </div>
-                      <YesNoButtonGroup
-                        value={applicant.payment1}
-                        onChange={(value) => handlePaymentSave(1, value)}
-                      />
+                      <button
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="p-2.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 opacity-0 group-hover:opacity-100"
+                        title={showPassword ? "Hide password" : "Show password"}
+                      >
+                        <Icon
+                          icon={showPassword ? "mdi:eye-off" : "mdi:eye"}
+                          className="text-lg"
+                        />
+                      </button>
                     </div>
                   </div>
-                  <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-100">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-base font-semibold text-gray-900 mb-1">
-                          Payment 2
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          Visa application payment
-                        </p>
-                      </div>
-                      <YesNoButtonGroup
-                        value={applicant.payment2}
-                        onChange={(value) => handlePaymentSave(2, value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column */}
-            <div className="space-y-6">
-              {/* Documents Card */}
-              <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                    <Icon
-                      icon="mdi:file-document-multiple"
-                      className="text-lg text-white"
-                    />
-                  </div>
-                  <h2 className="text-xl font-bold text-gray-900">Documents</h2>
-                </div>
-                <div className="space-y-6">
-                  <DocumentsTable applicationId={id} />
-                  <div className="border-t border-gray-200 pt-6">
-                    <DcoumentsFromUs applicationId={id} />
-                  </div>
-                </div>
+                )}
               </div>
 
-              {/* Universities Card */}
-              <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center">
-                    <Icon
-                      icon="mdi:university"
-                      className="text-lg text-white"
-                    />
+              {/* Profile Picture */}
+              <div className="flex flex-col items-center space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <Icon icon="mdi:camera" className="text-lg text-white" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-900">
-                    Universities
-                  </h2>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Profile Picture
+                  </h3>
                 </div>
-                <UniversitiesTable applicationId={id} />
+                <div className="relative">
+                  <Image
+                    src={getDocumentUrl(applicant.documents, "Profile Picture")}
+                    alt="profile"
+                    width={140}
+                    height={140}
+                    className="w-35 h-35 rounded-2xl object-cover border-4 border-white shadow-lg"
+                  />
+                  <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                    <Icon icon="mdi:camera" className="text-white text-sm" />
+                  </div>
+                </div>
+                <ProfilePic applicationId={id} />
               </div>
             </div>
           </div>
 
-          {/* Bottom Section - Application Progress & Visa */}
-          <div className="space-y-6">
+          {/* Payments Section */}
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                <Icon icon="mdi:credit-card" className="text-xl text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">Payments</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Payment 1
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Initial application payment
+                    </p>
+                  </div>
+                  <YesNoButtonGroup
+                    value={applicant.payment1}
+                    onChange={(value) => handlePaymentSave(1, value)}
+                  />
+                </div>
+              </div>
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Payment 2
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Visa application payment
+                    </p>
+                  </div>
+                  <YesNoButtonGroup
+                    value={applicant.payment2}
+                    onChange={(value) => handlePaymentSave(2, value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Documents Section */}
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                <Icon
+                  icon="mdi:file-document-multiple"
+                  className="text-xl text-white"
+                />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">Documents</h2>
+            </div>
+            <div className="space-y-6">
+              <DocumentsTable applicationId={id} />
+              <div className="border-t border-gray-200 pt-6">
+                <DcoumentsFromUs applicationId={id} />
+              </div>
+            </div>
+          </div>
+
+          {/* Universities Section */}
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center">
+                <Icon icon="mdi:university" className="text-xl text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">Universities</h2>
+            </div>
+            <UniversitiesTable applicationId={id} />
+          </div>
+
+          {/* Application Progress & Visa Section */}
+          <div className="space-y-8">
             {/* Application Progress Card */}
             <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center">
-                  <Icon icon="mdi:checklist" className="text-lg text-white" />
+                <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                  <Icon icon="mdi:checklist" className="text-xl text-white" />
                 </div>
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-gray-900">
                   Application Progress
                 </h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
                   <ApplicationOptions
                     applicationId={id}
                     optionsToCheck={[
@@ -852,19 +832,20 @@ const ApplicantDetail = () => {
                       { name: "APPLIED UNIVERSITY", option: false },
                       { name: "DORMS (OPTIONAL)", option: false },
                     ]}
-                    title="Application Options"
+                    title="Application Setup"
                   />
                 </div>
-                <div>
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
                   <ApplicationOptions
                     applicationId={id}
                     optionsToCheck={[
                       { name: "ADMISSION/OFFER LETTER", option: false },
                     ]}
-                    title="Admission Letter (8-10 weeks)"
+                    title="Admission Letter"
+                    subtitle="(8-10 weeks)"
                   />
                 </div>
-                <div>
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
                   <ApplicationOptions
                     applicationId={id}
                     optionsToCheck={[
@@ -879,77 +860,86 @@ const ApplicantDetail = () => {
             {/* Visa Application Card */}
             <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                  <Icon icon="mdi:passport" className="text-lg text-white" />
+                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                  <Icon icon="mdi:passport" className="text-xl text-white" />
                 </div>
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-gray-900">
                   Visa Application
                 </h2>
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <ApplicationOptions
-                    applicationId={id}
-                    optionsToCheck={[
-                      { name: "APPLICATION FORM", option: false },
-                      { name: "3 PASSPORT PHOTOS", option: false },
-                      {
-                        name: "PHOTOCOPY OF ALL PASSPORT PAGES",
-                        option: false,
-                      },
-                      { name: "MOTIVATION LETTER", option: false },
-                      { name: "CV", option: false },
-                      { name: "O/L AND A/L CERTIFICATE", option: false },
-                      {
-                        name: "BACHELOR CERTIFICATE/ TRANSCRIPT ( MASTERS)",
-                        option: false,
-                      },
-                      { name: "ADMISSION LETTER", option: false },
-                    ]}
-                    title="Required Documents (Part 1)"
-                  />
-                </div>
-                <div>
-                  <ApplicationOptions
-                    applicationId={id}
-                    optionsToCheck={[
-                      { name: "ENROLMENT LETTER", option: false },
-                      {
-                        name: "LANGUAGE CERTIFICATE ( IELTS) / GERMAN",
-                        option: false,
-                      },
-                      { name: "BLOCKED ACCOUNT/ SPONSOR", option: false },
-                      { name: "PAYMENT OF SEMESTER FEES", option: false },
-                      { name: "HEALTH INSURANCE", option: false },
-                      { name: "TRAVEL HEALTH INSURANCE", option: false },
-                      { name: "BIRTH CERTIFICATE ( ENGLISH)", option: false },
-                      { name: "ACCOMMODATION", option: false },
-                    ]}
-                    title="Required Documents (Part 2)"
-                  />
-                </div>
-              </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <ApplicationOptions
-                    applicationId={id}
-                    optionsToCheck={[
-                      { name: "TRAVEL INSURANCE", option: false },
-                      { name: "FLIGHT TICKET ( DUMMY)", option: false },
-                    ]}
-                    title="Additional Requirements"
-                  />
-                  <ApplicationOptions
-                    applicationId={id}
-                    optionsToCheck={[
-                      {
-                        name: "INTERVIEW SECTION WITH GIDZ UNI PATH TEAM",
-                        option: false,
-                      },
-                    ]}
-                    title="Finalization"
-                  />
+              {/* Main Visa Documents */}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                    <ApplicationOptions
+                      applicationId={id}
+                      optionsToCheck={[
+                        { name: "APPLICATION FORM", option: false },
+                        { name: "3 PASSPORT PHOTOS", option: false },
+                        {
+                          name: "PHOTOCOPY OF ALL PASSPORT PAGES",
+                          option: false,
+                        },
+                        { name: "MOTIVATION LETTER", option: false },
+                        { name: "CV", option: false },
+                        { name: "O/L AND A/L CERTIFICATE", option: false },
+                        {
+                          name: "BACHELOR CERTIFICATE/ TRANSCRIPT",
+                          option: false,
+                        },
+                        { name: "ADMISSION LETTER", option: false },
+                      ]}
+                      title="Essential Documents"
+                    />
+                  </div>
+                  <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                    <ApplicationOptions
+                      applicationId={id}
+                      optionsToCheck={[
+                        { name: "ENROLMENT LETTER", option: false },
+                        {
+                          name: "LANGUAGE CERTIFICATE (IELTS/GERMAN)",
+                          option: false,
+                        },
+                        { name: "BLOCKED ACCOUNT/ SPONSOR", option: false },
+                        { name: "PAYMENT OF SEMESTER FEES", option: false },
+                        { name: "HEALTH INSURANCE", option: false },
+                        { name: "TRAVEL HEALTH INSURANCE", option: false },
+                        { name: "BIRTH CERTIFICATE (ENGLISH)", option: false },
+                        { name: "ACCOMMODATION", option: false },
+                      ]}
+                      title="Supporting Documents"
+                    />
+                  </div>
+                </div>
+
+                {/* Additional Requirements */}
+                <div className="border-t border-gray-200 pt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                      <ApplicationOptions
+                        applicationId={id}
+                        optionsToCheck={[
+                          { name: "TRAVEL INSURANCE", option: false },
+                          { name: "FLIGHT TICKET (DUMMY)", option: false },
+                        ]}
+                        title="Travel Requirements"
+                      />
+                    </div>
+                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                      <ApplicationOptions
+                        applicationId={id}
+                        optionsToCheck={[
+                          {
+                            name: "INTERVIEW WITH GIDZ UNI PATH TEAM",
+                            option: false,
+                          },
+                        ]}
+                        title="Final Steps"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

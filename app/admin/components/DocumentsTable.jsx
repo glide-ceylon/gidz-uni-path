@@ -13,6 +13,7 @@ const DocumentsTable = ({ applicationId }) => {
   const [newDoc, setNewDoc] = useState({
     name: "",
     url: "",
+    type: "",
   });
 
   // Fetch documents when component mounts or applicationId changes
@@ -41,11 +42,16 @@ const DocumentsTable = ({ applicationId }) => {
   };
 
   const handleAddDocument = async () => {
-    const { name, url } = newDoc;
+    const { name, url, type } = newDoc;
 
     // Basic validation
     if (!name) {
       alert("Please provide a document name.");
+      return;
+    }
+
+    if (!type) {
+      alert("Please select a document type.");
       return;
     }
 
@@ -57,6 +63,7 @@ const DocumentsTable = ({ applicationId }) => {
           application_id: applicationId,
           name,
           url: url || null, // Allow URL to be nullable
+          type,
         },
       ])
       .select();
@@ -71,6 +78,7 @@ const DocumentsTable = ({ applicationId }) => {
       setNewDoc({
         name: "",
         url: "",
+        type: "",
       });
       setShowAddModal(false);
     }
@@ -96,11 +104,16 @@ const DocumentsTable = ({ applicationId }) => {
 
   // Handle Edit Document
   const handleEditDocument = async () => {
-    const { id, name, url } = currentDoc;
+    const { id, name, url, type } = currentDoc;
 
     // Basic validation
     if (!name) {
       alert("Please provide a document name.");
+      return;
+    }
+
+    if (!type) {
+      alert("Please select a document type.");
       return;
     }
 
@@ -109,6 +122,7 @@ const DocumentsTable = ({ applicationId }) => {
       .update({
         name,
         url: url || null,
+        type,
       })
       .eq("id", id);
 
@@ -124,91 +138,173 @@ const DocumentsTable = ({ applicationId }) => {
   };
 
   return (
-    <div className="mt-8">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">Upload</h2>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+            <Icon icon="mdi:upload" className="text-sm text-white" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">Upload</h3>
+        </div>
         <button
-          className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 text-sm font-semibold"
           onClick={() => setShowAddModal(true)}
         >
-          <Icon icon="mdi:plus" className="mr-2" />
+          <Icon icon="mdi:plus" className="text-base" />
           Add Document
         </button>
       </div>
 
       {loading ? (
-        <div className="text-center">Loading documents...</div>
+        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-8 border border-gray-100 text-center">
+          <div className="animate-pulse">
+            <div className="w-8 h-8 bg-gray-200 rounded-full mx-auto mb-3"></div>
+            <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
+          </div>
+          <p className="text-gray-600 mt-3">Loading documents...</p>
+        </div>
       ) : documents.length === 0 ? (
-        <div className="text-center">No documents found.</div>
+        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-8 border border-gray-100 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Icon
+              icon="mdi:file-document-outline"
+              className="text-2xl text-gray-400"
+            />
+          </div>
+          <p className="text-gray-600 text-base">No documents found.</p>
+          <p className="text-gray-500 text-sm mt-1">
+            Add a document to get started.
+          </p>
+        </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b text-left">Document Name</th>
-                <th className="py-2 px-4 border-b text-left">View</th>
-                <th className="py-2 px-4 border-b text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {documents.map((doc) => (
-                <tr key={doc.id}>
-                  <td className="py-2 px-4 border-b">{doc.name}</td>
-                  <td className="py-2 px-4 border-b">
-                    {doc.url ? (
-                      <a
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
-                      >
-                        Click here to view
-                      </a>
-                    ) : (
-                      <button
-                        className="bg-yellow-500 text-white px-3 py-1 rounded"
-                        onClick={() => alert("Document not yet uploaded.")}
-                        disabled
-                      >
-                        Not Yet Uploaded
-                      </button>
-                    )}
-                  </td>
-                  <td className="py-2 px-4 border-b">
-                    <button
-                      className="text-blue-500 hover:text-blue-700 mr-2"
-                      onClick={() => {
-                        setCurrentDoc({ ...doc });
-                        setShowEditModal(true);
-                      }}
-                    >
-                      <Icon icon="mdi:pencil" />
-                    </button>
-                    <button
-                      className="text-red-500 hover:text-red-700"
-                      onClick={() => handleDeleteDocument(doc.id)}
-                    >
-                      <Icon icon="mdi:delete" />
-                    </button>
-                  </td>
+        <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="bg-gray-50/80">
+                <tr>
+                  <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Document Name
+                  </th>
+                  <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Type
+                  </th>
+                  <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    View
+                  </th>
+                  <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {documents.map((doc) => (
+                  <tr
+                    key={doc.id}
+                    className="hover:bg-gray-50/50 transition-colors duration-200"
+                  >
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                          <Icon
+                            icon="mdi:file-document"
+                            className="text-white text-sm"
+                          />
+                        </div>
+                        <span className="text-gray-900 font-medium">
+                          {doc.name}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-6">
+                      <span
+                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${
+                          doc.type === "visa"
+                            ? "bg-purple-100 text-purple-800"
+                            : doc.type === "university"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        <Icon
+                          icon={
+                            doc.type === "visa"
+                              ? "mdi:passport"
+                              : doc.type === "university"
+                              ? "mdi:school"
+                              : "mdi:file-question"
+                          }
+                          className="text-sm"
+                        />
+                        {doc.type === "visa"
+                          ? "Visa"
+                          : doc.type === "university"
+                          ? "University"
+                          : doc.type || "Unknown"}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6">
+                      {doc.url ? (
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm hover:underline transition-colors duration-200"
+                        >
+                          <Icon icon="mdi:eye" className="text-base" />
+                          Click here to view
+                        </a>
+                      ) : (
+                        <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                          <Icon icon="mdi:clock-outline" className="text-sm" />
+                          Not Yet Uploaded
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                          onClick={() => {
+                            setCurrentDoc({ ...doc });
+                            setShowEditModal(true);
+                          }}
+                          title="Edit document"
+                        >
+                          <Icon icon="mdi:pencil" className="text-lg" />
+                        </button>
+                        <button
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                          onClick={() => handleDeleteDocument(doc.id)}
+                          title="Delete document"
+                        >
+                          <Icon icon="mdi:delete" className="text-lg" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
-      {/* ==============================
-              ADD DOCUMENT MODAL
-      ============================== */}
+      {/* Add Document Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white w-96 p-6 rounded-md relative">
-            <h2 className="text-xl font-semibold mb-4">Add New Document</h2>
-            <div className="space-y-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+          <div className="bg-white rounded-2xl shadow-2xl border border-white/20 w-full max-w-md mx-4 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Icon icon="mdi:file-document-plus" className="text-xl" />
+                </div>
+                <h2 className="text-xl font-semibold">Add New Document</h2>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
               <div>
-                <label className="block mb-1 font-semibold">
-                  Document Name:
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Document Name
                 </label>
                 <input
                   type="text"
@@ -216,41 +312,63 @@ const DocumentsTable = ({ applicationId }) => {
                   onChange={(e) =>
                     setNewDoc({ ...newDoc, name: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
-                  placeholder="e.g., Transcript"
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  placeholder="e.g., Transcript, ID Card, etc."
                 />
               </div>
-            </div>
-
-            <div className="mt-6 flex justify-end space-x-2">
-              <button
-                className="bg-gray-300 px-4 py-2 rounded"
-                onClick={() => setShowAddModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                onClick={handleAddDocument}
-              >
-                Add
-              </button>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Document Type
+                </label>
+                <select
+                  value={newDoc.type}
+                  onChange={(e) =>
+                    setNewDoc({ ...newDoc, type: e.target.value })
+                  }
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                >
+                  <option value="">Select document type</option>
+                  <option value="visa">Visa</option>
+                  <option value="university">University</option>
+                </select>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  className="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium"
+                  onClick={() => setShowAddModal(false)}
+                >
+                  <Icon icon="mdi:close" className="inline mr-2" />
+                  Cancel
+                </button>
+                <button
+                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 font-medium"
+                  onClick={handleAddDocument}
+                >
+                  <Icon icon="mdi:plus" className="inline mr-2" />
+                  Add Document
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* ==============================
-              EDIT DOCUMENT MODAL
-      ============================== */}
+      {/* Edit Document Modal */}
       {showEditModal && currentDoc && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white w-96 p-6 rounded-md relative">
-            <h2 className="text-xl font-semibold mb-4">Edit Document</h2>
-            <div className="space-y-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+          <div className="bg-white rounded-2xl shadow-2xl border border-white/20 w-full max-w-md mx-4 overflow-hidden">
+            <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 p-6 text-white">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Icon icon="mdi:file-document-edit" className="text-xl" />
+                </div>
+                <h2 className="text-xl font-semibold">Edit Document</h2>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
               <div>
-                <label className="block mb-1 font-semibold">
-                  Document Name:
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Document Name
                 </label>
                 <input
                   type="text"
@@ -258,13 +376,30 @@ const DocumentsTable = ({ applicationId }) => {
                   onChange={(e) =>
                     setCurrentDoc({ ...currentDoc, name: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
-                  placeholder="e.g., Transcript"
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                  placeholder="e.g., Transcript, ID Card, etc."
                 />
               </div>
               <div>
-                <label className="block mb-1 font-semibold">
-                  URL (optional):
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Document Type
+                </label>
+                <select
+                  value={currentDoc.type || ""}
+                  onChange={(e) =>
+                    setCurrentDoc({ ...currentDoc, type: e.target.value })
+                  }
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                >
+                  <option value="">Select document type</option>
+                  <option value="visa">Visa</option>
+                  <option value="university">University</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Document URL{" "}
+                  <span className="text-gray-500 font-normal">(optional)</span>
                 </label>
                 <input
                   type="url"
@@ -272,28 +407,29 @@ const DocumentsTable = ({ applicationId }) => {
                   onChange={(e) =>
                     setCurrentDoc({ ...currentDoc, url: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
-                  placeholder="e.g., https://example.com/transcript.pdf"
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                  placeholder="https://example.com/document.pdf"
                 />
               </div>
-            </div>
-
-            <div className="mt-6 flex justify-end space-x-2">
-              <button
-                className="bg-gray-300 px-4 py-2 rounded"
-                onClick={() => {
-                  setShowEditModal(false);
-                  setCurrentDoc(null);
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                onClick={handleEditDocument}
-              >
-                Save
-              </button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  className="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setCurrentDoc(null);
+                  }}
+                >
+                  <Icon icon="mdi:close" className="inline mr-2" />
+                  Cancel
+                </button>
+                <button
+                  className="flex-1 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-4 py-3 rounded-xl hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 font-medium"
+                  onClick={handleEditDocument}
+                >
+                  <Icon icon="mdi:content-save" className="inline mr-2" />
+                  Save Changes
+                </button>
+              </div>
             </div>
           </div>
         </div>
