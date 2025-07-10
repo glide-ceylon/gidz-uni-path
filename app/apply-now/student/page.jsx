@@ -328,8 +328,8 @@ const StudentApplicationForm = () => {
       File: null,
     },
     WhenApplyingMaster: {
-      BachelorsCertificate: "",
-      Transcript: "",
+      BachelorsCertificate: null,
+      Transcript: null,
     },
     AdditionalInformation: {
       ReferenceCode: "",
@@ -463,20 +463,174 @@ const StudentApplicationForm = () => {
     setCurrentStep(stepIndex);
   };
 
+  // Upload file to storage bucket
+  const uploadFile = async (file, folder) => {
+    if (!file) return null;
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `${folder}/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('student_visa_files')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('student_visa_files')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error(`Error uploading file to ${folder}:`, error);
+      throw error;
+    }
+  };
+
   // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      // Create a copy of form data for processing
+      const processedData = JSON.parse(JSON.stringify(formData));
+
+      // Upload files and replace with URLs
+      if (formData.EducationalQualification.OLevel.ResultsDocument) {
+        processedData.EducationalQualification.OLevel.ResultsDocument = await uploadFile(
+          formData.EducationalQualification.OLevel.ResultsDocument,
+          'ol'
+        );
+      }
+
+      if (formData.EducationalQualification.ALevel.ResultsDocument) {
+        processedData.EducationalQualification.ALevel.ResultsDocument = await uploadFile(
+          formData.EducationalQualification.ALevel.ResultsDocument,
+          'al'
+        );
+      }
+
+      if (formData.EducationalQualification.TranscriptOrAdditionalDocument) {
+        processedData.EducationalQualification.TranscriptOrAdditionalDocument = await uploadFile(
+          formData.EducationalQualification.TranscriptOrAdditionalDocument,
+          'transcript'
+        );
+      }
+
+      if (formData.IELTSResults.Certificate) {
+        processedData.IELTSResults.Certificate = await uploadFile(
+          formData.IELTSResults.Certificate,
+          'ielts'
+        );
+      }
+
+      if (formData.CVUpload.File) {
+        processedData.CVUpload.File = await uploadFile(
+          formData.CVUpload.File,
+          'cv'
+        );
+      }
+
+      if (formData.WhenApplyingMaster.BachelorsCertificate) {
+        processedData.WhenApplyingMaster.BachelorsCertificate = await uploadFile(
+          formData.WhenApplyingMaster.BachelorsCertificate,
+          'bachelors'
+        );
+      }
+
+      if (formData.WhenApplyingMaster.Transcript) {
+        processedData.WhenApplyingMaster.Transcript = await uploadFile(
+          formData.WhenApplyingMaster.Transcript,
+          'transcript'
+        );
+      }
+
+      if (formData.FinancialProof.FinancialDocuments) {
+        processedData.FinancialProof.FinancialDocuments = await uploadFile(
+          formData.FinancialProof.FinancialDocuments,
+          'financial'
+        );
+      }
+
+      // Add metadata
+      processedData.ApplicationDate = new Date().toISOString();
+      processedData.MarkasRead = false;
+
+      // Insert into student_visa table with data as JSON string
       const { data, error } = await supabase
-        .from("student_applications")
-        .insert([formData]);
+        .from("student_visa")
+        .insert([{ data: JSON.stringify(processedData) }]);
 
       if (error) throw error;
 
       alert("Application submitted successfully!");
       // Reset form or redirect
+      setFormData({
+        PersonalInformation: {
+          FirstName: "",
+          LastName: "",
+          Gender: "",
+          DateOfBirth: "",
+          UniversityType: [],
+        },
+        ContactInformation: {
+          Email: "",
+          MobileNo: "",
+          Address: "",
+          Country: "",
+        },
+        EducationalQualification: {
+          OLevel: {
+            ResultsDocument: null,
+          },
+          ALevel: {
+            ResultsDocument: null,
+            GPA: {
+              RequiredForMasters: false,
+              Value: "",
+            },
+          },
+          TranscriptOrAdditionalDocument: null,
+        },
+        IELTSResults: {
+          ScoreOption: "",
+          Reading: "",
+          Writing: "",
+          Listening: "",
+          Speaking: "",
+          Certificate: null,
+        },
+        CVUpload: {
+          File: null,
+        },
+        WhenApplyingMaster: {
+          BachelorsCertificate: null,
+          Transcript: null,
+        },
+        AdditionalInformation: {
+          ReferenceCode: "",
+          Course: "",
+          AcademicYear: "",
+          AcademicTerm: "",
+          CoursePreferences: [""],
+          UniversityPreferences: [""],
+          PersonalStatement: "",
+        },
+        FinancialProof: {
+          CanEarnLivingInGermany: "",
+          FinancialMeansType: "",
+          BlockedAccountAmount: "",
+          DeclarationOfCommitment: "",
+          SponsorDetails: "",
+          OtherFinancialMeans: "",
+          FinancialDocuments: null,
+        },
+      });
+      setCurrentStep(0);
     } catch (error) {
       console.error("Error submitting application:", error);
       alert("Error submitting application. Please try again.");
@@ -1084,6 +1238,11 @@ const StudentApplicationForm = () => {
                       <p className="text-sm text-appleGray-500 mt-2">
                         PDF, JPG, PNG up to 10MB
                       </p>
+                      {formData.WhenApplyingMaster.BachelorsCertificate && (
+                        <p className="text-sm text-green-600 mt-2">
+                          ✓ {formData.WhenApplyingMaster.BachelorsCertificate.name}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -1114,6 +1273,11 @@ const StudentApplicationForm = () => {
                       <p className="text-sm text-appleGray-500 mt-2">
                         PDF, JPG, PNG up to 10MB
                       </p>
+                      {formData.WhenApplyingMaster.Transcript && (
+                        <p className="text-sm text-green-600 mt-2">
+                          ✓ {formData.WhenApplyingMaster.Transcript.name}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1150,6 +1314,11 @@ const StudentApplicationForm = () => {
             <p className="text-sm text-appleGray-500 mt-2">
               PDF, JPG, PNG up to 10MB
             </p>
+            {formData.EducationalQualification.TranscriptOrAdditionalDocument && (
+              <p className="text-sm text-green-600 mt-2">
+                ✓ {formData.EducationalQualification.TranscriptOrAdditionalDocument.name}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -1253,6 +1422,11 @@ const StudentApplicationForm = () => {
                 <p className="text-sm text-appleGray-500 mt-2">
                   PDF, JPG, PNG up to 10MB
                 </p>
+                {formData.IELTSResults.Certificate && (
+                  <p className="text-sm text-green-600 mt-2">
+                    ✓ {formData.IELTSResults.Certificate.name}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -1298,6 +1472,11 @@ const StudentApplicationForm = () => {
               <p className="text-sm text-appleGray-500 mt-2">
                 PDF, DOC, DOCX up to 10MB
               </p>
+              {formData.CVUpload.File && (
+                <p className="text-sm text-green-600 mt-2">
+                  ✓ {formData.CVUpload.File.name}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -1532,6 +1711,7 @@ const StudentApplicationForm = () => {
             Prove your financial independence for studying in Germany
           </p>
         </div>
+
         {/* Do You Know About Blocked Account */}
         <div className="bg-appleGray-50 p-6 rounded-2xl">
           <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
@@ -1562,6 +1742,168 @@ const StudentApplicationForm = () => {
                 <span className="text-appleGray-700 font-medium">{option}</span>
               </label>
             ))}
+          </div>
+        </div>
+
+        {/* Financial Means Type */}
+        <div>
+          <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+            How will you finance your studies? *
+          </label>
+          <div className="grid grid-cols-1 gap-4">
+            {[
+              "Blocked Account (Sperrkonto)",
+              "Declaration of Commitment (Verpflichtungserklärung)",
+              "Scholarship",
+              "Other Financial Means"
+            ].map((option) => (
+              <label
+                key={option}
+                className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200"
+              >
+                <input
+                  type="radio"
+                  name="financialMeansType"
+                  value={option}
+                  checked={formData.FinancialProof.FinancialMeansType === option}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "FinancialProof",
+                      "FinancialMeansType",
+                      e.target.value
+                    )
+                  }
+                  className="w-4 h-4 text-sky-500 border-appleGray-300 focus:ring-sky-500"
+                />
+                <span className="text-appleGray-700">{option}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Blocked Account Amount */}
+        {formData.FinancialProof.FinancialMeansType === "Blocked Account (Sperrkonto)" && (
+          <div className="bg-blue-50 p-6 rounded-2xl">
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+              Blocked Account Details
+            </h4>
+            <div>
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                Amount in EUR (Required: €11,208 for 2024)
+              </label>
+              <input
+                type="number"
+                value={formData.FinancialProof.BlockedAccountAmount}
+                onChange={(e) =>
+                  handleInputChange(
+                    "FinancialProof",
+                    "BlockedAccountAmount",
+                    e.target.value
+                  )
+                }
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder="11208"
+                min="11208"
+              />
+              <p className="text-sm text-appleGray-500 mt-2">
+                The minimum required amount for a German student visa is €11,208 per year
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Declaration of Commitment */}
+        {formData.FinancialProof.FinancialMeansType === "Declaration of Commitment (Verpflichtungserklärung)" && (
+          <div className="bg-green-50 p-6 rounded-2xl">
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+              Declaration of Commitment Details
+            </h4>
+            <div>
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                Sponsor Information
+              </label>
+              <textarea
+                value={formData.FinancialProof.SponsorDetails}
+                onChange={(e) =>
+                  handleInputChange(
+                    "FinancialProof",
+                    "SponsorDetails",
+                    e.target.value
+                  )
+                }
+                rows={4}
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder="Please provide details about your sponsor (name, relationship, address, etc.)"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Other Financial Means */}
+        {formData.FinancialProof.FinancialMeansType === "Other Financial Means" && (
+          <div className="bg-yellow-50 p-6 rounded-2xl">
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+              Other Financial Means
+            </h4>
+            <div>
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                Please describe your financial means
+              </label>
+              <textarea
+                value={formData.FinancialProof.OtherFinancialMeans}
+                onChange={(e) =>
+                  handleInputChange(
+                    "FinancialProof",
+                    "OtherFinancialMeans",
+                    e.target.value
+                  )
+                }
+                rows={4}
+                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                placeholder="Describe your financial situation, savings, family support, etc."
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Financial Documents Upload */}
+        <div>
+          <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+            Financial Documents *
+          </label>
+          <p className="text-sm text-appleGray-600 mb-4">
+            Upload documents supporting your financial proof (bank statements, blocked account confirmation, scholarship letter, etc.)
+          </p>
+          <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
+            <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+            <input
+              type="file"
+              onChange={(e) =>
+                handleInputChange(
+                  "FinancialProof",
+                  "FinancialDocuments",
+                  e.target.files[0]
+                )
+              }
+              className="hidden"
+              id="financial-upload"
+              accept=".pdf,.jpg,.jpeg,.png"
+              required
+            />
+            <label
+              htmlFor="financial-upload"
+              className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
+            >
+              Upload Financial Documents
+            </label>
+            <p className="text-sm text-appleGray-500 mt-2">
+              PDF, JPG, PNG up to 10MB
+            </p>
+            {formData.FinancialProof.FinancialDocuments && (
+              <p className="text-sm text-green-600 mt-2">
+                ✓ {formData.FinancialProof.FinancialDocuments.name}
+              </p>
+            )}
           </div>
         </div>
       </div>
