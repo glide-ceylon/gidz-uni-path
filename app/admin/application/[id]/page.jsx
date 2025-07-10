@@ -600,7 +600,7 @@ const ApplicantDetail = () => {
                     }
                     className="text-lg"
                   />
-                  {lockstate ? "Locked" : "Unlocked"}
+                  {lockstate ? "Visa Locked" : "Visa Unlocked"}
                 </button>
               </div>
             </div>

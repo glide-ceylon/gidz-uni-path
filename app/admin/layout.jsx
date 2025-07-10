@@ -42,27 +42,6 @@ export default function AdminLayout({ children }) {
       {/* Use the existing navigation */}
       <Nav />
 
-      {/* Admin Sub-Navigation */}
-      <div className="pt-20 bg-white border-b border-appleGray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center space-x-8 py-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center">
-                <span className="text-white text-sm font-semibold">A</span>
-              </div>
-              <div>
-                <h1 className="text-lg font-semibold text-appleGray-800">
-                  Admin Panel
-                </h1>
-                <p className="text-sm text-appleGray-500">
-                  Management Dashboard
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Page Content */}
       <main className="min-h-screen pt-4">{children}</main>
     </div>

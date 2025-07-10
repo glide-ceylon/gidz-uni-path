@@ -150,6 +150,46 @@ const WorkVisaApplicationForm = () => {
 
   // Handle file upload
   const handleFileChange = (section, field, file) => {
+    if (!file) return;
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setModalMessage(
+        "File size must be less than 10MB. Please choose a smaller file."
+      );
+      setIsModalOpen(true);
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = {
+      cv: [".pdf", ".doc", ".docx"],
+      bachelorOrMasterDegreeCertificate: [".pdf", ".jpg", ".jpeg", ".png"],
+      vocationalTrainingCertificates: [".pdf", ".jpg", ".jpeg", ".png"],
+      germanCertificate: [".pdf", ".jpg", ".jpeg", ".png"],
+      englishCertificate: [".pdf", ".jpg", ".jpeg", ".png"],
+    };
+
+    const fileExtension = "." + file.name.split(".").pop().toLowerCase();
+    const allowedExtensions = allowedTypes[field] || [
+      ".pdf",
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".doc",
+      ".docx",
+    ];
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      setModalMessage(
+        `Invalid file type. Please upload a file with one of these extensions: ${allowedExtensions.join(
+          ", "
+        )}`
+      );
+      setIsModalOpen(true);
+      return;
+    }
+
     setFormData((prevData) => ({
       ...prevData,
       [section]: {
@@ -199,7 +239,7 @@ const WorkVisaApplicationForm = () => {
     if (!formData.ContactInformation.email) {
       newErrors["ContactInformation.email"] = "Email is required.";
     } else if (
-      !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(formData.ContactInformation.email)
+      !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.ContactInformation.email)
     ) {
       newErrors["ContactInformation.email"] = "Invalid email format.";
     }
@@ -239,15 +279,39 @@ const WorkVisaApplicationForm = () => {
   // File upload helper
   const uploadFileToStorage = async (file, fileName) => {
     try {
-      const { data, error } = await supabase.storage
-        .from("work-applications")
-        .upload(fileName, file);
+      // Validate file
+      if (!file) {
+        throw new Error("No file provided");
+      }
 
-      if (error) throw error;
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error("File size exceeds 10MB limit");
+      }
+
+      // Get file extension
+      const fileExtension = file.name.split(".").pop();
+      const fullFileName = `${fileName}.${fileExtension}`;
+
+      console.log("Uploading file:", fullFileName, "Size:", file.size);
+
+      const { data, error } = await supabase.storage
+        .from("work_visa_files")
+        .upload(fullFileName, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (error) {
+        console.error("Supabase storage error:", error);
+        throw error;
+      }
+
+      console.log("File uploaded successfully:", data);
 
       const {
         data: { publicUrl },
-      } = supabase.storage.from("work-applications").getPublicUrl(fileName);
+      } = supabase.storage.from("work_visa_files").getPublicUrl(fullFileName);
 
       return publicUrl;
     } catch (error) {
@@ -270,6 +334,8 @@ const WorkVisaApplicationForm = () => {
 
     try {
       // Upload files to Supabase Storage
+      console.log("Starting file uploads...");
+
       const bachelorOrMasterDegreeCertificateUrl = formData
         .QualificationsAndExperience.bachelorOrMasterDegreeCertificate
         ? await uploadFileToStorage(
@@ -308,46 +374,156 @@ const WorkVisaApplicationForm = () => {
           )
         : null;
 
-      // Prepare data for database
+      console.log("File uploads completed successfully");
+
+      // Prepare data for database - standardize format to match existing records
       const applicationData = {
-        ...formData.PersonalInformation,
-        ...formData.ContactInformation,
-        ...formData.QualificationsAndExperience,
-        ...formData.LanguageSkills,
-        ...formData.GermanyExperience,
-        ...formData.ApplicationDetails,
-        ...formData.FinancialProof,
-        bachelorOrMasterDegreeCertificateUrl,
-        vocationalTrainingCertificatesUrl,
-        cvUrl,
-        germanCertificateUrl,
-        englishCertificateUrl,
+        // Personal Information
+        firstName: formData.PersonalInformation.firstName,
+        lastName: formData.PersonalInformation.lastName,
+        dateOfBirth: formData.PersonalInformation.dateOfBirth,
+        nationality: formData.PersonalInformation.nationality || "",
+        passportNumber: formData.PersonalInformation.passportNumber || "",
+
+        // Contact Information
+        mobileNumber: formData.ContactInformation.mobileNumber,
+        email: formData.ContactInformation.email,
+        currentAddress: formData.ContactInformation.currentAddress || "",
+        country: formData.ContactInformation.country || "",
+
+        // Education & Experience
+        educationType: formData.QualificationsAndExperience.educationType || "",
+        yearsOfProfessionalExperience:
+          formData.QualificationsAndExperience.yearsOfProfessionalExperience ||
+          "",
+        currentJobTitle:
+          formData.QualificationsAndExperience.currentJobTitle || "",
+
+        // Language Skills
+        germanLanguageLevel: formData.LanguageSkills.germanLanguageLevel || "",
+        englishLanguageLevel:
+          formData.LanguageSkills.englishLanguageLevel || "",
+        otherLanguages: formData.LanguageSkills.otherLanguages || [],
+
+        // Germany Experience - standardize format
+        previousStayInGermany:
+          formData.GermanyExperience.previousStayInGermany || "None",
+        previousVisaType: formData.GermanyExperience.previousVisaType || "",
+
+        // Application Details - convert boolean to string format
+        applyingWithSpouse: formData.ApplicationDetails.applyingWithSpouse
+          ? "Yes"
+          : "No",
+        blockedAccount: formData.ApplicationDetails.blockedAccount
+          ? "Yes"
+          : "No",
+        aboutYouAndYourNeeds:
+          formData.ApplicationDetails.aboutYouAndYourNeeds || "",
+
+        // Financial Proof
+        CanEarnLivingInGermany:
+          formData.FinancialProof.CanEarnLivingInGermany || "",
+
+        // File URLs - match existing database field names (without 'Url' suffix)
+        bachelorOrMasterDegreeCertificate: bachelorOrMasterDegreeCertificateUrl,
+        vocationalTrainingCertificates: vocationalTrainingCertificatesUrl,
+        cv: cvUrl,
+        germanCertificate: germanCertificateUrl,
+        englishCertificate: englishCertificateUrl,
+
+        // Additional fields to match existing format
         applicationDate: new Date().toISOString(),
+        MarkasRead: false,
       };
 
-      // Remove file objects from data
-      delete applicationData.bachelorOrMasterDegreeCertificate;
-      delete applicationData.vocationalTrainingCertificates;
-      delete applicationData.cv;
-      delete applicationData.germanCertificate;
-      delete applicationData.englishCertificate;
+      console.log("Inserting application data to database...");
+      console.log("Standardized application data:", applicationData);
 
+      // The work_visa table expects data to be in a JSON column called 'data'
+      // Data format matches existing records in the database
       const { data, error } = await supabase
-        .from("work_applications")
-        .insert([applicationData]);
+        .from("work_visa")
+        .insert([{ data: JSON.stringify(applicationData) }]);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Database error:", error);
+        throw error;
+      }
+
+      console.log("Application submitted successfully");
 
       setModalMessage(
         "Application submitted successfully! We will contact you soon."
       );
       setIsModalOpen(true);
 
-      // Reset form
+      // Reset form to initial state
+      setFormData({
+        PersonalInformation: {
+          firstName: "",
+          lastName: "",
+          dateOfBirth: "",
+          nationality: "",
+          passportNumber: "",
+        },
+        ContactInformation: {
+          mobileNumber: "",
+          email: "",
+          currentAddress: "",
+          country: "",
+        },
+        QualificationsAndExperience: {
+          educationType: "",
+          bachelorOrMasterDegreeCertificate: null,
+          vocationalTrainingCertificates: null,
+          cv: null,
+          yearsOfProfessionalExperience: "",
+          currentJobTitle: "",
+        },
+        LanguageSkills: {
+          germanLanguageLevel: "",
+          germanCertificate: null,
+          englishLanguageLevel: "",
+          englishCertificate: null,
+          otherLanguages: [],
+        },
+        GermanyExperience: {
+          previousStayInGermany: "",
+          previousVisaType: "",
+        },
+        ApplicationDetails: {
+          applyingWithSpouse: false,
+          blockedAccount: false,
+          aboutYouAndYourNeeds: "",
+        },
+        FinancialProof: {
+          CanEarnLivingInGermany: "",
+        },
+      });
       setCurrentStep(0);
+      setErrors({});
     } catch (error) {
       console.error("Error submitting application:", error);
-      setModalMessage("Error submitting application. Please try again.");
+
+      let errorMessage = "Error submitting application. Please try again.";
+
+      if (error.message) {
+        if (error.message.includes("File size exceeds")) {
+          errorMessage =
+            "One or more files exceed the 10MB size limit. Please upload smaller files.";
+        } else if (error.message.includes("No file provided")) {
+          errorMessage = "Please make sure all required files are selected.";
+        } else if (error.message.includes("Storage")) {
+          errorMessage =
+            "Error uploading files. Please check your internet connection and try again.";
+        } else if (error.message.includes("Database")) {
+          errorMessage = "Error saving application data. Please try again.";
+        } else {
+          errorMessage = `Error: ${error.message}`;
+        }
+      }
+
+      setModalMessage(errorMessage);
       setIsModalOpen(true);
     } finally {
       setIsLoading(false);

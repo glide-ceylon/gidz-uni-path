@@ -236,7 +236,7 @@ export default function AdminManagementPage() {
   }
 
   return (
-    <div className="min-h-screen bg-appleGray-50 p-6">
+    <div className="min-h-screen bg-appleGray-50 pt-24 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
