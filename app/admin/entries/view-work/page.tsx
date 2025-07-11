@@ -247,7 +247,7 @@ const WorkDetails = () => {
                     icon="material-symbols:school"
                     className="text-lg text-appleGray-500"
                   />
-                  <span>Bachelor's Degree Certificate</span>
+                  <span>Bachelor&apos;s Degree Certificate</span>
                 </label>
                 {bachelorsUrl ? (
                   <button

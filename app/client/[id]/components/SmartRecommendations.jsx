@@ -144,7 +144,7 @@ const SmartRecommendations = ({
 
     setRecommendations(gidzBuddyChecklist);
     setLoading(false);
-  }, [applicantData, dashboardStats]);
+  }, []); // Remove unnecessary dependencies since we're using static data
 
   useEffect(() => {
     generateRecommendations();
