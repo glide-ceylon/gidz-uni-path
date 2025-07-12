@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import { useAuthSystem, AUTH_TYPES } from "../../hooks/useAuthSystem";
@@ -42,7 +42,7 @@ export default function Login() {
 
     // Only run this check once on mount
     checkExistingAuth();
-  }, []); // Empty dependency array - only run on mount
+  }, [isAuthenticated, authType, user?.id, router]); // Include all dependencies
 
   // Toggle password visibility
   const toggleShowPassword = () => {

@@ -51,41 +51,80 @@ export const useAuthSystem = () => {
       return null;
     }
   }, []);
-  // Check admin authentication (authenticator/supabase-based)
+  // Check admin authentication (custom session-based)
   const checkAdminAuth = useCallback(async () => {
     try {
-      // Check Supabase session
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      // First check if we have a session cookie by calling the validation endpoint
+      const response = await fetch("/api/admin-auth/validate", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (session && session.user) {
-        return {
-          type: AUTH_TYPES.ADMIN,
-          user: {
-            id: session.user.id,
-            email: session.user.email,
-            name: session.user.user_metadata?.name || session.user.email,
-          },
-          isAuthenticated: true,
-        };
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.admin) {
+          const adminData = {
+            id: data.admin.id,
+            email: data.admin.email,
+            name:
+              `${data.admin.first_name} ${data.admin.last_name}`.trim() ||
+              data.admin.email,
+            first_name: data.admin.first_name,
+            last_name: data.admin.last_name,
+            role: data.admin.role,
+            department: data.admin.department,
+          };
+
+          // Update localStorage for backward compatibility
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("adminData", JSON.stringify(adminData));
+
+          return {
+            type: AUTH_TYPES.ADMIN,
+            user: adminData,
+            isAuthenticated: true,
+          };
+        }
       }
 
-      // Fallback to localStorage (for backward compatibility)
+      // If API call failed, check localStorage as fallback (for backward compatibility)
       const adminAuth = localStorage.getItem("isLoggedIn");
       const adminData = localStorage.getItem("adminData");
 
       if (adminAuth === "true" && adminData) {
-        const parsedAdminData = JSON.parse(adminData);
-        return {
-          type: AUTH_TYPES.ADMIN,
-          user: parsedAdminData,
-          isAuthenticated: true,
-        };
+        try {
+          const parsedAdminData = JSON.parse(adminData);
+          // Verify the session is still valid by calling the API
+          const validationResponse = await fetch("/api/admin-auth/validate", {
+            method: "GET",
+            credentials: "include",
+          });
+
+          if (validationResponse.ok) {
+            return {
+              type: AUTH_TYPES.ADMIN,
+              user: parsedAdminData,
+              isAuthenticated: true,
+            };
+          } else {
+            // Session expired, clear localStorage
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("adminData");
+          }
+        } catch (parseError) {
+          console.error("Error parsing admin data:", parseError);
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("adminData");
+        }
       }
+
       return null;
     } catch (err) {
       console.error("Admin auth check error:", err);
+      // Clear potentially invalid localStorage data
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("adminData");
       return null;
@@ -176,52 +215,86 @@ export const useAuthSystem = () => {
       return { success: false, error: "Login failed" };
     }
   }, []);
-  // Admin login (supabase auth)
-  const adminLogin = useCallback(async (email, password) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+  // Admin login (custom session-based auth)
+  const adminLogin = useCallback(
+    async (email, password, rememberMe = false) => {
+      try {
+        const response = await fetch("/api/admin-auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email,
+            password,
+            remember_me: rememberMe,
+          }),
+        });
 
-      if (error) {
-        return { success: false, error: error.message };
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          const adminData = {
+            id: data.data.admin.id,
+            email: data.data.admin.email,
+            name:
+              `${data.data.admin.first_name} ${data.data.admin.last_name}`.trim() ||
+              data.data.admin.email,
+            first_name: data.data.admin.first_name,
+            last_name: data.data.admin.last_name,
+            role: data.data.admin.role,
+            department: data.data.admin.department,
+          };
+
+          // Store for backward compatibility
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("adminData", JSON.stringify(adminData));
+
+          setAuthState({
+            type: AUTH_TYPES.ADMIN,
+            user: adminData,
+            isAuthenticated: true,
+            loading: false,
+          });
+
+          // Dispatch custom event to notify all components
+          window.dispatchEvent(new Event("authStateChanged"));
+
+          return { success: true, user: adminData };
+        } else {
+          return { success: false, error: data.error || "Login failed" };
+        }
+      } catch (err) {
+        console.error("Admin login error:", err);
+        return { success: false, error: "Network error occurred" };
       }
-
-      const adminData = {
-        id: data.user.id,
-        email: data.user.email,
-        name: data.user.user_metadata?.name || data.user.email,
-      };
-
-      // Store for backward compatibility
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("adminData", JSON.stringify(adminData));
-      setAuthState({
-        type: AUTH_TYPES.ADMIN,
-        user: adminData,
-        isAuthenticated: true,
-        loading: false,
-      });
-
-      // Dispatch custom event to notify all components
-      window.dispatchEvent(new Event("authStateChanged"));
-
-      return { success: true, user: adminData };
-    } catch (err) {
-      console.error("Admin login error:", err);
-      return { success: false, error: "Login failed" };
-    }
-  }, []);
+    },
+    []
+  );
   // Universal logout
   const logout = useCallback(async () => {
-    // Clear Supabase session
-    await supabase.auth.signOut();
+    try {
+      // Call custom admin logout endpoint (if admin is logged in)
+      const adminAuth = localStorage.getItem("isLoggedIn");
+      if (adminAuth === "true") {
+        await fetch("/api/admin-auth/login", {
+          method: "DELETE",
+          credentials: "include",
+        });
+      }
+
+      // Also clear Supabase session for any remaining users
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
 
     // Clear all possible auth data
     localStorage.removeItem("userId");
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("adminData");
+
     setAuthState({
       type: AUTH_TYPES.GUEST,
       user: null,
@@ -266,10 +339,33 @@ export const useAuthSystem = () => {
           showApplications: true,
           showCheckStatus: false, // Hide Check Status for admin
           showContact: false, // Hide Contact for admin
+          showAdminDropdown: true, // Add admin-specific dropdown
+          adminDropdownItems: [
+            {
+              href: "/admin",
+              label: "Dashboard",
+              description: "Overview and analytics",
+            },
+            {
+              href: "/admin/admins",
+              label: "Admin Management",
+              description: "Manage admin users",
+            },
+            // {
+            //   href: "/admin/entries",
+            //   label: "Timeline Management",
+            //   description: "Manage timeline events",
+            // },
+            // {
+            //   href: "/admin/messages",
+            //   label: "Messages",
+            //   description: "Communication center",
+            // },
+          ],
           primaryAction: {
-            type: "link",
+            type: "admin-dropdown",
             href: "/admin",
-            label: "Admin Dashboard",
+            label: "Admin Panel",
             className:
               "text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200",
           },

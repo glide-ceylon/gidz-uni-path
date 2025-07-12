@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabase";
+import { Icon } from "@iconify/react";
 
 const StudentDetails = () => {
   const [student, setStudent] = useState(null);
@@ -15,65 +16,77 @@ const StudentDetails = () => {
     const fetchWorkDetails = async () => {
       setLoading(true);
       const Id = sessionStorage.getItem("selectedStudentId");
-  
+
       if (!Id) {
         setLoading(false);
         return;
       }
-  
+
       try {
         const { data, error } = await supabase
           .from("student_visa")
           .select("*")
           .eq("id", Id)
           .single();
-  
+
         if (error) throw new Error(error.message);
-  
+
         // Parse JSON data column
         const parsedData = data.data ? JSON.parse(data.data) : {};
         setStudent({ id: data.id, ...parsedData });
 
         const fetchFileUrls = async (folder, fileName) => {
           if (!fileName) return null;
-        
+
           // Extract the relative path if the fileName contains the full URL
-          const baseUrl = "https://cpzkzyokznbrayxnyfin.supabase.co/storage/v1/object/public/student_visa_files/";
+          const baseUrl =
+            "https://cpzkzyokznbrayxnyfin.supabase.co/storage/v1/object/public/student_visa_files/";
           let relativePath = fileName;
-        
+
           if (fileName.startsWith(baseUrl)) {
             relativePath = fileName.replace(baseUrl, "");
           }
-        
+
           // Ensure that filePath is correctly formatted
-          const decodedFileName = decodeURIComponent(relativePath.split("/").pop());
+          const decodedFileName = decodeURIComponent(
+            relativePath.split("/").pop()
+          );
           const filePath = `${folder}/${decodedFileName}`;
-        
-        
+
           // Get public URL from Supabase storage
           const { data } = supabase.storage
             .from("student_visa_files")
             .getPublicUrl(filePath);
-        
+
           if (!data || !data.publicUrl) {
             console.error(`Error fetching public URL for: ${filePath}`);
             return null;
           }
-        
+
           console.log(`Fetched file URL from`, data);
           return data.publicUrl;
         };
         // Fetch file URLs
-        const [ieltsUrl, transcriptUrl, cvUrl, bachelorsUrl, transUrl] = await Promise.all([
-          fetchFileUrls("ielts", parsedData.IELTSResults?.Certificate),
-          fetchFileUrls("transcript", parsedData.EducationalQualification?.TranscriptOrAdditionalDocument),
-          fetchFileUrls("cv", parsedData.CVUpload?.File),
-          fetchFileUrls("bachelors", parsedData.WhenApplyingMaster?.BachelorsCertificate),
-          fetchFileUrls("bachelors", parsedData.WhenApplyingMaster?.Transcript),
-        ]);
-        console.log("Ielts Url", ieltsUrl)
-        
-  
+        const [ieltsUrl, transcriptUrl, cvUrl, bachelorsUrl, transUrl] =
+          await Promise.all([
+            fetchFileUrls("ielts", parsedData.IELTSResults?.Certificate),
+            fetchFileUrls(
+              "transcript",
+              parsedData.EducationalQualification
+                ?.TranscriptOrAdditionalDocument
+            ),
+            fetchFileUrls("cv", parsedData.CVUpload?.File),
+            fetchFileUrls(
+              "bachelors",
+              parsedData.WhenApplyingMaster?.BachelorsCertificate
+            ),
+            fetchFileUrls(
+              "bachelors",
+              parsedData.WhenApplyingMaster?.Transcript
+            ),
+          ]);
+        console.log("Ielts Url", ieltsUrl);
+
         setIeltsDocumentUrl(ieltsUrl);
         setTranscriptUrl(transcriptUrl);
         setCvUrl(cvUrl);
@@ -85,11 +98,9 @@ const StudentDetails = () => {
         setLoading(false);
       }
     };
-  
+
     fetchWorkDetails();
   }, []);
-  
-  
 
   // Function to open file in a new tab
   const openFileInNewTab = (fileUrl) => {
@@ -102,365 +113,664 @@ const StudentDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg text-gray-600">Loading...</p>
+      <div className="min-h-screen bg-appleGray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-sky-200 border-t-sky-500 mx-auto"></div>
+          <div className="mt-6 space-y-2">
+            <h3 className="text-xl font-semibold text-appleGray-800">
+              Loading Student Details
+            </h3>
+            <p className="text-appleGray-600">
+              Please wait while we fetch the information...
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!student) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg text-red-500">No data available</p>
+      <div className="min-h-screen bg-appleGray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Icon
+              icon="material-symbols:error"
+              className="text-2xl text-red-600"
+            />
+          </div>
+          <h3 className="text-xl font-semibold text-appleGray-800 mb-2">
+            No Student Data Found
+          </h3>
+          <p className="text-appleGray-600 mb-6">
+            The requested student information could not be found or has been
+            removed.
+          </p>
+          <button
+            onClick={() => window.close()}
+            className="bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-2xl font-medium transition-colors duration-200"
+          >
+            Close Tab
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 flex justify-center items-start">
-      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-5xl">
-        <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">
-          Student Details
-        </h1>
-        <form className="space-y-8">
-          {/* Personal Information */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Personal Information
-            </h2>
-            <div className="grid grid-cols-1 gap-6">
-              {[
-                { name: "FirstName", label: "First Name" },
-                { name: "LastName", label: "Last Name" },
-                { name: "Gender", label: "Gender" },
-                { name: "DateOfBirth", label: "Date of Birth" },
-              ].map(({ name, label }) => (
-                <div key={name}>
-                  <label className="block text-sm font-medium text-gray-600">
-                    {label}
-                  </label>
-                  <input
-                    type="text"
-                    value={student.PersonalInformation?.[name] || "Not provided"}
-                    readOnly
-                    className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
+    <div className="min-h-screen bg-appleGray-50">
+      {/* Header Section with navbar gap */}
+      <div className="relative pt-20 admin-header-separator">
+        {/* Subtle divider line for navbar separation */}
+        <div className="absolute top-[80px] left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent z-10"></div>
+
+        {/* Additional visual separation with subtle shadow */}
+        <div className="absolute top-[81px] left-0 right-0 h-2 bg-gradient-to-b from-white/20 to-transparent z-10"></div>
+
+        <div className="bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white shadow-lg relative admin-dashboard-header">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">Student Details</h1>
+                <p className="text-sky-100">
+                  Detailed view of student visa application
+                </p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                  <Icon
+                    icon="material-symbols:person"
+                    className="text-2xl text-white"
                   />
                 </div>
-              ))}
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  University Type
-                </label>
-                <div className="mt-2 flex space-x-4">
-                  {["Public University", "Private University"]
-                    .filter((option) =>
-                      student.PersonalInformation?.UniversityType?.includes(option)
-                    )
-                    .map((option) => (
-                      <label key={option} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={true}
-                          disabled
-                          className="mr-2 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <span className="text-sm text-gray-600">{option}</span>
-                      </label>
-                    ))}
+                <div>
+                  <div className="font-semibold">
+                    {student.PersonalInformation?.FirstName}{" "}
+                    {student.PersonalInformation?.LastName}
+                  </div>
+                  <div className="text-sky-100 text-sm">ID: {student.id}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          {/* Personal Information */}
+          <div className="bg-white rounded-3xl shadow-large border border-appleGray-200 overflow-hidden">
+            <div className="bg-appleGray-50 px-6 py-4 border-b border-appleGray-200">
+              <h2 className="text-xl font-semibold text-appleGray-800 flex items-center space-x-2">
+                <Icon
+                  icon="material-symbols:person"
+                  className="text-xl text-sky-500"
+                />
+                <span>Personal Information</span>
+              </h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  {
+                    name: "FirstName",
+                    label: "First Name",
+                    icon: "material-symbols:badge",
+                  },
+                  {
+                    name: "LastName",
+                    label: "Last Name",
+                    icon: "material-symbols:badge",
+                  },
+                  {
+                    name: "Gender",
+                    label: "Gender",
+                    icon: "material-symbols:person",
+                  },
+                  {
+                    name: "DateOfBirth",
+                    label: "Date of Birth",
+                    icon: "material-symbols:calendar-today",
+                  },
+                ].map(({ name, label, icon }) => (
+                  <div key={name}>
+                    <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                      <Icon
+                        icon={icon}
+                        className="text-lg text-appleGray-500"
+                      />
+                      <span>{label}</span>
+                    </label>
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                      {student.PersonalInformation?.[name] || "Not provided"}
+                    </div>
+                  </div>
+                ))}
+                <div className="md:col-span-2">
+                  <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:school"
+                      className="text-lg text-appleGray-500"
+                    />
+                    <span>University Type</span>
+                  </label>
+                  <div className="flex flex-wrap gap-3">
+                    {["Public University", "Private University"]
+                      .filter((option) =>
+                        student.PersonalInformation?.UniversityType?.includes(
+                          option
+                        )
+                      )
+                      .map((option) => (
+                        <div
+                          key={option}
+                          className="bg-sky-100 text-sky-700 px-4 py-2 rounded-2xl flex items-center space-x-2"
+                        >
+                          <Icon
+                            icon="material-symbols:check-circle"
+                            className="text-lg"
+                          />
+                          <span className="font-medium">{option}</span>
+                        </div>
+                      ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Contact Information */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Contact Information
-            </h2>
-            <div className="grid grid-cols-1 gap-6">
-              {[
-                { name: "Email", label: "Email" },
-                { name: "MobileNo", label: "Mobile No" },
-                { name: "Address", label: "Address" },
-                { name: "Country", label: "Country" },
-              ].map(({ name, label }) => (
-                <div key={name}>
-                  <label className="block text-sm font-medium text-gray-600">
-                    {label}
-                  </label>
-                  <input
-                    type="text"
-                    value={student.ContactInformation?.[name] || "Not provided"}
-                    readOnly
-                    className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                  />
-                </div>
-              ))}
+          <div className="bg-white rounded-3xl shadow-large border border-appleGray-200 overflow-hidden">
+            <div className="bg-appleGray-50 px-6 py-4 border-b border-appleGray-200">
+              <h2 className="text-xl font-semibold text-appleGray-800 flex items-center space-x-2">
+                <Icon
+                  icon="material-symbols:contact-mail"
+                  className="text-xl text-sky-500"
+                />
+                <span>Contact Information</span>
+              </h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  {
+                    name: "Email",
+                    label: "Email",
+                    icon: "material-symbols:mail",
+                  },
+                  {
+                    name: "MobileNo",
+                    label: "Mobile No",
+                    icon: "material-symbols:phone",
+                  },
+                  {
+                    name: "Address",
+                    label: "Address",
+                    icon: "material-symbols:location-on",
+                  },
+                  {
+                    name: "Country",
+                    label: "Country",
+                    icon: "material-symbols:public",
+                  },
+                ].map(({ name, label, icon }) => (
+                  <div key={name}>
+                    <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                      <Icon
+                        icon={icon}
+                        className="text-lg text-appleGray-500"
+                      />
+                      <span>{label}</span>
+                    </label>
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                      {student.ContactInformation?.[name] || "Not provided"}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Educational Qualification */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Educational Qualification
-            </h2>
-            <div className="grid grid-cols-1 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  A-Level Subjects
-                </label>
-                {student.EducationalQualification?.ALevel?.SubjectResults?.map(
-                  (subject, index) => (
-                    <div key={index} className="mt-2">
-                      <input
-                        type="text"
-                        value={`${subject.Subject}: ${subject.Result}`}
-                        readOnly
-                        className="block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                      />
-                    </div>
-                  )
-                )}
-              </div>
-              {/* <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  GPA
-                </label>
-                <input
-                  type="text"
-                  value={
-                    student.EducationalQualification?.ALevel?.GPA?.Value ||
-                    "Not provided"
-                  }
-                  readOnly
-                  className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
+          <div className="bg-white rounded-3xl shadow-large border border-appleGray-200 overflow-hidden">
+            <div className="bg-appleGray-50 px-6 py-4 border-b border-appleGray-200">
+              <h2 className="text-xl font-semibold text-appleGray-800 flex items-center space-x-2">
+                <Icon
+                  icon="material-symbols:school"
+                  className="text-xl text-sky-500"
                 />
-              </div> */}
+                <span>Educational Qualification</span>
+              </h2>
+            </div>
+            <div className="p-6 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Transcript/Additional Document
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:grade"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>A-Level Subjects</span>
+                </label>
+                <div className="space-y-3">
+                  {student.EducationalQualification?.ALevel?.SubjectResults?.map(
+                    (subject, index) => (
+                      <div
+                        key={index}
+                        className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800"
+                      >
+                        {subject.Subject}: {subject.Result}
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:description"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>Transcript/Additional Document</span>
                 </label>
                 {transcriptUrl ? (
                   <button
                     onClick={() => openFileInNewTab(transcriptUrl)}
-                    className="text-blue-500 hover:underline"
+                    className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-2xl transition-colors duration-200 flex items-center space-x-2 font-medium shadow-md hover:shadow-lg"
                   >
-                    View Transcript
+                    <Icon
+                      icon="material-symbols:visibility"
+                      className="text-lg"
+                    />
+                    <span>View Transcript</span>
                   </button>
                 ) : (
-                  <p className="text-gray-500">No transcript uploaded</p>
+                  <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-600 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:description-off"
+                      className="text-lg"
+                    />
+                    <span>No transcript uploaded</span>
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
           {/* IELTS Results */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              IELTS Results
-            </h2>
-            <div className="grid grid-cols-1 gap-6">
-              {[
-                { name: "Reading", label: "Reading" },
-                { name: "Writing", label: "Writing" },
-                { name: "Listening", label: "Listening" },
-                { name: "Speaking", label: "Speaking" },
-              ].map(({ name, label }) => (
-                <div key={name}>
-                  <label className="block text-sm font-medium text-gray-600">
-                    {label}
-                  </label>
-                  <input
-                    type="text"
-                    value={student.IELTSResults?.[name] || "Not provided"}
-                    readOnly
-                    className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                  />
-                </div>
-              ))}
+          <div className="bg-white rounded-3xl shadow-large border border-appleGray-200 overflow-hidden">
+            <div className="bg-appleGray-50 px-6 py-4 border-b border-appleGray-200">
+              <h2 className="text-xl font-semibold text-appleGray-800 flex items-center space-x-2">
+                <Icon
+                  icon="material-symbols:language"
+                  className="text-xl text-sky-500"
+                />
+                <span>IELTS Results</span>
+              </h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {[
+                  {
+                    name: "Reading",
+                    label: "Reading",
+                    icon: "material-symbols:menu-book",
+                  },
+                  {
+                    name: "Writing",
+                    label: "Writing",
+                    icon: "material-symbols:edit",
+                  },
+                  {
+                    name: "Listening",
+                    label: "Listening",
+                    icon: "material-symbols:hearing",
+                  },
+                  {
+                    name: "Speaking",
+                    label: "Speaking",
+                    icon: "material-symbols:record-voice-over",
+                  },
+                ].map(({ name, label, icon }) => (
+                  <div key={name}>
+                    <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                      <Icon
+                        icon={icon}
+                        className="text-lg text-appleGray-500"
+                      />
+                      <span>{label}</span>
+                    </label>
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                      {student.IELTSResults?.[name] || "Not provided"}
+                    </div>
+                  </div>
+                ))}
+              </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  IELTS Certificate
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:workspace-premium"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>IELTS Certificate</span>
                 </label>
                 {ieltsDocumentUrl ? (
                   <button
                     onClick={() => openFileInNewTab(ieltsDocumentUrl)}
-                    className="text-blue-500 hover:underline"
+                    className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-2xl transition-colors duration-200 flex items-center space-x-2 font-medium shadow-md hover:shadow-lg"
                   >
-                    View IELTS Certificate
+                    <Icon
+                      icon="material-symbols:visibility"
+                      className="text-lg"
+                    />
+                    <span>View IELTS Certificate</span>
                   </button>
                 ) : (
-                  <p className="text-gray-500">No IELTS certificate uploaded</p>
+                  <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-600 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:description-off"
+                      className="text-lg"
+                    />
+                    <span>No IELTS certificate uploaded</span>
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
           {/* CV Upload */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              CV Upload
-            </h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-600">
-                CV File
-              </label>
-              {cvUrl ? (
-                <button
-                  onClick={() => openFileInNewTab(cvUrl)}
-                  className="text-blue-500 hover:underline"
-                >
-                  View CV
-                </button>
-              ) : (
-                <p className="text-gray-500">No CV uploaded</p>
-              )}
+          <div className="bg-white rounded-3xl shadow-large border border-appleGray-200 overflow-hidden">
+            <div className="bg-appleGray-50 px-6 py-4 border-b border-appleGray-200">
+              <h2 className="text-xl font-semibold text-appleGray-800 flex items-center space-x-2">
+                <Icon
+                  icon="material-symbols:description"
+                  className="text-xl text-sky-500"
+                />
+                <span>CV Upload</span>
+              </h2>
+            </div>
+            <div className="p-6">
+              <div>
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:file-present"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>CV File</span>
+                </label>
+                {cvUrl ? (
+                  <button
+                    onClick={() => openFileInNewTab(cvUrl)}
+                    className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-2xl transition-colors duration-200 flex items-center space-x-2 font-medium shadow-md hover:shadow-lg"
+                  >
+                    <Icon
+                      icon="material-symbols:visibility"
+                      className="text-lg"
+                    />
+                    <span>View CV</span>
+                  </button>
+                ) : (
+                  <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-600 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:description-off"
+                      className="text-lg"
+                    />
+                    <span>No CV uploaded</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              When Applying Master
-            </h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-600">
-                Bachelors Certificate
-              </label>
-              {bachelorsUrl ? (
-                <button
-                  onClick={() => openFileInNewTab(bachelorsUrl)}
-                  className="text-blue-500 hover:underline"
-                >
-                  View Certificate
-                </button>
-              ) : (
-                <p className="text-gray-500">No Certificate uploaded</p>
-              )}
+          {/* When Applying Master */}
+          <div className="bg-white rounded-3xl shadow-large border border-appleGray-200 overflow-hidden">
+            <div className="bg-appleGray-50 px-6 py-4 border-b border-appleGray-200">
+              <h2 className="text-xl font-semibold text-appleGray-800 flex items-center space-x-2">
+                <Icon
+                  icon="material-symbols:school"
+                  className="text-xl text-sky-500"
+                />
+                <span>When Applying Master</span>
+              </h2>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-600">
-                Transcript
-              </label>
-              {transUrl ? (
-                <button
-                  onClick={() => openFileInNewTab(transUrl)}
-                  className="text-blue-500 hover:underline"
-                >
-                  View Transcript
-                </button>
-              ) : (
-                <p className="text-gray-500">No Transcript uploaded</p>
-              )}
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:workspace-premium"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>Bachelors Certificate</span>
+                </label>
+                {bachelorsUrl ? (
+                  <button
+                    onClick={() => openFileInNewTab(bachelorsUrl)}
+                    className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-2xl transition-colors duration-200 flex items-center space-x-2 font-medium shadow-md hover:shadow-lg"
+                  >
+                    <Icon
+                      icon="material-symbols:visibility"
+                      className="text-lg"
+                    />
+                    <span>View Certificate</span>
+                  </button>
+                ) : (
+                  <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-600 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:description-off"
+                      className="text-lg"
+                    />
+                    <span>No Certificate uploaded</span>
+                  </div>
+                )}
+              </div>
+              <div>
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:description"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>Transcript</span>
+                </label>
+                {transUrl ? (
+                  <button
+                    onClick={() => openFileInNewTab(transUrl)}
+                    className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-2xl transition-colors duration-200 flex items-center space-x-2 font-medium shadow-md hover:shadow-lg"
+                  >
+                    <Icon
+                      icon="material-symbols:visibility"
+                      className="text-lg"
+                    />
+                    <span>View Transcript</span>
+                  </button>
+                ) : (
+                  <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-600 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:description-off"
+                      className="text-lg"
+                    />
+                    <span>No Transcript uploaded</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Additional Information */}
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Additional Information
-            </h2>
-            <div className="grid grid-cols-1 gap-6">
-              {[
-                { name: "ReferenceCode", label: "Reference Code" },
-                { name: "Course", label: "Course" },
-                { name: "AcademicYear", label: "Academic Year" },
-                { name: "AcademicTerm", label: "Academic Term" },
-              ].map(({ name, label }) => (
-                <div key={name}>
-                  <label className="block text-sm font-medium text-gray-600">
-                    {label}
-                  </label>
-                  <input
-                    type="text"
-                    value={student.AdditionalInformation?.[name] || "Not provided"}
-                    readOnly
-                    className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                  />
-                </div>
-              ))}
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Course Preferences
-                </label>
-                {Array.isArray(student.AdditionalInformation?.CoursePreferences) ? (
-                  student.AdditionalInformation.CoursePreferences.map((preference, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={preference}
-                      readOnly
-                      className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                    />
-                  ))
-                ) : (
-                  <input
-                    type="text"
-                    value={student.AdditionalInformation?.CoursePreferences || "Not provided"}
-                    readOnly
-                    className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                  />
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  City Preferences
-                </label>
-                {Array.isArray(student.AdditionalInformation?.CityPreferences) ? (
-                  student.AdditionalInformation.CityPreferences.map((preference, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={preference}
-                      readOnly
-                      className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                    />
-                  ))
-                ) : (
-                  <input
-                    type="text"
-                    value={student.AdditionalInformation?.CityPreferences || "Not provided"}
-                    readOnly
-                    className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                  />
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Universities Preferences
-                </label>
-                {Array.isArray(student.AdditionalInformation?.UniversityPreferences) ? (
-                  student.AdditionalInformation.UniversityPreferences.map((preference, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={preference}
-                      readOnly
-                      className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                    />
-                  ))
-                ) : (
-                  <input
-                    type="text"
-                    value={student.AdditionalInformation?.UniversityPreferences || "Not provided"}
-                    readOnly
-                    className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
-                  />
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Open for Other Options
-                </label>
-                <input
-                  type="text"
-                  value={
-                    student.AdditionalInformation?.OpenForOtherOptions
-                      ? "Yes"
-                      : "No"
-                  }
-                  readOnly
-                  className="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm bg-gray-100 p-2"
+          <div className="bg-white rounded-3xl shadow-large border border-appleGray-200 overflow-hidden">
+            <div className="bg-appleGray-50 px-6 py-4 border-b border-appleGray-200">
+              <h2 className="text-xl font-semibold text-appleGray-800 flex items-center space-x-2">
+                <Icon
+                  icon="material-symbols:info"
+                  className="text-xl text-sky-500"
                 />
+                <span>Additional Information</span>
+              </h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {[
+                  {
+                    name: "ReferenceCode",
+                    label: "Reference Code",
+                    icon: "material-symbols:confirmation-number",
+                  },
+                  {
+                    name: "Course",
+                    label: "Course",
+                    icon: "material-symbols:menu-book",
+                  },
+                  {
+                    name: "AcademicYear",
+                    label: "Academic Year",
+                    icon: "material-symbols:calendar-today",
+                  },
+                  {
+                    name: "AcademicTerm",
+                    label: "Academic Term",
+                    icon: "material-symbols:schedule",
+                  },
+                ].map(({ name, label, icon }) => (
+                  <div key={name}>
+                    <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                      <Icon
+                        icon={icon}
+                        className="text-lg text-appleGray-500"
+                      />
+                      <span>{label}</span>
+                    </label>
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                      {student.AdditionalInformation?.[name] || "Not provided"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Course Preferences */}
+              <div className="mb-6">
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:favorite"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>Course Preferences</span>
+                </label>
+                <div className="space-y-3">
+                  {Array.isArray(
+                    student.AdditionalInformation?.CoursePreferences
+                  ) ? (
+                    student.AdditionalInformation.CoursePreferences.map(
+                      (preference, index) => (
+                        <div
+                          key={index}
+                          className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800"
+                        >
+                          {preference}
+                        </div>
+                      )
+                    )
+                  ) : (
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                      {student.AdditionalInformation?.CoursePreferences ||
+                        "Not provided"}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* City Preferences */}
+              <div className="mb-6">
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:location-city"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>City Preferences</span>
+                </label>
+                <div className="space-y-3">
+                  {Array.isArray(
+                    student.AdditionalInformation?.CityPreferences
+                  ) ? (
+                    student.AdditionalInformation.CityPreferences.map(
+                      (preference, index) => (
+                        <div
+                          key={index}
+                          className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800"
+                        >
+                          {preference}
+                        </div>
+                      )
+                    )
+                  ) : (
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                      {student.AdditionalInformation?.CityPreferences ||
+                        "Not provided"}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* University Preferences */}
+              <div className="mb-6">
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:account-balance"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>University Preferences</span>
+                </label>
+                <div className="space-y-3">
+                  {Array.isArray(
+                    student.AdditionalInformation?.UniversityPreferences
+                  ) ? (
+                    student.AdditionalInformation.UniversityPreferences.map(
+                      (preference, index) => (
+                        <div
+                          key={index}
+                          className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800"
+                        >
+                          {preference}
+                        </div>
+                      )
+                    )
+                  ) : (
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                      {student.AdditionalInformation?.UniversityPreferences ||
+                        "Not provided"}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Open for Other Options */}
+              <div>
+                <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                  <Icon
+                    icon="material-symbols:open-in-new"
+                    className="text-lg text-appleGray-500"
+                  />
+                  <span>Open for Other Options</span>
+                </label>
+                <div
+                  className={`px-4 py-3 rounded-2xl flex items-center space-x-2 ${
+                    student.AdditionalInformation?.OpenForOtherOptions
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  <Icon
+                    icon={
+                      student.AdditionalInformation?.OpenForOtherOptions
+                        ? "material-symbols:check-circle"
+                        : "material-symbols:cancel"
+                    }
+                    className="text-lg"
+                  />
+                  <span className="font-medium">
+                    {student.AdditionalInformation?.OpenForOtherOptions
+                      ? "Yes"
+                      : "No"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -470,12 +780,13 @@ const StudentDetails = () => {
             <button
               type="button"
               onClick={() => window.close()}
-              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              className="bg-appleGray-600 hover:bg-appleGray-700 text-white px-8 py-4 rounded-2xl font-medium transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
             >
-              Close Tab
+              <Icon icon="material-symbols:close" className="text-lg" />
+              <span>Close Tab</span>
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

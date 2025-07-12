@@ -12,6 +12,13 @@ import {
   FaCalendarAlt,
   FaChartLine,
   FaBolt,
+  FaUserFriends,
+  FaUniversity as FaBank,
+  FaEnvelope,
+  FaHome,
+  FaLanguage,
+  FaPlane,
+  FaHeartbeat,
 } from "react-icons/fa";
 
 const SmartRecommendations = ({
@@ -25,188 +32,119 @@ const SmartRecommendations = ({
 
   const generateRecommendations = useCallback(() => {
     setLoading(true);
-    const recs = [];
-    const currentStep = parseInt(applicantData?.status?.slice(-1)) || 1;
-    const currentDate = new Date();
 
-    // Priority Level: 1 = High, 2 = Medium, 3 = Low
-
-    // Document-related recommendations
-    if (dashboardStats.documentsUploaded < 5) {
-      recs.push({
-        id: "upload-documents",
-        title: "Complete Document Upload",
+    // Gidz Buddy Checklist - Fixed items that students should complete
+    const gidzBuddyChecklist = [
+      {
+        id: "blocked-account",
+        title: "Blocked Account - Expatrio",
         description:
-          "Upload remaining required documents to progress your application",
+          "Open a blocked account to show financial proof for your visa application",
+        priority: 1,
+        category: "finance",
+        icon: FaBank,
+        action: "Open Account",
+        estimatedTime: "30 minutes",
+        impact: "Critical",
+        nextSteps: [
+          "Visit Expatrio website",
+          "Create account and verify identity",
+          "Deposit required amount (approx. €11,208)",
+          "Download account confirmation",
+        ],
+      },
+      {
+        id: "motivation-letter",
+        title: "Motivation Letter",
+        description:
+          "Write a compelling motivation letter for your university applications",
         priority: 1,
         category: "documents",
-        icon: FaFileAlt,
-        action: "Upload Now",
-        estimatedTime: "15 minutes",
+        icon: FaEnvelope,
+        action: "Write Letter",
+        estimatedTime: "2 hours",
         impact: "High",
         nextSteps: [
-          "Check document requirements list",
-          "Scan or photograph documents",
-          "Upload through document portal",
+          "Research the university and program",
+          "Outline your academic and career goals",
+          "Draft your motivation letter",
+          "Review and get feedback",
         ],
-      });
-    }
-
-    // Payment recommendations
-    if (!applicantData?.payment1 || !applicantData?.payment2) {
-      recs.push({
-        id: "complete-payments",
-        title: "Complete Required Payments",
-        description: "Process outstanding payments to avoid application delays",
-        priority: 1,
-        category: "payments",
-        icon: FaCheckCircle,
-        action: "Pay Now",
-        estimatedTime: "10 minutes",
-        impact: "Critical",
-        nextSteps: [
-          "Review payment requirements",
-          "Choose payment method",
-          "Process payment securely",
-        ],
-      });
-    }
-
-    // University application recommendations
-    if (dashboardStats.universitiesApplied < 3 && currentStep >= 2) {
-      recs.push({
-        id: "apply-universities",
-        title: "Apply to More Universities",
-        description: "Increase your chances by applying to 3-5 universities",
+      },
+      {
+        id: "find-accommodation",
+        title: "Find Accommodation",
+        description: "Secure housing for your stay in Germany before arrival",
         priority: 2,
-        category: "universities",
-        icon: FaUniversity,
-        action: "Browse Universities",
-        estimatedTime: "30 minutes",
-        impact: "High",
-        nextSteps: [
-          "Research university rankings",
-          "Check admission requirements",
-          "Submit applications",
-        ],
-      });
-    }
-
-    // Progress-based recommendations
-    if (currentStep === 1) {
-      recs.push({
-        id: "start-documents",
-        title: "Begin Document Collection",
-        description: "Start gathering required documents for your application",
-        priority: 1,
-        category: "getting-started",
-        icon: FaGraduationCap,
-        action: "Get Started",
+        category: "housing",
+        icon: FaHome,
+        action: "Search Housing",
         estimatedTime: "1 hour",
         impact: "High",
         nextSteps: [
-          "Download document checklist",
-          "Organize physical documents",
-          "Begin scanning process",
+          "Check university dormitories",
+          "Browse private housing platforms",
+          "Contact landlords or housing services",
+          "Submit accommodation applications",
         ],
-      });
-    }
-
-    if (currentStep >= 3) {
-      recs.push({
-        id: "visa-preparation",
-        title: "Prepare for Visa Interview",
-        description: "Book visa appointment and prepare required documents",
-        priority: 2,
-        category: "visa",
-        icon: FaPassport,
-        action: "Schedule Interview",
-        estimatedTime: "45 minutes",
-        impact: "Critical",
-        nextSteps: [
-          "Check visa requirements",
-          "Book appointment slot",
-          "Prepare interview documents",
-        ],
-      });
-    }
-
-    // Time-sensitive recommendations
-    const daysFromNow = (days) =>
-      new Date(currentDate.getTime() + days * 24 * 60 * 60 * 1000);
-
-    if (dashboardStats.nextDeadline) {
-      const deadline = new Date(dashboardStats.nextDeadline);
-      const daysUntilDeadline = Math.ceil(
-        (deadline - currentDate) / (1000 * 60 * 60 * 24)
-      );
-
-      if (daysUntilDeadline <= 30 && daysUntilDeadline > 0) {
-        recs.push({
-          id: "deadline-reminder",
-          title: "Upcoming Deadline Alert",
-          description: `University deadline in ${daysUntilDeadline} days`,
-          priority: 1,
-          category: "deadlines",
-          icon: FaClock,
-          action: "Review Requirements",
-          estimatedTime: "20 minutes",
-          impact: "Critical",
-          nextSteps: [
-            "Review application status",
-            "Complete missing requirements",
-            "Submit before deadline",
-          ],
-          urgent: true,
-        });
-      }
-    }
-
-    // Smart suggestions based on patterns
-    if (dashboardStats.progressPercentage >= 75) {
-      recs.push({
-        id: "accommodation-planning",
-        title: "Plan Your Accommodation",
-        description: "Start looking for student housing options in Germany",
+      },
+      {
+        id: "german-language",
+        title: "Tips for Learning German",
+        description:
+          "Start learning German to help with daily life and studies",
         priority: 3,
-        category: "planning",
-        icon: FaCalendarAlt,
-        action: "Explore Options",
-        estimatedTime: "1 hour",
+        category: "preparation",
+        icon: FaLanguage,
+        action: "Start Learning",
+        estimatedTime: "Ongoing",
         impact: "Medium",
         nextSteps: [
-          "Research student dormitories",
-          "Check private accommodation",
-          "Apply for housing",
+          "Download language learning apps (Duolingo, Babbel)",
+          "Find German language courses online or locally",
+          "Practice with German media (movies, podcasts)",
+          "Join German conversation groups",
         ],
-      });
-    }
-
-    // Personalized recommendations based on user behavior
-    const lastLoginDays = 3; // This would come from real analytics
-    if (lastLoginDays > 7) {
-      recs.push({
-        id: "catch-up",
-        title: "Catch Up on Recent Updates",
-        description: "Review recent messages and application updates",
+      },
+      {
+        id: "book-flight",
+        title: "Book Flight",
+        description: "Book your flight to Germany after visa approval",
         priority: 2,
-        category: "updates",
-        icon: FaBolt,
-        action: "Review Updates",
-        estimatedTime: "10 minutes",
-        impact: "Medium",
+        category: "travel",
+        icon: FaPlane,
+        action: "Book Now",
+        estimatedTime: "45 minutes",
+        impact: "High",
         nextSteps: [
-          "Check new messages",
-          "Review status changes",
-          "Update pending actions",
+          "Compare flight prices on booking sites",
+          "Check baggage allowances",
+          "Book flight tickets",
+          "Arrange airport pickup or transport",
         ],
-      });
-    } // Sort by priority (1 = highest)
-    recs.sort((a, b) => a.priority - b.priority);
+      },
+      {
+        id: "health-insurance",
+        title: "Health Insurance",
+        description: "Get mandatory health insurance coverage for Germany",
+        priority: 1,
+        category: "insurance",
+        icon: FaHeartbeat,
+        action: "Get Insurance",
+        estimatedTime: "1 hour",
+        impact: "Critical",
+        nextSteps: [
+          "Research public vs private insurance options",
+          "Compare insurance providers",
+          "Apply for health insurance",
+          "Get insurance confirmation letter",
+        ],
+      },
+    ];
 
-    setRecommendations(recs);
+    setRecommendations(gidzBuddyChecklist);
     setLoading(false);
-  }, [applicantData, dashboardStats]);
+  }, []); // Remove unnecessary dependencies since we're using static data
 
   useEffect(() => {
     generateRecommendations();
@@ -272,13 +210,13 @@ const SmartRecommendations = ({
     <div className="space-y-6">
       <div className="flex items-center space-x-3 mb-6">
         <div className="w-8 h-8 bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl flex items-center justify-center">
-          <FaLightbulb className="w-4 h-4 text-white" />
+          <FaUserFriends className="w-4 h-4 text-white" />
         </div>
         <h3 className="text-xl font-bold text-appleGray-800">
-          Smart Recommendations
+          Gidz Buddy Checklist
         </h3>
         <span className="text-sm text-appleGray-600">
-          AI-powered next steps
+          Essential steps for your journey
         </span>
       </div>
 
@@ -288,10 +226,10 @@ const SmartRecommendations = ({
             <FaStar className="w-8 h-8 text-white" />
           </div>
           <h4 className="text-lg font-semibold text-green-800 mb-2">
-            All Caught Up!
+            Checklist Complete!
           </h4>
           <p className="text-green-600">
-            You&apos;re on track. Keep up the great work!
+            You&apos;ve completed all essential steps. Great job!
           </p>
         </div>
       ) : (
@@ -319,7 +257,7 @@ const SmartRecommendations = ({
                       {isCompleted ? (
                         <FaCheckCircle className="w-6 h-6 text-white" />
                       ) : (
-                        <rec.icon className="w-6 h-6 text-white" />
+                        <FaCheckCircle className="w-6 h-6 text-white" />
                       )}
                     </div>
 

@@ -81,7 +81,12 @@ const Universities = ({ applicationId }) => {
           University Applications
         </h3>
         <p className="text-sm text-appleGray-600">
-          Track your university application progress
+          Track your university application progress.
+        </p>
+        <p className="text-sm text-appleGray-600">
+          It takes 2-3 months for universities to process applications. If you
+          receive any emails from universities, please forward them to your
+          counselor.
         </p>
       </div>
 

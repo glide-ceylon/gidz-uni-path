@@ -51,9 +51,7 @@ const WorkVisaApplicationForm = () => {
       vocationalTrainingCertificates: null,
       cv: null,
       yearsOfProfessionalExperience: "",
-      experienceTimeline: "",
       currentJobTitle: "",
-      targetJobField: "",
     },
     LanguageSkills: {
       germanLanguageLevel: "",
@@ -65,25 +63,14 @@ const WorkVisaApplicationForm = () => {
     GermanyExperience: {
       previousStayInGermany: "",
       previousVisaType: "",
-      stayDuration: "",
-      reasonForPreviousStay: "",
     },
     ApplicationDetails: {
       applyingWithSpouse: false,
-      spouseDetails: "",
       blockedAccount: false,
       aboutYouAndYourNeeds: "",
-      preferredStartDate: "",
-      targetSalaryRange: "",
     },
     FinancialProof: {
       CanEarnLivingInGermany: "",
-      FinancialMeansType: "",
-      BlockedAccountAmount: "",
-      DeclarationOfCommitment: "",
-      SponsorDetails: "",
-      OtherFinancialMeans: "",
-      FinancialDocuments: null,
     },
   });
 
@@ -163,6 +150,46 @@ const WorkVisaApplicationForm = () => {
 
   // Handle file upload
   const handleFileChange = (section, field, file) => {
+    if (!file) return;
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setModalMessage(
+        "File size must be less than 10MB. Please choose a smaller file."
+      );
+      setIsModalOpen(true);
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = {
+      cv: [".pdf", ".doc", ".docx"],
+      bachelorOrMasterDegreeCertificate: [".pdf", ".jpg", ".jpeg", ".png"],
+      vocationalTrainingCertificates: [".pdf", ".jpg", ".jpeg", ".png"],
+      germanCertificate: [".pdf", ".jpg", ".jpeg", ".png"],
+      englishCertificate: [".pdf", ".jpg", ".jpeg", ".png"],
+    };
+
+    const fileExtension = "." + file.name.split(".").pop().toLowerCase();
+    const allowedExtensions = allowedTypes[field] || [
+      ".pdf",
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".doc",
+      ".docx",
+    ];
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      setModalMessage(
+        `Invalid file type. Please upload a file with one of these extensions: ${allowedExtensions.join(
+          ", "
+        )}`
+      );
+      setIsModalOpen(true);
+      return;
+    }
+
     setFormData((prevData) => ({
       ...prevData,
       [section]: {
@@ -212,7 +239,7 @@ const WorkVisaApplicationForm = () => {
     if (!formData.ContactInformation.email) {
       newErrors["ContactInformation.email"] = "Email is required.";
     } else if (
-      !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(formData.ContactInformation.email)
+      !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.ContactInformation.email)
     ) {
       newErrors["ContactInformation.email"] = "Invalid email format.";
     }
@@ -239,13 +266,10 @@ const WorkVisaApplicationForm = () => {
       // newErrors["LanguageSkills.germanCertificate"] = "German certificate is required.";
     }
 
-    // Financial Proof validation (only if financial means type is selected)
-    if (
-      formData.FinancialProof.FinancialMeansType &&
-      !formData.FinancialProof.CanEarnLivingInGermany
-    ) {
+    // Financial Proof validation
+    if (!formData.FinancialProof.CanEarnLivingInGermany) {
       newErrors["FinancialProof.CanEarnLivingInGermany"] =
-        "Please specify if you can earn living in Germany.";
+        "Please answer the blocked account question.";
     }
 
     setErrors(newErrors);
@@ -255,15 +279,39 @@ const WorkVisaApplicationForm = () => {
   // File upload helper
   const uploadFileToStorage = async (file, fileName) => {
     try {
-      const { data, error } = await supabase.storage
-        .from("work-applications")
-        .upload(fileName, file);
+      // Validate file
+      if (!file) {
+        throw new Error("No file provided");
+      }
 
-      if (error) throw error;
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error("File size exceeds 10MB limit");
+      }
+
+      // Get file extension
+      const fileExtension = file.name.split(".").pop();
+      const fullFileName = `${fileName}.${fileExtension}`;
+
+      console.log("Uploading file:", fullFileName, "Size:", file.size);
+
+      const { data, error } = await supabase.storage
+        .from("work_visa_files")
+        .upload(fullFileName, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (error) {
+        console.error("Supabase storage error:", error);
+        throw error;
+      }
+
+      console.log("File uploaded successfully:", data);
 
       const {
         data: { publicUrl },
-      } = supabase.storage.from("work-applications").getPublicUrl(fileName);
+      } = supabase.storage.from("work_visa_files").getPublicUrl(fullFileName);
 
       return publicUrl;
     } catch (error) {
@@ -286,6 +334,8 @@ const WorkVisaApplicationForm = () => {
 
     try {
       // Upload files to Supabase Storage
+      console.log("Starting file uploads...");
+
       const bachelorOrMasterDegreeCertificateUrl = formData
         .QualificationsAndExperience.bachelorOrMasterDegreeCertificate
         ? await uploadFileToStorage(
@@ -324,45 +374,156 @@ const WorkVisaApplicationForm = () => {
           )
         : null;
 
-      // Prepare data for database
+      console.log("File uploads completed successfully");
+
+      // Prepare data for database - standardize format to match existing records
       const applicationData = {
-        ...formData.PersonalInformation,
-        ...formData.ContactInformation,
-        ...formData.QualificationsAndExperience,
-        ...formData.LanguageSkills,
-        ...formData.GermanyExperience,
-        ...formData.ApplicationDetails,
-        bachelorOrMasterDegreeCertificateUrl,
-        vocationalTrainingCertificatesUrl,
-        cvUrl,
-        germanCertificateUrl,
-        englishCertificateUrl,
+        // Personal Information
+        firstName: formData.PersonalInformation.firstName,
+        lastName: formData.PersonalInformation.lastName,
+        dateOfBirth: formData.PersonalInformation.dateOfBirth,
+        nationality: formData.PersonalInformation.nationality || "",
+        passportNumber: formData.PersonalInformation.passportNumber || "",
+
+        // Contact Information
+        mobileNumber: formData.ContactInformation.mobileNumber,
+        email: formData.ContactInformation.email,
+        currentAddress: formData.ContactInformation.currentAddress || "",
+        country: formData.ContactInformation.country || "",
+
+        // Education & Experience
+        educationType: formData.QualificationsAndExperience.educationType || "",
+        yearsOfProfessionalExperience:
+          formData.QualificationsAndExperience.yearsOfProfessionalExperience ||
+          "",
+        currentJobTitle:
+          formData.QualificationsAndExperience.currentJobTitle || "",
+
+        // Language Skills
+        germanLanguageLevel: formData.LanguageSkills.germanLanguageLevel || "",
+        englishLanguageLevel:
+          formData.LanguageSkills.englishLanguageLevel || "",
+        otherLanguages: formData.LanguageSkills.otherLanguages || [],
+
+        // Germany Experience - standardize format
+        previousStayInGermany:
+          formData.GermanyExperience.previousStayInGermany || "None",
+        previousVisaType: formData.GermanyExperience.previousVisaType || "",
+
+        // Application Details - convert boolean to string format
+        applyingWithSpouse: formData.ApplicationDetails.applyingWithSpouse
+          ? "Yes"
+          : "No",
+        blockedAccount: formData.ApplicationDetails.blockedAccount
+          ? "Yes"
+          : "No",
+        aboutYouAndYourNeeds:
+          formData.ApplicationDetails.aboutYouAndYourNeeds || "",
+
+        // Financial Proof
+        CanEarnLivingInGermany:
+          formData.FinancialProof.CanEarnLivingInGermany || "",
+
+        // File URLs - match existing database field names (without 'Url' suffix)
+        bachelorOrMasterDegreeCertificate: bachelorOrMasterDegreeCertificateUrl,
+        vocationalTrainingCertificates: vocationalTrainingCertificatesUrl,
+        cv: cvUrl,
+        germanCertificate: germanCertificateUrl,
+        englishCertificate: englishCertificateUrl,
+
+        // Additional fields to match existing format
         applicationDate: new Date().toISOString(),
+        MarkasRead: false,
       };
 
-      // Remove file objects from data
-      delete applicationData.bachelorOrMasterDegreeCertificate;
-      delete applicationData.vocationalTrainingCertificates;
-      delete applicationData.cv;
-      delete applicationData.germanCertificate;
-      delete applicationData.englishCertificate;
+      console.log("Inserting application data to database...");
+      console.log("Standardized application data:", applicationData);
 
+      // The work_visa table expects data to be in a JSON column called 'data'
+      // Data format matches existing records in the database
       const { data, error } = await supabase
-        .from("work_applications")
-        .insert([applicationData]);
+        .from("work_visa")
+        .insert([{ data: JSON.stringify(applicationData) }]);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Database error:", error);
+        throw error;
+      }
+
+      console.log("Application submitted successfully");
 
       setModalMessage(
         "Application submitted successfully! We will contact you soon."
       );
       setIsModalOpen(true);
 
-      // Reset form
+      // Reset form to initial state
+      setFormData({
+        PersonalInformation: {
+          firstName: "",
+          lastName: "",
+          dateOfBirth: "",
+          nationality: "",
+          passportNumber: "",
+        },
+        ContactInformation: {
+          mobileNumber: "",
+          email: "",
+          currentAddress: "",
+          country: "",
+        },
+        QualificationsAndExperience: {
+          educationType: "",
+          bachelorOrMasterDegreeCertificate: null,
+          vocationalTrainingCertificates: null,
+          cv: null,
+          yearsOfProfessionalExperience: "",
+          currentJobTitle: "",
+        },
+        LanguageSkills: {
+          germanLanguageLevel: "",
+          germanCertificate: null,
+          englishLanguageLevel: "",
+          englishCertificate: null,
+          otherLanguages: [],
+        },
+        GermanyExperience: {
+          previousStayInGermany: "",
+          previousVisaType: "",
+        },
+        ApplicationDetails: {
+          applyingWithSpouse: false,
+          blockedAccount: false,
+          aboutYouAndYourNeeds: "",
+        },
+        FinancialProof: {
+          CanEarnLivingInGermany: "",
+        },
+      });
       setCurrentStep(0);
+      setErrors({});
     } catch (error) {
       console.error("Error submitting application:", error);
-      setModalMessage("Error submitting application. Please try again.");
+
+      let errorMessage = "Error submitting application. Please try again.";
+
+      if (error.message) {
+        if (error.message.includes("File size exceeds")) {
+          errorMessage =
+            "One or more files exceed the 10MB size limit. Please upload smaller files.";
+        } else if (error.message.includes("No file provided")) {
+          errorMessage = "Please make sure all required files are selected.";
+        } else if (error.message.includes("Storage")) {
+          errorMessage =
+            "Error uploading files. Please check your internet connection and try again.";
+        } else if (error.message.includes("Database")) {
+          errorMessage = "Error saving application data. Please try again.";
+        } else {
+          errorMessage = `Error: ${error.message}`;
+        }
+      }
+
+      setModalMessage(errorMessage);
       setIsModalOpen(true);
     } finally {
       setIsLoading(false);
@@ -1020,46 +1181,6 @@ const WorkVisaApplicationForm = () => {
                   placeholder="Enter your current job title"
                 />
               </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  Target Job Field in Germany
-                </label>
-                <input
-                  type="text"
-                  value={formData.QualificationsAndExperience.targetJobField}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "QualificationsAndExperience",
-                      "targetJobField",
-                      e.target.value
-                    )
-                  }
-                  className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                  placeholder="What type of work do you want to do in Germany?"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  Experience Timeline
-                </label>
-                <textarea
-                  value={
-                    formData.QualificationsAndExperience.experienceTimeline
-                  }
-                  onChange={(e) =>
-                    handleInputChange(
-                      "QualificationsAndExperience",
-                      "experienceTimeline",
-                      e.target.value
-                    )
-                  }
-                  rows={4}
-                  className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Briefly describe your work experience timeline..."
-                />
-              </div>
             </div>
           </div>
         </div>
@@ -1282,44 +1403,6 @@ const WorkVisaApplicationForm = () => {
                     <option value="Other">Other</option>
                   </select>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                    Duration of Stay
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.GermanyExperience.stayDuration}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "GermanyExperience",
-                        "stayDuration",
-                        e.target.value
-                      )
-                    }
-                    className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                    placeholder="e.g., 3 months, 1 year"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                    Reason for Previous Stay
-                  </label>
-                  <textarea
-                    value={formData.GermanyExperience.reasonForPreviousStay}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "GermanyExperience",
-                        "reasonForPreviousStay",
-                        e.target.value
-                      )
-                    }
-                    rows={3}
-                    className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Briefly describe the reason for your previous stay..."
-                  />
-                </div>
               </>
             )}
           </div>
@@ -1342,50 +1425,6 @@ const WorkVisaApplicationForm = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Preferred Start Date
-              </label>
-              <input
-                type="date"
-                value={formData.ApplicationDetails.preferredStartDate}
-                onChange={(e) =>
-                  handleInputChange(
-                    "ApplicationDetails",
-                    "preferredStartDate",
-                    e.target.value
-                  )
-                }
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                min={new Date().toISOString().split("T")[0]}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Target Salary Range (EUR per year)
-              </label>
-              <select
-                value={formData.ApplicationDetails.targetSalaryRange}
-                onChange={(e) =>
-                  handleInputChange(
-                    "ApplicationDetails",
-                    "targetSalaryRange",
-                    e.target.value
-                  )
-                }
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-              >
-                <option value="">Select salary range</option>
-                <option value="30000-40000">€30,000 - €40,000</option>
-                <option value="40000-50000">€40,000 - €50,000</option>
-                <option value="50000-60000">€50,000 - €60,000</option>
-                <option value="60000-70000">€60,000 - €70,000</option>
-                <option value="70000+">€70,000+</option>
-              </select>
-            </div>
-          </div>
           <div className="space-y-4">
             <div className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200">
               <input
@@ -1408,27 +1447,6 @@ const WorkVisaApplicationForm = () => {
                 I am applying with my spouse/partner
               </label>
             </div>
-
-            {formData.ApplicationDetails.applyingWithSpouse && (
-              <div>
-                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  Spouse/Partner Details
-                </label>
-                <textarea
-                  value={formData.ApplicationDetails.spouseDetails}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "ApplicationDetails",
-                      "spouseDetails",
-                      e.target.value
-                    )
-                  }
-                  rows={3}
-                  className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Please provide details about your spouse/partner..."
-                />
-              </div>
-            )}
 
             <div className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200">
               <input
@@ -1491,10 +1509,10 @@ const WorkVisaApplicationForm = () => {
           </p>
         </div>
 
-        {/* Can You Earn a Living in Germany */}
+        {/* Do You Know About Blocked Account */}
         <div className="bg-appleGray-50 p-6 rounded-2xl">
           <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-            Can you earn a living in Germany?
+            Do you know about Blocked Account?
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {["Yes", "No"].map((option) => (
@@ -1521,182 +1539,6 @@ const WorkVisaApplicationForm = () => {
                 <span className="text-appleGray-700 font-medium">{option}</span>
               </label>
             ))}
-          </div>
-        </div>
-
-        {/* Financial Means Type */}
-        <div className="bg-appleGray-50 p-6 rounded-2xl">
-          <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-            Type of Financial Means
-          </h4>
-          <p className="text-sm text-appleGray-600 mb-4">
-            Your financial independence is a basic prerequisite for receiving
-            the work visa. You can prove your financial independence with the
-            help of a blocked account, employment contract, or a Declaration of
-            Commitment, among other things.
-          </p>
-
-          <div>
-            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-              Select your financial means type *
-            </label>
-            <select
-              value={formData.FinancialProof.FinancialMeansType}
-              onChange={(e) =>
-                handleInputChange(
-                  "FinancialProof",
-                  "FinancialMeansType",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-            >
-              <option value="">Choose financial means type</option>
-              <option value="employment-contract">Employment Contract</option>
-              <option value="blocked-account">Blocked Account</option>
-              <option value="declaration-commitment">
-                Declaration of Commitment
-              </option>
-              <option value="personal-savings">Personal Savings</option>
-              <option value="sponsor">Family/Personal Sponsor</option>
-              <option value="other">Other Financial Means</option>
-            </select>
-          </div>
-
-          {/* Blocked Account Details */}
-          {formData.FinancialProof.FinancialMeansType === "blocked-account" && (
-            <div className="mt-4">
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Blocked Account Amount (in EUR) *
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={formData.FinancialProof.BlockedAccountAmount}
-                onChange={(e) =>
-                  handleInputChange(
-                    "FinancialProof",
-                    "BlockedAccountAmount",
-                    e.target.value
-                  )
-                }
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="e.g., 12,000 (recommended minimum for work visa)"
-              />
-              <p className="text-sm text-appleGray-500 mt-2">
-                Recommended minimum €12,000 for work visa applications
-              </p>
-            </div>
-          )}
-
-          {/* Declaration of Commitment Details */}
-          {formData.FinancialProof.FinancialMeansType ===
-            "declaration-commitment" && (
-            <div className="mt-4">
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Declaration of Commitment Details *
-              </label>
-              <textarea
-                value={formData.FinancialProof.DeclarationOfCommitment}
-                onChange={(e) =>
-                  handleInputChange(
-                    "FinancialProof",
-                    "DeclarationOfCommitment",
-                    e.target.value
-                  )
-                }
-                rows={3}
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="Provide details about the declaration of commitment..."
-              />
-            </div>
-          )}
-
-          {/* Sponsor Details */}
-          {formData.FinancialProof.FinancialMeansType === "sponsor" && (
-            <div className="mt-4">
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Sponsor Details *
-              </label>
-              <textarea
-                value={formData.FinancialProof.SponsorDetails}
-                onChange={(e) =>
-                  handleInputChange(
-                    "FinancialProof",
-                    "SponsorDetails",
-                    e.target.value
-                  )
-                }
-                rows={3}
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="Provide details about your sponsor (name, relationship, financial capacity)..."
-              />
-            </div>
-          )}
-
-          {/* Other Financial Means */}
-          {formData.FinancialProof.FinancialMeansType === "other" && (
-            <div className="mt-4">
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Other Financial Means Details *
-              </label>
-              <textarea
-                value={formData.FinancialProof.OtherFinancialMeans}
-                onChange={(e) =>
-                  handleInputChange(
-                    "FinancialProof",
-                    "OtherFinancialMeans",
-                    e.target.value
-                  )
-                }
-                rows={3}
-                className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
-                placeholder="Describe your other financial means..."
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Financial Documents Upload */}
-        <div className="bg-appleGray-50 p-6 rounded-2xl">
-          <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-            Financial Documents Upload
-          </h4>
-          <div>
-            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-              Upload Financial Proof Documents *
-            </label>
-            <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
-              <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
-              <input
-                type="file"
-                onChange={(e) =>
-                  handleFileChange(
-                    "FinancialProof",
-                    "FinancialDocuments",
-                    e.target.files[0]
-                  )
-                }
-                className="hidden"
-                id="financial-documents-work-upload"
-                accept=".pdf,.jpg,.jpeg,.png"
-                multiple
-              />
-              <label
-                htmlFor="financial-documents-work-upload"
-                className="cursor-pointer text-sky-500 hover:text-sky-600 font-semibold"
-              >
-                {formData.FinancialProof.FinancialDocuments?.name ||
-                  "Upload Financial Documents"}
-              </label>
-              <p className="text-sm text-appleGray-500 mt-2">
-                PDF, JPG, PNG up to 10MB each
-              </p>
-              <p className="text-xs text-appleGray-400 mt-2">
-                e.g., Bank statements, employment contract, blocked account
-                confirmation, etc.
-              </p>
-            </div>
           </div>
         </div>
       </div>

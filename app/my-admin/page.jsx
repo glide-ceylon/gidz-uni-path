@@ -16,6 +16,7 @@ import Image from "next/image";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +29,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await adminLogin(email, password);
+      const result = await adminLogin(email, password, rememberMe);
 
       if (result.success) {
         router.replace("/admin/");
@@ -150,6 +151,23 @@ export default function LoginPage() {
                     )}
                   </button>
                 </div>
+              </div>
+
+              {/* Remember Me Checkbox */}
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-appleGray-300 rounded"
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-appleGray-700"
+                >
+                  Remember me for 7 days
+                </label>
               </div>
 
               {/* Error Message */}

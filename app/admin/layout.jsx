@@ -1,28 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { supabase } from "../../lib/supabase";
+import { useAdminAuth } from "../../hooks/useAdminAuth";
+import Nav from "../components/nav-german";
 
 export default function AdminLayout({ children }) {
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    const checkUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.replace("/my-admin"); // Redirect to login if not signed in
-      }
-
-      setLoading(false);
-    };
-    checkUser();
-  }, [router]);
+  const { loading, isAuthenticated } = useAdminAuth();
 
   if (loading) {
     return (
@@ -40,5 +22,28 @@ export default function AdminLayout({ children }) {
     );
   }
 
-  return <div className="min-h-screen bg-appleGray-50">{children}</div>;
+  // If not authenticated, the useAdminAuth hook will redirect to login
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-appleGray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <div className="text-xl font-semibold text-appleGray-800">
+              Redirecting to login...
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-appleGray-50">
+      {/* Use the existing navigation */}
+      <Nav />
+
+      {/* Page Content */}
+      <main className="min-h-screen pt-4">{children}</main>
+    </div>
+  );
 }
