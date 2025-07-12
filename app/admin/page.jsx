@@ -875,14 +875,6 @@ const AdminHomePage = () => {
             {/* Action buttons */}
             <div className="flex flex-wrap gap-3">
               <button
-                onClick={handleSearch}
-                className="px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl font-medium transition-all duration-200 btn-apple-hover flex items-center space-x-2"
-              >
-                <Icon icon="material-symbols:search" className="text-lg" />
-                <span>Search</span>
-              </button>
-
-              <button
                 onClick={openCreateModal}
                 className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-medium transition-all duration-200 btn-apple-hover flex items-center space-x-2"
               >

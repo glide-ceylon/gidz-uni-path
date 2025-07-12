@@ -409,48 +409,6 @@ const WorkQuery = () => {
         </div>
       ) : (
         <>
-          {/* Header Section */}
-          <div className="bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white shadow-lg">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                <div className="mb-8 lg:mb-0">
-                  <h1 className="text-4xl font-bold mb-3 animate-fade-in">
-                    {currentUser?.role === "staff"
-                      ? "My Assigned Work Applications"
-                      : "Work Visa Applications"}
-                  </h1>
-                  <p className="text-sky-100 text-lg animate-fade-in-up">
-                    {currentUser?.role === "staff"
-                      ? "Review and manage your assigned work visa applications"
-                      : "Manage and track work visa application entries"}
-                  </p>
-                </div>
-
-                {/* Stats Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-                    <div className="text-2xl font-bold">{works.length}</div>
-                    <div className="text-sky-100 text-sm">
-                      Total Applications
-                    </div>
-                  </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-                    <div className="text-2xl font-bold">
-                      {works.filter((w) => w.MarkasRead).length}
-                    </div>
-                    <div className="text-sky-100 text-sm">Read</div>
-                  </div>{" "}
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-                    <div className="text-2xl font-bold">
-                      {works.filter((w) => !w.MarkasRead).length}
-                    </div>
-                    <div className="text-sky-100 text-sm">Unread</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Main Content */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {/* Search and Filters */}

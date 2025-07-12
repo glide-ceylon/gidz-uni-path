@@ -736,7 +736,7 @@ const ApplicantDetail = () => {
                 {" "}
                 {[
                   { id: "overview", label: "Overview", icon: FaChartLine },
-                  { id: "timeline", label: "Timeline", icon: FaCalendarAlt },
+                  // { id: "timeline", label: "Timeline", icon: FaCalendarAlt },
                   { id: "documents", label: "Documents", icon: FaFileAlt },
                   {
                     id: "universities",

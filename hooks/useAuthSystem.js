@@ -351,16 +351,16 @@ export const useAuthSystem = () => {
               label: "Admin Management",
               description: "Manage admin users",
             },
-            {
-              href: "/admin/entries",
-              label: "Timeline Management",
-              description: "Manage timeline events",
-            },
-            {
-              href: "/admin/messages",
-              label: "Messages",
-              description: "Communication center",
-            },
+            // {
+            //   href: "/admin/entries",
+            //   label: "Timeline Management",
+            //   description: "Manage timeline events",
+            // },
+            // {
+            //   href: "/admin/messages",
+            //   label: "Messages",
+            //   description: "Communication center",
+            // },
           ],
           primaryAction: {
             type: "admin-dropdown",

@@ -210,7 +210,7 @@ export default function Nav() {
               </div>
             )}{" "}
             {/* Applications - Show based on auth state (Admin only) */}
-            {navConfig.showApplications && (
+            {/* {navConfig.showApplications && (
               <Link
                 href="/applications"
                 className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
@@ -218,9 +218,9 @@ export default function Nav() {
                 Applications
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
               </Link>
-            )}
+            )} */}
             {/* Application Status - Show based on auth state */}
-            {navConfig.showCheckStatus && (
+            {/* {navConfig.showCheckStatus && (
               <Link
                 href="/application"
                 className="text-appleGray-700 hover:text-sky-500 font-medium transition-colors duration-200 relative group"
@@ -228,7 +228,7 @@ export default function Nav() {
                 Check Status
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-200 group-hover:w-full"></span>
               </Link>
-            )}
+            )} */}
             {/* Contact - Show based on auth state */}
             {navConfig.showContact && (
               <Link
@@ -439,7 +439,7 @@ export default function Nav() {
                 </div>
               )}{" "}
               {/* Applications - Show based on auth state (Admin only) */}
-              {navConfig.showApplications && (
+              {/* {navConfig.showApplications && (
                 <Link
                   href="/applications"
                   className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
@@ -447,9 +447,9 @@ export default function Nav() {
                 >
                   Applications
                 </Link>
-              )}
+              )} */}
               {/* Application Status - Show based on auth state */}
-              {navConfig.showCheckStatus && (
+              {/* {navConfig.showCheckStatus && (
                 <Link
                   href="/application"
                   className="block text-appleGray-700 hover:text-sky-500 font-medium py-2 transition-colors duration-200"
@@ -457,7 +457,7 @@ export default function Nav() {
                 >
                   Check Status
                 </Link>
-              )}
+              )} */}
               {/* Contact - Show based on auth state */}
               {navConfig.showContact && (
                 <Link

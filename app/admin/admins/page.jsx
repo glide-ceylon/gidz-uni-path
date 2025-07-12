@@ -16,6 +16,7 @@ import {
   FaSave,
   FaTimes,
   FaCheck,
+  FaEnvelope,
 } from "react-icons/fa";
 
 export default function AdminManagementPage() {
@@ -74,23 +75,73 @@ export default function AdminManagementPage() {
     return roles.find((r) => r.value === roleValue) || roles[3];
   };
 
+  // Check if current admin can manage other admins
+  const canManageAdmins = () => {
+    if (!admin) return false;
+
+    // Super admins can always manage admins
+    if (admin.role === "super_admin") return true;
+
+    // Check for specific permissions
+    if (admin.permissions) {
+      return (
+        admin.permissions.can_manage_admins ||
+        (admin.permissions["admin.create"] && admin.permissions["admin.update"])
+      );
+    }
+
+    // Fallback for older admin accounts
+    return admin.role === "admin";
+  };
+
+  // Test session validity
+  const testSession = async () => {
+    try {
+      const response = await fetch("/api/admin-auth/validate", {
+        credentials: "include",
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        setError(
+          `✅ Session Valid: ${data.admin?.email} (${data.admin?.role})`
+        );
+      } else {
+        setError(`❌ Session Invalid: ${data.error}`);
+      }
+    } catch (err) {
+      setError(`❌ Session Test Failed: ${err.message}`);
+    }
+  };
+
   // Fetch admin users
   const fetchAdmins = async () => {
     try {
       setLoading(true);
+      setError(""); // Clear any previous errors
+
+      console.log("Fetching admins...");
       const response = await fetch("/api/admin-users", {
         credentials: "include",
       });
 
+      console.log("Fetch admins response status:", response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log("Admins data:", data);
         setAdmins(data.data || []);
       } else {
-        setError("Failed to fetch admin users");
+        const errorData = await response.json();
+        const errorMessage =
+          errorData.error || `Failed to fetch admin users (${response.status})`;
+        console.error("Failed to fetch admins:", errorMessage);
+        setError(errorMessage);
       }
     } catch (err) {
       console.error("Error fetching admins:", err);
-      setError("Network error");
+      const errorMessage = err.message || "Network error occurred";
+      setError(`Failed to load admin users: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -99,7 +150,56 @@ export default function AdminManagementPage() {
   // Create new admin
   const handleCreateAdmin = async (e) => {
     e.preventDefault();
+    setError(""); // Clear any previous errors
+
+    // Validate required fields
+    if (
+      !createForm.email ||
+      !createForm.first_name ||
+      !createForm.last_name ||
+      !createForm.role
+    ) {
+      setError(
+        "Please fill in all required fields (email, first name, last name, and role)"
+      );
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(createForm.email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    // Check for duplicate email
+    const emailExists = admins.some(
+      (admin) => admin.email.toLowerCase() === createForm.email.toLowerCase()
+    );
+    if (emailExists) {
+      setError("An admin with this email address already exists");
+      return;
+    }
+
+    // Validate password if creating auth user
+    if (
+      createForm.create_auth_user &&
+      (!createForm.password || createForm.password.length < 6)
+    ) {
+      setError(
+        "Password must be at least 6 characters long when creating authentication account"
+      );
+      return;
+    }
+
     try {
+      console.log("🚀 Creating admin with data:", createForm);
+      console.log("🔍 Auth user creation:", {
+        create_auth_user: createForm.create_auth_user,
+        hasPassword: !!createForm.password,
+        passwordLength: createForm.password ? createForm.password.length : 0,
+      });
+
       const response = await fetch("/api/admin-users", {
         method: "POST",
         headers: {
@@ -108,6 +208,12 @@ export default function AdminManagementPage() {
         credentials: "include",
         body: JSON.stringify(createForm),
       });
+
+      console.log("📥 Response status:", response.status);
+      console.log("📥 Response ok:", response.ok);
+
+      const data = await response.json();
+      console.log("📥 Response data:", data);
 
       if (response.ok) {
         setShowCreateModal(false);
@@ -121,13 +227,32 @@ export default function AdminManagementPage() {
           create_auth_user: false,
         });
         fetchAdmins();
+
+        // Show success message based on response
+        const message = data.message || "Admin created successfully!";
+        setError(
+          `✅ ${message} ${
+            createForm.create_auth_user
+              ? "Welcome email with login credentials sent to " +
+                createForm.email
+              : "Welcome email sent to " + createForm.email
+          }`
+        );
+
+        // Clear success message after 7 seconds
+        setTimeout(() => {
+          setError("");
+        }, 7000);
       } else {
-        const data = await response.json();
-        setError(data.error || "Failed to create admin");
+        const errorMessage =
+          data.error || `Failed to create admin (${response.status})`;
+        console.error("Admin creation failed:", errorMessage);
+        setError(errorMessage);
       }
     } catch (err) {
       console.error("Error creating admin:", err);
-      setError("Network error");
+      const errorMessage = err.message || "Network error occurred";
+      setError(`Network error: ${errorMessage}`);
     }
   };
 
@@ -215,9 +340,12 @@ export default function AdminManagementPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
+      console.log("Admin authenticated:", admin);
+      console.log("Admin role:", admin?.role);
+      console.log("Admin permissions:", admin?.permissions);
       fetchAdmins();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, admin]);
 
   if (authLoading || loading) {
     return (
@@ -249,13 +377,20 @@ export default function AdminManagementPage() {
                 Manage administrator accounts and permissions
               </p>
             </div>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-2xl flex items-center space-x-2 transition-colors duration-200 shadow-soft"
-            >
-              <FaPlus className="w-4 h-4" />
-              <span>Add Admin</span>
-            </button>
+            {canManageAdmins() ? (
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-2xl flex items-center space-x-2 transition-colors duration-200 shadow-soft"
+              >
+                <FaPlus className="w-4 h-4" />
+                <span>Add Admin</span>
+              </button>
+            ) : (
+              <div className="bg-gray-100 text-gray-600 px-6 py-3 rounded-2xl flex items-center space-x-2">
+                <FaUserShield className="w-4 h-4" />
+                <span>Insufficient Permissions</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -294,16 +429,102 @@ export default function AdminManagementPage() {
           </div>
         </div>
 
-        {/* Error Message */}
+        {/* Permissions Notice */}
+        {!canManageAdmins() && (
+          <div className="bg-amber-50 border-l-4 border-amber-500 rounded-2xl p-4 mb-6">
+            <div className="flex items-center">
+              <FaUserShield className="h-5 w-5 text-amber-500 mr-3" />
+              <div>
+                <h3 className="text-sm font-semibold text-amber-800">
+                  Limited Permissions
+                </h3>
+                <p className="text-amber-700 text-sm mt-1">
+                  You can view admin users but cannot create, edit, or delete
+                  them. Contact a Super Admin for admin management permissions.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Debug Info for Development */}
+        {process.env.NODE_ENV === "development" && admin && (
+          <div className="bg-blue-50 border-l-4 border-blue-500 rounded-2xl p-4 mb-6">
+            <div className="flex items-center">
+              <FaUser className="h-5 w-5 text-blue-500 mr-3" />
+              <div>
+                <h3 className="text-sm font-semibold text-blue-800">
+                  Debug Info (Development Only)
+                </h3>
+                <p className="text-blue-700 text-sm mt-1">
+                  Logged in as: {admin.email} ({admin.role})
+                </p>
+                <p className="text-blue-700 text-sm">
+                  Can manage admins: {canManageAdmins() ? "Yes" : "No"}
+                </p>
+                <details className="mt-2">
+                  <summary className="text-blue-700 text-sm cursor-pointer">
+                    View Permissions
+                  </summary>
+                  <pre className="text-xs mt-1 bg-blue-100 p-2 rounded overflow-auto">
+                    {JSON.stringify(admin.permissions, null, 2)}
+                  </pre>
+                </details>
+                <button
+                  onClick={testSession}
+                  className="mt-2 text-xs bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                >
+                  Test Session
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Message Display (Error or Success) */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6">
-            <p className="text-red-600 font-medium">{error}</p>
-            <button
-              onClick={() => setError("")}
-              className="text-red-500 hover:text-red-700 mt-2 text-sm underline"
-            >
-              Dismiss
-            </button>
+          <div
+            className={`border-l-4 rounded-2xl p-6 mb-6 shadow-soft ${
+              error.startsWith("✅")
+                ? "bg-green-50 border-green-500"
+                : "bg-red-50 border-red-500"
+            }`}
+          >
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                {error.startsWith("✅") ? (
+                  <FaCheck className="h-5 w-5 text-green-500 mt-0.5" />
+                ) : (
+                  <FaTimes className="h-5 w-5 text-red-500 mt-0.5" />
+                )}
+              </div>
+              <div className="ml-3 flex-1">
+                <h3
+                  className={`text-sm font-semibold mb-1 ${
+                    error.startsWith("✅") ? "text-green-800" : "text-red-800"
+                  }`}
+                >
+                  {error.startsWith("✅") ? "Success!" : "Error occurred"}
+                </h3>
+                <p
+                  className={`text-sm leading-relaxed ${
+                    error.startsWith("✅") ? "text-green-700" : "text-red-700"
+                  }`}
+                >
+                  {error}
+                </p>
+                <button
+                  onClick={() => setError("")}
+                  className={`mt-3 text-sm font-medium underline focus:outline-none ${
+                    error.startsWith("✅")
+                      ? "text-green-600 hover:text-green-800"
+                      : "text-red-600 hover:text-red-800"
+                  }`}
+                >
+                  Dismiss {error.startsWith("✅") ? "message" : "error"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -377,22 +598,31 @@ export default function AdminManagementPage() {
 
                 {/* Actions */}
                 <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => openEditModal(adminUser)}
-                    className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 px-3 rounded-xl flex items-center justify-center space-x-2 transition-colors duration-200"
-                  >
-                    <FaEdit className="w-3 h-3" />
-                    <span className="text-sm">Edit</span>
-                  </button>
+                  {canManageAdmins() ? (
+                    <>
+                      <button
+                        onClick={() => openEditModal(adminUser)}
+                        className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 px-3 rounded-xl flex items-center justify-center space-x-2 transition-colors duration-200"
+                      >
+                        <FaEdit className="w-3 h-3" />
+                        <span className="text-sm">Edit</span>
+                      </button>
 
-                  {adminUser.id !== admin?.id && (
-                    <button
-                      onClick={() => handleDeleteAdmin(adminUser)}
-                      className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 px-3 rounded-xl flex items-center justify-center space-x-2 transition-colors duration-200"
-                    >
-                      <FaTrash className="w-3 h-3" />
-                      <span className="text-sm">Delete</span>
-                    </button>
+                      {adminUser.id !== admin?.id && (
+                        <button
+                          onClick={() => handleDeleteAdmin(adminUser)}
+                          className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 px-3 rounded-xl flex items-center justify-center space-x-2 transition-colors duration-200"
+                        >
+                          <FaTrash className="w-3 h-3" />
+                          <span className="text-sm">Delete</span>
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    <div className="flex-1 bg-gray-50 text-gray-400 py-2 px-3 rounded-xl flex items-center justify-center space-x-2">
+                      <FaEye className="w-3 h-3" />
+                      <span className="text-sm">View Only</span>
+                    </div>
                   )}
                 </div>
               </div>
@@ -584,6 +814,27 @@ export default function AdminManagementPage() {
                     </p>
                   </div>
                 )}
+
+                {/* Email Notification Notice */}
+                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0">
+                      <FaEnvelope className="h-5 w-5 text-blue-600 mt-0.5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-blue-800 mb-1">
+                        📧 Email Notification
+                      </h4>
+                      <p className="text-blue-700 text-sm">
+                        A welcome email will be automatically sent to the
+                        admin&apos;s email address upon creation.
+                        {createForm.create_auth_user
+                          ? " The email will include login credentials (email and password)."
+                          : " The email will include role details and admin panel access information."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Buttons */}
                 <div className="flex space-x-3 pt-4">
