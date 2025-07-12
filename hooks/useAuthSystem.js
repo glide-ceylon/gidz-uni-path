@@ -334,34 +334,49 @@ export const useAuthSystem = () => {
         };
 
       case AUTH_TYPES.ADMIN:
+        // Check if user has admin or super admin role for Admin Management access
+        const canManageAdmins =
+          authState.user?.role === "admin" ||
+          authState.user?.role === "super admin";
+
+        const adminDropdownItems = [
+          {
+            href: "/admin",
+            label: "Dashboard",
+            description: "Overview and analytics",
+          },
+        ];
+
+        // Only add Admin Management if user has appropriate role
+        if (canManageAdmins) {
+          adminDropdownItems.push({
+            href: "/admin/admins",
+            label: "Admin Management",
+            description: "Manage admin users",
+          });
+        }
+
+        // Add other menu items as needed
+        // adminDropdownItems.push(
+        //   {
+        //     href: "/admin/entries",
+        //     label: "Timeline Management",
+        //     description: "Manage timeline events",
+        //   },
+        //   {
+        //     href: "/admin/messages",
+        //     label: "Messages",
+        //     description: "Communication center",
+        //   }
+        // );
+
         return {
           showVisaServices: false,
           showApplications: true,
           showCheckStatus: false, // Hide Check Status for admin
           showContact: false, // Hide Contact for admin
           showAdminDropdown: true, // Add admin-specific dropdown
-          adminDropdownItems: [
-            {
-              href: "/admin",
-              label: "Dashboard",
-              description: "Overview and analytics",
-            },
-            {
-              href: "/admin/admins",
-              label: "Admin Management",
-              description: "Manage admin users",
-            },
-            // {
-            //   href: "/admin/entries",
-            //   label: "Timeline Management",
-            //   description: "Manage timeline events",
-            // },
-            // {
-            //   href: "/admin/messages",
-            //   label: "Messages",
-            //   description: "Communication center",
-            // },
-          ],
+          adminDropdownItems,
           primaryAction: {
             type: "admin-dropdown",
             href: "/admin",
