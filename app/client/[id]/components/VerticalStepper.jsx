@@ -54,7 +54,7 @@ export default function HorizontalStepper({ currentStep = 1 }) {
 
   // Determine if step is completed, current, or pending
   const getStatus = (stepId) => {
-    if (stepId < currentStep) return "completed";
+    if (stepId <= currentStep) return "completed";
     if (stepId === currentStep) return "inProgress";
     return "pending";
   };

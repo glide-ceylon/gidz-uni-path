@@ -755,10 +755,17 @@ const ApplicantDetail = () => {
                       Initial application payment
                     </p>
                   </div>
-                  <YesNoButtonGroup
-                    value={applicant.payment1}
-                    onChange={(value) => handlePaymentSave(1, value)}
-                  />
+                  {applicant.payment1 ? (
+                    <div className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold flex items-center gap-2">
+                      <Icon icon="mdi:check-circle" className="text-lg" />
+                      Paid
+                    </div>
+                  ) : (
+                    <YesNoButtonGroup
+                      value={applicant.payment1}
+                      onChange={(value) => handlePaymentSave(1, value)}
+                    />
+                  )}
                 </div>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-gray-100 hover:border-gray-200 transition-all duration-200">
@@ -771,10 +778,17 @@ const ApplicantDetail = () => {
                       Visa application payment
                     </p>
                   </div>
-                  <YesNoButtonGroup
-                    value={applicant.payment2}
-                    onChange={(value) => handlePaymentSave(2, value)}
-                  />
+                  {applicant.payment2 ? (
+                    <div className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold flex items-center gap-2">
+                      <Icon icon="mdi:check-circle" className="text-lg" />
+                      Paid
+                    </div>
+                  ) : (
+                    <YesNoButtonGroup
+                      value={applicant.payment2}
+                      onChange={(value) => handlePaymentSave(2, value)}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -816,7 +830,7 @@ const ApplicantDetail = () => {
             <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                  <Icon icon="mdi:checklist" className="text-xl text-white" />
+                  <Icon icon="mdi:check" className="text-xl text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900">
                   Application Progress
