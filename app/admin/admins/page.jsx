@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAdminAuth } from "../../../hooks/useAdminAuth";
+import axios from "axios";
 import {
   FaPlus,
   FaEdit,
@@ -216,6 +217,159 @@ export default function AdminManagementPage() {
       console.log("📥 Response data:", data);
 
       if (response.ok) {
+        // Track email sending status
+        let emailSentSuccessfully = false;
+
+        // Send welcome email to the newly created admin
+        try {
+          console.log("🔄 Preparing to send welcome email...");
+
+          const emailTemp = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Welcome to Gidz Uni Path Admin Team</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f4f4f4;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+                    <!-- Header with Logo -->
+                    <div style="display: flex; align-items: center; justify-content: center; padding: 20px 0; background-color: #003366; margin-bottom: 30px;">
+                        <img src="https://www.gidzunipath.com/logo.png" style="height: 70px; width: auto; margin-right: 10px;" /> 
+                        <h1 style="color: #ffffff; margin-left: 10px; font-size: 28px;">Gidz Uni Path</h1>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div style="padding: 0 20px;">
+                        <p style="font-size: 16px; margin-bottom: 20px;">Dear ${
+                          createForm.first_name
+                        } ${createForm.last_name},</p>
+                        
+                        <p style="font-size: 16px; margin-bottom: 20px;">Welcome to the Gidz Uni Path admin team! We're excited to have you join our mission of helping students achieve their dreams of studying in Germany.</p>
+
+                        <div style="background-color: #f8f9fa; border-left: 4px solid #003366; padding: 20px; margin-bottom: 30px;">
+                            <h2 style="color: #003366; margin: 0 0 15px 0; font-size: 20px;">Your Admin Account Details</h2>
+                            <p style="margin: 5px 0;">Email: <strong>${
+                              createForm.email
+                            }</strong></p>
+                            <p style="margin: 5px 0;">Role: <strong>${
+                              getRoleInfo(createForm.role).label
+                            }</strong></p>
+                            ${
+                              createForm.department
+                                ? `<p style="margin: 5px 0;">Department: <strong>${createForm.department}</strong></p>`
+                                : ""
+                            }
+                            ${
+                              createForm.create_auth_user && createForm.password
+                                ? `
+                                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+                                    <h3 style="color: #003366; margin: 0 0 10px 0; font-size: 16px;">Login Credentials</h3>
+                                    <p style="margin: 5px 0;">Username: <strong>${createForm.email}</strong></p>
+                                    <p style="margin: 5px 0;">Password: <strong>${createForm.password}</strong></p>
+                                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #666666;">Please change your password after your first login.</p>
+                                </div>
+                            `
+                                : ""
+                            }
+                            <a href="https://www.gidzunipath.com/admin" style="display: inline-block; background-color: #003366; color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 5px; margin-top: 15px;">Access Admin Panel</a>
+                        </div>
+
+                        <!-- Admin Responsibilities -->
+                        <div style="margin-bottom: 30px;">
+                            <h2 style="color: #003366; font-size: 20px;">Your Responsibilities</h2>
+                            <ul style="padding-left: 20px; margin-bottom: 15px;">
+                                <li style="margin-bottom: 8px;">Review and manage student applications</li>
+                                <li style="margin-bottom: 8px;">Assist students throughout their application process</li>
+                                <li style="margin-bottom: 8px;">Maintain accurate records and documentation</li>
+                                <li style="margin-bottom: 8px;">Provide excellent customer service</li>
+                                ${
+                                  createForm.role === "super_admin" ||
+                                  createForm.role === "admin"
+                                    ? '<li style="margin-bottom: 8px;">Manage other admin users and system settings</li>'
+                                    : ""
+                                }
+                            </ul>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div style="margin-bottom: 30px;">
+                            <h2 style="color: #003366; font-size: 20px;">Need Help Getting Started?</h2>
+                            <p style="margin-bottom: 15px;">Our team is here to support you! Contact us at:</p>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li style="margin-bottom: 10px;">
+                                    <span style="color: #003366;">📞</span> 
+                                    <strong>Phone:</strong> +49 155 66389194
+                                    <div style="margin-left: 25px; color: #666666; font-size: 14px;">(Monday to Friday, 9:30 am to 5:00 pm)</div>
+                                </li>
+                                <li style="margin-bottom: 10px;">
+                                    <span style="color: #003366;">✉</span>
+                                    <strong>Email:</strong> 
+                                    <a href="mailto:gidzunipath@gmail.com" style="color: #003366; text-decoration: none;">gidzunipath@gmail.com</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <p style="margin-bottom: 30px;">We're thrilled to have you on our team and look forward to working together to make a difference in students' lives!</p>
+
+                        <!-- Footer -->
+                        <div style="border-top: 2px solid #f4f4f4; padding-top: 20px; text-align: center;">
+                            <p style="color: #666666; font-size: 14px;">Best regards,<br>The Gidz Uni Path Management Team</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+          `;
+
+          const emailPayload = {
+            senderEmail: "gidzunipath@gmail.com",
+            recipientEmail: createForm.email,
+            subject: "Welcome to Gidz Uni Path Admin Team",
+            template: emailTemp,
+          };
+
+          console.log("📧 Email payload prepared:", {
+            senderEmail: emailPayload.senderEmail,
+            recipientEmail: emailPayload.recipientEmail,
+            subject: emailPayload.subject,
+            templateLength: emailPayload.template.length,
+          });
+
+          const emailResponse = await axios.post(
+            "/api/send_email",
+            emailPayload
+          );
+
+          console.log("✅ Welcome email sent successfully:", {
+            status: emailResponse.status,
+            data: emailResponse.data,
+            recipient: createForm.email,
+          });
+
+          emailSentSuccessfully = true;
+        } catch (emailError) {
+          console.error("❌ Error sending welcome email:", {
+            error: emailError.message,
+            status: emailError.response?.status,
+            statusText: emailError.response?.statusText,
+            data: emailError.response?.data,
+            recipient: createForm.email,
+          });
+
+          // Log the full error for debugging
+          if (emailError.response) {
+            console.error("📧 Email API Response Error:", emailError.response);
+          }
+
+          // Don't fail the admin creation if email fails, but inform the user
+          console.warn(
+            "⚠️ Admin created successfully but welcome email failed to send"
+          );
+          emailSentSuccessfully = false;
+        }
+
         setShowCreateModal(false);
         setCreateForm({
           email: "",
@@ -230,14 +384,15 @@ export default function AdminManagementPage() {
 
         // Show success message based on response
         const message = data.message || "Admin created successfully!";
-        setError(
-          `✅ ${message} ${
-            createForm.create_auth_user
-              ? "Welcome email with login credentials sent to " +
-                createForm.email
-              : "Welcome email sent to " + createForm.email
-          }`
-        );
+        let successMessage = `✅ ${message}`;
+
+        if (emailSentSuccessfully) {
+          successMessage += ` Welcome email sent to ${createForm.email}`;
+        } else {
+          successMessage += ` (Note: Welcome email could not be sent - please notify the admin manually)`;
+        }
+
+        setError(successMessage);
 
         // Clear success message after 7 seconds
         setTimeout(() => {
@@ -448,7 +603,7 @@ export default function AdminManagementPage() {
         )}
 
         {/* Debug Info for Development */}
-        {process.env.NODE_ENV === "development" && admin && (
+        {/* {process.env.NODE_ENV === "development" && admin && (
           <div className="bg-blue-50 border-l-4 border-blue-500 rounded-2xl p-4 mb-6">
             <div className="flex items-center">
               <FaUser className="h-5 w-5 text-blue-500 mr-3" />
@@ -479,7 +634,7 @@ export default function AdminManagementPage() {
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Message Display (Error or Success) */}
         {error && (
