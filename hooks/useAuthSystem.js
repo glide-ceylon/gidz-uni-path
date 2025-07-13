@@ -334,10 +334,17 @@ export const useAuthSystem = () => {
         };
 
       case AUTH_TYPES.ADMIN:
+        // Debug: Log the current user role to see what we're actually getting
+        console.log("Current admin user role:", authState.user?.role);
+        console.log("Full admin user data:", authState.user);
+
         // Check if user has admin or super admin role for Admin Management access
+        // Make the check case-insensitive and handle potential whitespace
+        const userRole = authState.user?.role?.toLowerCase()?.trim();
         const canManageAdmins =
-          authState.user?.role === "admin" ||
-          authState.user?.role === "super admin";
+          userRole === "admin" || userRole === "super_admin";
+
+        console.log("Can manage admins:", canManageAdmins, "Role:", userRole);
 
         const adminDropdownItems = [
           {
