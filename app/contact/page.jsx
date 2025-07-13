@@ -93,7 +93,8 @@ export default function ContactPage() {
     `;
 
     const success = await handleSent(
-      formData.email,
+      // formData.email,
+      "gidzunipath@gmail.com",
       "gidzunipath@gmail.com",
       `Contact Form: ${formData.subject}`,
       template
