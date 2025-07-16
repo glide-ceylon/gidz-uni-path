@@ -7,6 +7,7 @@ const SmartRecommendations = ({
   dashboardStats,
 }) => {
   const [recommendations, setRecommendations] = useState([]);
+  const [completedActions, setCompletedActions] = useState(new Set());
   const [loading, setLoading] = useState(true);
 
   const generateRecommendations = useCallback(async () => {
@@ -34,6 +35,10 @@ const SmartRecommendations = ({
   useEffect(() => {
     generateRecommendations();
   }, [generateRecommendations]);
+
+  const handleActionClick = (recId) => {
+    setCompletedActions((prev) => new Set([...prev, recId]));
+  };
 
   const handleWatchVideo = (youtubeLink) => {
     if (youtubeLink) {
@@ -80,20 +85,36 @@ const SmartRecommendations = ({
       ) : (
         <div className="space-y-4">
           {recommendations.map((rec) => {
+            const isCompleted = completedActions.has(rec.id);
+
             return (
               <div
                 key={rec.id}
-                className="p-6 rounded-3xl border transition-all duration-300 hover:shadow-medium bg-white border-gray-200"
+                className={`p-6 rounded-3xl border transition-all duration-300 hover:shadow-medium ${
+                  isCompleted
+                    ? "bg-green-50 border-green-200 opacity-75"
+                    : "bg-white border-gray-200"
+                }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-4 flex-1">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-sky-500">
+                    <div
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                        isCompleted ? "bg-green-500" : "bg-sky-500"
+                      }`}
+                    >
                       <FaCheckCircle className="w-6 h-6 text-white" />
                     </div>
 
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
-                        <h4 className="text-lg font-semibold text-appleGray-800">
+                        <h4
+                          className={`text-lg font-semibold ${
+                            isCompleted
+                              ? "text-green-800"
+                              : "text-appleGray-800"
+                          }`}
+                        >
                           {rec.title}
                         </h4>
                       </div>
@@ -101,17 +122,41 @@ const SmartRecommendations = ({
                       <p className="text-appleGray-600 mb-4">
                         {rec.description}
                       </p>
+
+                      {/* YouTube Video Guide */}
+                      {rec.youtubeLink && (
+                        <div className="mt-4 p-4 bg-gradient-to-r from-red-50 to-red-100 rounded-2xl border border-red-200">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <h5 className="text-sm font-medium text-red-800 mb-1">
+                                📺 Video Guide Available
+                              </h5>
+                              <p className="text-sm text-red-700">
+                                Watch our step-by-step guide to help you with
+                                this task
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => handleWatchVideo(rec.youtubeLink)}
+                              className="ml-3 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
+                            >
+                              <FaPlay className="w-3 h-3" />
+                              <span>Watch Video</span>
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <div className="ml-4">
-                    {rec.youtubeLink && (
+                    {!isCompleted && (
                       <button
-                        onClick={() => handleWatchVideo(rec.youtubeLink)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
+                        onClick={() => handleActionClick(rec.id)}
+                        className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
                       >
-                        <FaPlay className="w-3 h-3" />
-                        <span>Watch Video</span>
+                        <FaCheckCircle className="w-3 h-3" />
+                        <span>Mark Done</span>
                       </button>
                     )}
                   </div>

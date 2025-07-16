@@ -20,7 +20,8 @@ import {
   FaLifeRing,
   FaChartLine,
   FaClock,
-  FaSearch, // Add logout icon
+  FaSearch,
+  FaUserEdit, // Add logout icon
 } from "react-icons/fa";
 import { supabase } from "../../../lib/supabase";
 import { useRouter } from "next/navigation"; // Add useRouter
@@ -745,47 +746,89 @@ const ApplicantDetail = () => {
                   },
                   { id: "tasks", label: "Visa", icon: FaPassport },
                   { id: "support", label: "Support", icon: FaLifeRing },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center space-x-2 px-4 sm:px-6 py-4 text-sm font-medium border-b-2 transition-all duration-200 whitespace-nowrap ${
-                      activeTab === tab.id
-                        ? "border-sky-500 text-sky-600 bg-sky-50"
-                        : "border-transparent text-appleGray-600 hover:text-appleGray-800 hover:border-appleGray-300"
-                    }`}
-                  >
-                    <tab.icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                    {/* Tab badge for urgent items */}
-                    {tab.id === "tasks" &&
-                      (dashboardStats.visaDocumentsUploaded <
-                        Math.floor(dashboardStats.visaDocumentsTotal * 0.4) ||
-                        !applicant?.payment1 ||
-                        !applicant?.payment2) && (
-                        <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center tab-badge-urgent">
-                          !
-                        </span>
-                      )}
-                    {tab.id === "documents" &&
-                      (dashboardStats.universityDocumentsUploaded <
-                        Math.floor(
-                          dashboardStats.universityDocumentsTotal * 0.5
-                        ) ||
-                        dashboardStats.visaDocumentsUploaded <
+                  { id: "profile", label: "Profile", icon: FaUserEdit },
+                ].map((tab) => {
+                  const isVisaTabLocked =
+                    tab.id === "tasks" && applicant?.lock_1;
+
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        if (!isVisaTabLocked) {
+                          setActiveTab(tab.id);
+                        }
+                      }}
+                      disabled={isVisaTabLocked}
+                      className={`flex items-center space-x-2 px-4 sm:px-6 py-4 text-sm font-medium border-b-2 transition-all duration-200 whitespace-nowrap ${
+                        isVisaTabLocked
+                          ? "border-transparent text-appleGray-400 cursor-not-allowed opacity-50"
+                          : activeTab === tab.id
+                          ? "border-sky-500 text-sky-600 bg-sky-50"
+                          : "border-transparent text-appleGray-600 hover:text-appleGray-800 hover:border-appleGray-300 cursor-pointer"
+                      }`}
+                    >
+                      <tab.icon className="w-4 h-4" />
+                      <span>{tab.label}</span>
+                      {/* Tab badge for urgent items */}
+                      {tab.id === "tasks" &&
+                        (dashboardStats.visaDocumentsUploaded <
+                          Math.floor(dashboardStats.visaDocumentsTotal * 0.4) ||
+                          !applicant?.payment1 ||
+                          !applicant?.payment2) && (
+                          <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center tab-badge-urgent">
+                            !
+                          </span>
+                        )}
+                      {tab.id === "documents" &&
+                        (dashboardStats.universityDocumentsUploaded <
                           Math.floor(
-                            dashboardStats.visaDocumentsTotal * 0.4
-                          )) && (
-                        <span className="bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            dashboardStats.universityDocumentsTotal * 0.5
+                          ) ||
+                          dashboardStats.visaDocumentsUploaded <
+                            Math.floor(
+                              dashboardStats.visaDocumentsTotal * 0.4
+                            )) && (
+                          <span className="bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            !
+                          </span>
+                        )}
+                      {tab.id === "visa" && applicant?.lock_1 ? (
+                        <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                           !
                         </span>
-                      )}
-                  </button>
-                ))}
+                      ) : null}
+                    </button>
+                  );
+                })}
               </nav>
             </div>
             {/* Tab Content */}
             <div className="min-h-[600px] tab-content">
+              {/* Visa Tab Locked Message */}
+              {activeTab === "tasks" && applicant?.lock_1 && (
+                <div className="p-6 sm:p-8 flex items-center justify-center">
+                  <div className="text-center max-w-md">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <FaExclamationTriangle className="w-8 h-8 text-red-500" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-appleGray-800 mb-2">
+                      Visa Section Locked
+                    </h3>
+                    <p className="text-appleGray-600 mb-4">
+                      The visa section is currently locked. Please contact your
+                      counselor for assistance or complete the required previous
+                      steps.
+                    </p>
+                    <button
+                      onClick={() => setShowMessageModal(true)}
+                      className="bg-sky-500 hover:bg-sky-600 text-white px-6 py-2 rounded-xl font-medium transition-colors duration-200"
+                    >
+                      Contact Counselor
+                    </button>
+                  </div>
+                </div>
+              )}
               {activeTab === "overview" && (
                 <div className="p-6 sm:p-8 space-y-8">
                   {/* Application Progress */}
@@ -881,7 +924,7 @@ const ApplicantDetail = () => {
                 </div>
               )}
 
-              {activeTab === "tasks" && (
+              {activeTab === "tasks" && !applicant?.lock_1 && (
                 <div className="p-6 sm:p-8 space-y-8">
                   <div>
                     <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
