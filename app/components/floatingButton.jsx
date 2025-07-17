@@ -50,29 +50,6 @@ export default function FloatingButtons() {
 
         {/* Contact Menu */}
         <div className="relative">
-          {/* Contact Options */}
-          {isMenuOpen && (
-            <div className="absolute bottom-16 right-0 flex flex-col space-y-3 animate-scale-in">
-              {/* Email */}
-              <button
-                onClick={handleEmailClick}
-                className="w-12 h-12 bg-sky-400 hover:bg-sky-500 text-white rounded-xl shadow-soft flex items-center justify-center transition-all duration-300 btn-apple-hover"
-                aria-label="Send email"
-              >
-                <FaEnvelope className="w-4 h-4" />
-              </button>
-
-              {/* Phone */}
-              <button
-                onClick={handlePhoneClick}
-                className="w-12 h-12 bg-sky-500 hover:bg-sky-600 text-white rounded-xl shadow-soft flex items-center justify-center transition-all duration-300 btn-apple-hover"
-                aria-label="Call us"
-              >
-                <FaPhone className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-
           {/* Main WhatsApp Button */}
           <button
             onClick={handleWhatsAppClick}

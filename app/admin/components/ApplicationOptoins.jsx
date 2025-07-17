@@ -116,7 +116,7 @@ const ApplicationOptions = ({
   };
 
   return (
-    <div className=" mx-auto  rounded-lg  mt-10">
+    <div className=" mx-auto rounded-lg">
       <h3 className="text-xl font-semibold text-gray-800 mb-4 ">{title}</h3>
 
       {loading && <p className="text-center text-blue-500 mb-4">Loading...</p>}

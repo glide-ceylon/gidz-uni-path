@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { requireAdminAuth } from "../../../lib/adminAuth";
+import {
+  requireAdminAuth,
+  getDefaultPermissions,
+} from "../../../lib/adminAuth";
 
 // Create service role client for admin operations
 const supabaseAdmin = createClient(
@@ -158,37 +161,11 @@ export async function POST(request) {
 
     // Default permissions based on role
     const defaultPermissions = {
-      super_admin: {
-        "timeline.read": true,
-        "timeline.create": true,
-        "timeline.update": true,
-        "timeline.delete": true,
-        "admin.read": true,
-        "admin.create": true,
-        "admin.update": true,
-        "admin.delete": true,
-        can_manage_admins: true,
-        can_access_all_data: true,
-      },
-      admin: {
-        "timeline.read": true,
-        "timeline.create": true,
-        "timeline.update": true,
-        "timeline.delete": true,
-        "admin.read": true,
-        can_manage_timeline: true,
-      },
-      manager: {
-        "timeline.read": true,
-        "timeline.create": true,
-        "timeline.update": true,
-        "admin.read": true,
-        can_manage_timeline: true,
-      },
-      staff: {
-        "timeline.read": true,
-        can_view_basic_data: true,
-      },
+      super_admin: getDefaultPermissions("super_admin"),
+      admin: getDefaultPermissions("admin"),
+      manager: getDefaultPermissions("manager"),
+      staff: getDefaultPermissions("staff"),
+      finance_manager: getDefaultPermissions("finance_manager"),
     };
 
     const adminData = {

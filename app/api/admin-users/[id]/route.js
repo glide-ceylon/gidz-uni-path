@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { requireAdminAuth } from "../../../../lib/adminAuth";
+import {
+  requireAdminAuth,
+  getDefaultPermissions,
+} from "../../../../lib/adminAuth";
 import { createClient } from "@supabase/supabase-js";
 
 // Create service role client for admin operations
@@ -105,7 +108,13 @@ export async function PUT(request, { params }) {
 
     // Validate role if provided
     if (role) {
-      const validRoles = ["super_admin", "admin", "manager", "staff"];
+      const validRoles = [
+        "super_admin",
+        "admin",
+        "manager",
+        "staff",
+        "finance_manager",
+      ];
       if (!validRoles.includes(role)) {
         return NextResponse.json(
           { error: `Invalid role. Must be one of: ${validRoles.join(", ")}` },
@@ -114,11 +123,31 @@ export async function PUT(request, { params }) {
       }
     }
 
+    // Default permissions based on role - used for auto-updating permissions when role changes
+    const defaultPermissions = {
+      super_admin: getDefaultPermissions("super_admin"),
+      admin: getDefaultPermissions("admin"),
+      manager: getDefaultPermissions("manager"),
+      staff: getDefaultPermissions("staff"),
+      finance_manager: getDefaultPermissions("finance_manager"),
+    };
+
     // Prepare update data (only include provided fields)
     const updateData = {};
     if (first_name !== undefined) updateData.first_name = first_name.trim();
     if (last_name !== undefined) updateData.last_name = last_name.trim();
-    if (role !== undefined) updateData.role = role;
+    if (role !== undefined) {
+      updateData.role = role;
+      // Auto-update permissions when role changes (unless permissions are explicitly provided)
+      if (permissions === undefined) {
+        updateData.permissions =
+          defaultPermissions[role] || defaultPermissions.staff;
+        console.log(
+          `🔄 Auto-updating permissions for role change to '${role}':`,
+          updateData.permissions
+        );
+      }
+    }
     if (department !== undefined)
       updateData.department = department?.trim() || null;
     if (permissions !== undefined) updateData.permissions = permissions;

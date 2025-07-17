@@ -105,9 +105,9 @@ const SmartRecommendations = ({
                   </div>
 
                   <div className="ml-4">
-                    {rec.youtubeLink && (
+                    {rec.youtube_link && (
                       <button
-                        onClick={() => handleWatchVideo(rec.youtubeLink)}
+                        onClick={() => handleWatchVideo(rec.youtube_link)}
                         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
                       >
                         <FaPlay className="w-3 h-3" />
