@@ -75,6 +75,9 @@ const EditableField = ({
     setIsEditing(false);
   };
 
+  // Check if this is a textarea field (for special notes)
+  const isTextarea = label === "Special Notes";
+
   return (
     <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200 group">
       <div className="flex items-start justify-between">
@@ -83,8 +86,16 @@ const EditableField = ({
             {label}
           </label>
           {!isEditing ? (
-            <div className="min-h-[40px] flex items-center">
-              <span className="text-gray-900 font-medium text-base">
+            <div
+              className={`${
+                isTextarea ? "min-h-[80px]" : "min-h-[40px]"
+              } flex items-start`}
+            >
+              <span
+                className={`text-gray-900 font-medium text-base ${
+                  isTextarea ? "whitespace-pre-wrap" : ""
+                }`}
+              >
                 {value || "Not provided"}
               </span>
             </div>
@@ -109,6 +120,13 @@ const EditableField = ({
               value={tempValue}
               onChange={(e) => setTempValue(e.target.value)}
               className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+            />
+          ) : isTextarea ? (
+            <textarea
+              value={tempValue}
+              onChange={(e) => setTempValue(e.target.value)}
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white min-h-[120px] resize-y"
+              placeholder="Add special notes about this application..."
             />
           ) : (
             <input
@@ -513,6 +531,50 @@ const ApplicantDetail = () => {
   };
 
   // -------------------------------------------
+  //  Handle Refund Save
+  // -------------------------------------------
+  const handleRefundSave = (value) => {
+    // Confirmation before saving
+    setConfirmation({
+      isOpen: true,
+      title: `Confirm Update`,
+      message: `Are you sure you want to update Refund Status?`,
+      onConfirm: async () => {
+        try {
+          const updateData = { is_refunded: value };
+
+          const { data: updatedData, error } = await supabase
+            .from("applications")
+            .update(updateData)
+            .eq("id", applicant.id)
+            .single();
+
+          if (error) throw error;
+
+          setApplicant(updatedData);
+          await fetchApplicant(applicant.id);
+          setConfirmation({ ...confirmation, isOpen: false });
+          setNotification({
+            isOpen: true,
+            title: "Success",
+            message: `Refund Status updated successfully!`,
+            type: "success",
+          });
+        } catch (error) {
+          console.error(error);
+          setConfirmation({ ...confirmation, isOpen: false });
+          setNotification({
+            isOpen: true,
+            title: "Error",
+            message: `Error updating Refund Status.`,
+            type: "error",
+          });
+        }
+      },
+    });
+  };
+
+  // -------------------------------------------
   //  Helper function to get document URL
   // -------------------------------------------
   function getDocumentUrl(documents, documentName) {
@@ -792,6 +854,41 @@ const ApplicantDetail = () => {
                 </div>
               </div>
             </div>
+
+            {/* Refunded Section */}
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
+                  <Icon icon="mdi:cash-refund" className="text-lg text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Refunded
+                </h3>
+              </div>
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                      Refund Status
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Payment refund processing status
+                    </p>
+                  </div>
+                  {applicant.is_refunded ? (
+                    <div className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold flex items-center gap-2">
+                      <Icon icon="mdi:cash-refund" className="text-lg" />
+                      Refunded
+                    </div>
+                  ) : (
+                    <YesNoButtonGroup
+                      value={applicant.is_refunded}
+                      onChange={(value) => handleRefundSave(value)}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Documents Section */}
@@ -828,7 +925,7 @@ const ApplicantDetail = () => {
           <div className="space-y-8">
             {/* Application Progress Card */}
             <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
                   <Icon icon="mdi:check" className="text-xl text-white" />
                 </div>
@@ -836,73 +933,91 @@ const ApplicantDetail = () => {
                   Application Progress
                 </h2>
               </div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl flex items-center justify-center">
+                  <Icon icon="mdi:university" className="text-xl text-white" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-900">
+                  University Section
+                </h2>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                <div className="bg-white/60 backdrop-blur-sm space-y-4 rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
                   <ApplicationOptions
                     applicationId={id}
                     optionsToCheck={[
-                      { name: "CREATED UA ACCOUNT", option: false },
-                      { name: "VISA APPOINTMENT", option: false },
-                      { name: "APPLIED UNIVERSITY", option: false },
-                      { name: "DORMS (OPTIONAL)", option: false },
+                      { name: "Create Gmail", option: false },
+                      { name: "Passport", option: false },
+                      { name: "IELTS", option: false },
+                      { name: "OL", option: false },
+                      { name: "AL", option: false },
+                      { name: "CV", option: false },
+                      { name: "School L. C", option: false },
+                      { name: "Birth C", option: false },
                     ]}
                     title="Application Setup"
                   />
-                </div>
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
                   <ApplicationOptions
                     applicationId={id}
                     optionsToCheck={[
-                      { name: "ADMISSION/OFFER LETTER", option: false },
+                      { name: "Bachelor D&T", option: false },
+                      { name: "Recommendation", option: false },
+                      { name: "Work", option: false },
+                      { name: "MOI", option: false },
                     ]}
-                    title="Admission Letter"
-                    subtitle="(8-10 weeks)"
+                    title="Master"
                   />
                 </div>
                 <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
                   <ApplicationOptions
                     applicationId={id}
                     optionsToCheck={[
-                      { name: "ENROLMENT LETTER", option: false },
+                      { name: "Create UA ACCOUNT", option: false },
+                      { name: "UNI 1 APPLY", option: false },
+                      { name: "UNI 2 APPLY", option: false },
+                      { name: "UNI 3 APPLY", option: false },
                     ]}
-                    title="Semester Fees"
+                    title="Admin"
+                  />
+                </div>
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                  <ApplicationOptions
+                    applicationId={id}
+                    optionsToCheck={[
+                      { name: "Admission Latter 1", option: false },
+                      { name: "Admission Latter 2", option: false },
+                      { name: "Admission Latter 3", option: false },
+                      { name: "Enrolled", option: false },
+                    ]}
+                    title="Admission"
                   />
                 </div>
               </div>
-            </div>
-
-            {/* Visa Application Card */}
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+              <div className="flex items-center gap-3 my-6">
+                <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
                   <Icon icon="mdi:passport" className="text-xl text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Visa Application
+                <h2 className="text-xl font-bold text-gray-900">
+                  Visa Section
                 </h2>
               </div>
 
               {/* Main Visa Documents */}
               <div className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
                     <ApplicationOptions
                       applicationId={id}
                       optionsToCheck={[
-                        { name: "APPLICATION FORM", option: false },
-                        { name: "3 PASSPORT PHOTOS", option: false },
+                        { name: "Create Gmail", option: false },
+                        { name: "Motivation Letter", option: false },
                         {
-                          name: "PHOTOCOPY OF ALL PASSPORT PAGES",
+                          name: "CV",
                           option: false,
                         },
-                        { name: "MOTIVATION LETTER", option: false },
-                        { name: "CV", option: false },
-                        { name: "O/L AND A/L CERTIFICATE", option: false },
-                        {
-                          name: "BACHELOR CERTIFICATE/ TRANSCRIPT",
-                          option: false,
-                        },
-                        { name: "ADMISSION LETTER", option: false },
+                        { name: "Passport", option: false },
+                        { name: "Biometric Photo", option: false },
+                        { name: "Blocked Account", option: false },
                       ]}
                       title="Essential Documents"
                     />
@@ -911,51 +1026,81 @@ const ApplicantDetail = () => {
                     <ApplicationOptions
                       applicationId={id}
                       optionsToCheck={[
-                        { name: "ENROLMENT LETTER", option: false },
+                        { name: "Create GP Account", option: false },
                         {
-                          name: "LANGUAGE CERTIFICATE (IELTS/GERMAN)",
+                          name: "Application Form",
                           option: false,
                         },
-                        { name: "BLOCKED ACCOUNT/ SPONSOR", option: false },
-                        { name: "PAYMENT OF SEMESTER FEES", option: false },
-                        { name: "HEALTH INSURANCE", option: false },
-                        { name: "TRAVEL HEALTH INSURANCE", option: false },
-                        { name: "BIRTH CERTIFICATE (ENGLISH)", option: false },
-                        { name: "ACCOMMODATION", option: false },
+                        { name: "Documents Uploaded", option: false },
+                        { name: "Submitted", option: false },
+                        { name: "Appointment Date", option: false },
+                        { name: "Interview", option: false },
                       ]}
-                      title="Supporting Documents"
+                      title="Admin"
+                    />
+                  </div>
+                  <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                    <ApplicationOptions
+                      applicationId={id}
+                      optionsToCheck={[
+                        { name: "Travel Insurance", option: false },
+                        { name: "Flight Ticket (Dummy)", option: false },
+                      ]}
+                      title="Admission"
                     />
                   </div>
                 </div>
+              </div>
+            </div>
 
-                {/* Additional Requirements */}
-                <div className="border-t border-gray-200 pt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
-                      <ApplicationOptions
-                        applicationId={id}
-                        optionsToCheck={[
-                          { name: "TRAVEL INSURANCE", option: false },
-                          { name: "FLIGHT TICKET (DUMMY)", option: false },
-                        ]}
-                        title="Travel Requirements"
-                      />
-                    </div>
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
-                      <ApplicationOptions
-                        applicationId={id}
-                        optionsToCheck={[
-                          {
-                            name: "INTERVIEW WITH GIDZ UNI PATH TEAM",
-                            option: false,
-                          },
-                        ]}
-                        title="Final Steps"
-                      />
-                    </div>
+            {/* Visa Application Card */}
+            <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <Icon icon="mdi:passport" className="text-xl text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Visa Tracker
+                </h2>
+              </div>
+              {/* Additional Requirements */}
+              <div className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                    <ApplicationOptions
+                      applicationId={id}
+                      optionsToCheck={[
+                        { name: "Application Document", option: false },
+                        { name: "Client Review", option: false },
+                        { name: "Appointment Date", option: false },
+                        { name: "Interview Preparation", option: false },
+                        { name: "Submit Documents", option: false },
+                      ]}
+                      title="Application Tracker"
+                    />
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Special Notes Section */}
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                <Icon icon="mdi:note-text" className="text-xl text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Special Notes
+              </h2>
+            </div>
+
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200">
+              <EditableField
+                label="Special Notes"
+                value={applicant.special_notes || ""}
+                onSave={(value) => handleFieldSave("special_notes", value)}
+              />
             </div>
           </div>
         </div>

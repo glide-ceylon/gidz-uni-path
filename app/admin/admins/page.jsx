@@ -18,6 +18,7 @@ import {
   FaTimes,
   FaCheck,
   FaEnvelope,
+  FaFileInvoiceDollar,
 } from "react-icons/fa";
 
 export default function AdminManagementPage() {
@@ -69,7 +70,18 @@ export default function AdminManagementPage() {
       icon: FaUserTie,
       color: "text-green-600",
     },
-    { value: "staff", label: "Staff", icon: FaUser, color: "text-gray-600" },
+    {
+      value: "staff",
+      label: "Student Visa Consultant",
+      icon: FaUser,
+      color: "text-gray-600",
+    },
+    {
+      value: "finance_manager",
+      label: "Finance Manager",
+      icon: FaFileInvoiceDollar,
+      color: "text-orange-600",
+    },
   ];
 
   const getRoleInfo = (roleValue) => {
@@ -417,6 +429,9 @@ export default function AdminManagementPage() {
     if (!selectedAdmin) return;
 
     try {
+      // Check if role is being changed
+      const isRoleChanged = editForm.role !== selectedAdmin.role;
+
       const response = await fetch(`/api/admin-users/${selectedAdmin.id}`, {
         method: "PUT",
         headers: {
@@ -427,9 +442,28 @@ export default function AdminManagementPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
         setShowEditModal(false);
         setSelectedAdmin(null);
         fetchAdmins();
+
+        // Show success message with role change notification
+        if (isRoleChanged) {
+          setError(
+            `✅ Admin updated successfully! Role changed from ${
+              getRoleInfo(selectedAdmin.role).label
+            } to ${
+              getRoleInfo(editForm.role).label
+            }. Permissions have been automatically updated to match the new role.`
+          );
+        } else {
+          setError("✅ Admin updated successfully!");
+        }
+
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setError("");
+        }, 5000);
       } else {
         const data = await response.json();
         setError(data.error || "Failed to update admin");
@@ -603,7 +637,7 @@ export default function AdminManagementPage() {
         )}
 
         {/* Debug Info for Development */}
-        {/* {process.env.NODE_ENV === "development" && admin && (
+        {process.env.NODE_ENV === "development" && admin && (
           <div className="bg-blue-50 border-l-4 border-blue-500 rounded-2xl p-4 mb-6">
             <div className="flex items-center">
               <FaUser className="h-5 w-5 text-blue-500 mr-3" />
@@ -634,7 +668,7 @@ export default function AdminManagementPage() {
               </div>
             </div>
           </div>
-        )} */}
+        )}
 
         {/* Message Display (Error or Success) */}
         {error && (
@@ -896,6 +930,10 @@ export default function AdminManagementPage() {
                       </option>
                     ))}
                   </select>
+                  <p className="text-xs text-appleGray-500 mt-1">
+                    Permissions will be automatically assigned based on the
+                    selected role
+                  </p>
                 </div>
 
                 {/* Department */}
@@ -1098,6 +1136,26 @@ export default function AdminManagementPage() {
                       </option>
                     ))}
                   </select>
+                  {editForm.role !== selectedAdmin?.role && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                      <div className="flex items-start space-x-2">
+                        <div className="flex-shrink-0">
+                          <FaUserShield className="h-4 w-4 text-blue-600 mt-0.5" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-blue-800 font-medium">
+                            Permissions Update
+                          </p>
+                          <p className="text-xs text-blue-700 mt-1">
+                            Changing the role will automatically update
+                            permissions to match the new role. Current:{" "}
+                            {getRoleInfo(selectedAdmin?.role).label} → New:{" "}
+                            {getRoleInfo(editForm.role).label}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Department */}

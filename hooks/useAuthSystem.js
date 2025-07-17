@@ -356,11 +356,18 @@ export const useAuthSystem = () => {
 
         // Only add Admin Management if user has appropriate role
         if (canManageAdmins) {
-          adminDropdownItems.push({
-            href: "/admin/admins",
-            label: "Admin Management",
-            description: "Manage admin users",
-          });
+          adminDropdownItems.push(
+            {
+              href: "/admin/admins",
+              label: "Admin Management",
+              description: "Manage admin users",
+            },
+            {
+              href: "/admin/check-list",
+              label: "Checklist Management",
+              description: "Manage checklist items",
+            }
+          );
         }
 
         // Add other menu items as needed
@@ -370,11 +377,7 @@ export const useAuthSystem = () => {
         //     label: "Timeline Management",
         //     description: "Manage timeline events",
         //   },
-        //   {
-        //     href: "/admin/messages",
-        //     label: "Messages",
-        //     description: "Communication center",
-        //   }
+
         // );
 
         return {

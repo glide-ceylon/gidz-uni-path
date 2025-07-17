@@ -20,7 +20,15 @@ import {
   FaLifeRing,
   FaChartLine,
   FaClock,
-  FaSearch, // Add logout icon
+  FaSearch,
+  FaUserEdit, // Add logout icon
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaPaperPlane,
+  FaBook,
+  FaCertificate,
+  FaIdCard,
+  FaCopy,
 } from "react-icons/fa";
 import { supabase } from "../../../lib/supabase";
 import { useRouter } from "next/navigation"; // Add useRouter
@@ -745,47 +753,89 @@ const ApplicantDetail = () => {
                   },
                   { id: "tasks", label: "Visa", icon: FaPassport },
                   { id: "support", label: "Support", icon: FaLifeRing },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center space-x-2 px-4 sm:px-6 py-4 text-sm font-medium border-b-2 transition-all duration-200 whitespace-nowrap ${
-                      activeTab === tab.id
-                        ? "border-sky-500 text-sky-600 bg-sky-50"
-                        : "border-transparent text-appleGray-600 hover:text-appleGray-800 hover:border-appleGray-300"
-                    }`}
-                  >
-                    <tab.icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                    {/* Tab badge for urgent items */}
-                    {tab.id === "tasks" &&
-                      (dashboardStats.visaDocumentsUploaded <
-                        Math.floor(dashboardStats.visaDocumentsTotal * 0.4) ||
-                        !applicant?.payment1 ||
-                        !applicant?.payment2) && (
-                        <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center tab-badge-urgent">
-                          !
-                        </span>
-                      )}
-                    {tab.id === "documents" &&
-                      (dashboardStats.universityDocumentsUploaded <
-                        Math.floor(
-                          dashboardStats.universityDocumentsTotal * 0.5
-                        ) ||
-                        dashboardStats.visaDocumentsUploaded <
+                  { id: "profile", label: "Profile", icon: FaUserEdit },
+                ].map((tab) => {
+                  const isVisaTabLocked =
+                    tab.id === "tasks" && applicant?.lock_1;
+
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        if (!isVisaTabLocked) {
+                          setActiveTab(tab.id);
+                        }
+                      }}
+                      disabled={isVisaTabLocked}
+                      className={`flex items-center space-x-2 px-4 sm:px-6 py-4 text-sm font-medium border-b-2 transition-all duration-200 whitespace-nowrap ${
+                        isVisaTabLocked
+                          ? "border-transparent text-appleGray-400 cursor-not-allowed opacity-50"
+                          : activeTab === tab.id
+                          ? "border-sky-500 text-sky-600 bg-sky-50"
+                          : "border-transparent text-appleGray-600 hover:text-appleGray-800 hover:border-appleGray-300 cursor-pointer"
+                      }`}
+                    >
+                      <tab.icon className="w-4 h-4" />
+                      <span>{tab.label}</span>
+                      {/* Tab badge for urgent items */}
+                      {tab.id === "tasks" &&
+                        (dashboardStats.visaDocumentsUploaded <
+                          Math.floor(dashboardStats.visaDocumentsTotal * 0.4) ||
+                          !applicant?.payment1 ||
+                          !applicant?.payment2) && (
+                          <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center tab-badge-urgent">
+                            !
+                          </span>
+                        )}
+                      {tab.id === "documents" &&
+                        (dashboardStats.universityDocumentsUploaded <
                           Math.floor(
-                            dashboardStats.visaDocumentsTotal * 0.4
-                          )) && (
-                        <span className="bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            dashboardStats.universityDocumentsTotal * 0.5
+                          ) ||
+                          dashboardStats.visaDocumentsUploaded <
+                            Math.floor(
+                              dashboardStats.visaDocumentsTotal * 0.4
+                            )) && (
+                          <span className="bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            !
+                          </span>
+                        )}
+                      {tab.id === "visa" && applicant?.lock_1 ? (
+                        <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                           !
                         </span>
-                      )}
-                  </button>
-                ))}
+                      ) : null}
+                    </button>
+                  );
+                })}
               </nav>
             </div>
             {/* Tab Content */}
             <div className="min-h-[600px] tab-content">
+              {/* Visa Tab Locked Message */}
+              {activeTab === "tasks" && applicant?.lock_1 && (
+                <div className="p-6 sm:p-8 flex items-center justify-center">
+                  <div className="text-center max-w-md">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <FaExclamationTriangle className="w-8 h-8 text-red-500" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-appleGray-800 mb-2">
+                      Visa Section Locked
+                    </h3>
+                    <p className="text-appleGray-600 mb-4">
+                      The visa section is currently locked. Please contact your
+                      counselor for assistance or complete the required previous
+                      steps.
+                    </p>
+                    <button
+                      onClick={() => setShowMessageModal(true)}
+                      className="bg-sky-500 hover:bg-sky-600 text-white px-6 py-2 rounded-xl font-medium transition-colors duration-200"
+                    >
+                      Contact Counselor
+                    </button>
+                  </div>
+                </div>
+              )}
               {activeTab === "overview" && (
                 <div className="p-6 sm:p-8 space-y-8">
                   {/* Application Progress */}
@@ -841,6 +891,150 @@ const ApplicantDetail = () => {
                     </div>
                   </div>
 
+                  {/* University Application Guidelines */}
+                  <div>
+                    <h3 className="text-xl font-bold text-appleGray-800 mb-4 flex items-center">
+                      <FaUniversity className="w-5 h-5 text-sky-500 mr-3" />
+                      University Application Guidelines
+                    </h3>
+                    <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-3xl p-6">
+                      <div className="mb-6">
+                        <p className="text-appleGray-700 mb-4">
+                          To begin your university application process, please
+                          carefully follow the steps below. Once complete, send
+                          all required documents via WhatsApp or Email.
+                        </p>
+                      </div>
+
+                      {/* Step 1 */}
+                      <div className="mb-6">
+                        <div className="flex items-start space-x-3 mb-3">
+                          <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <FaCheckCircle className="w-3 h-3 text-white" />
+                          </div>
+                          <h4 className="text-lg font-semibold text-appleGray-800">
+                            STEP 1: Create a New Email Address
+                          </h4>
+                        </div>
+                        <p className="text-appleGray-600 ml-9">
+                          Specifically for university applications. This will
+                          help keep tracking all the process.
+                        </p>
+                      </div>
+
+                      {/* Step 2 */}
+                      <div className="mb-6">
+                        <div className="flex items-start space-x-3 mb-4">
+                          <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <FaCheckCircle className="w-3 h-3 text-white" />
+                          </div>
+                          <h4 className="text-lg font-semibold text-appleGray-800">
+                            STEP 2: Submit the Required Documents
+                          </h4>
+                        </div>
+                        <p className="text-appleGray-600 ml-9 mb-4">
+                          Please prepare and submit clear scanned copies (PDF
+                          format recommended) of the following documents based
+                          on the program you are applying for:
+                        </p>
+
+                        {/* Bachelor's Degree Requirements */}
+                        <div className="ml-9 mb-6">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <FaBook className="w-4 h-4 text-blue-600" />
+                            <h5 className="text-base font-semibold text-appleGray-800">
+                              For Bachelor's Degree Applicants
+                            </h5>
+                          </div>
+                          <div className="bg-white rounded-2xl p-4 space-y-2">
+                            {[
+                              "Proof of Language Proficiency (IELTS – Academic)",
+                              "G.C.E. O-Level Certificate (Must be certified by the Ministry of Foreign Affairs)",
+                              "G.C.E. A-Level Certificate (Must be certified by the Ministry of Foreign Affairs)",
+                              "Curriculum Vitae (CV) - (Updated in tabular format)",
+                              "School Leaving Certificate (Must be translated into English)",
+                              "Copy of Valid Passport",
+                              "Birth Certificate (English translation required)",
+                            ].map((item, index) => (
+                              <div
+                                key={index}
+                                className="flex items-start space-x-2 text-sm text-appleGray-700"
+                              >
+                                <span className="text-blue-600 font-medium mt-0.5">
+                                  {index + 1}.
+                                </span>
+                                <span>{item}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Master's Degree Requirements */}
+                        <div className="ml-9 mb-6">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <FaGraduationCap className="w-4 h-4 text-purple-600" />
+                            <h5 className="text-base font-semibold text-appleGray-800">
+                              For Master's Degree Applicants
+                            </h5>
+                          </div>
+                          <p className="text-sm text-appleGray-600 mb-3">
+                            (Include all of the above Bachelor's requirements,
+                            plus the following:)
+                          </p>
+                          <div className="bg-white rounded-2xl p-4 space-y-2">
+                            {[
+                              "Bachelor's Degree Certificate",
+                              "Bachelor's Transcript",
+                              "Two Letters of Recommendation",
+                              "Medium of Instruction Certificate",
+                              "Internship or Work Experience Letters (if applicable)",
+                            ].map((item, index) => (
+                              <div
+                                key={index}
+                                className="flex items-start space-x-2 text-sm text-appleGray-700"
+                              >
+                                <span className="text-purple-600 font-medium mt-0.5">
+                                  {index + 1}.
+                                </span>
+                                <span>{item}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Submit Documents */}
+                        <div className="ml-9">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <FaEnvelope className="w-4 h-4 text-green-600" />
+                            <h5 className="text-base font-semibold text-appleGray-800">
+                              Submit Documents To: WhatsApp or Email
+                            </h5>
+                          </div>
+                          <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                              <a
+                                href="https://wa.me/4915566389194"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                              >
+                                <FaPhone className="w-4 h-4" />
+                                <span>WhatsApp: +49 155 6638 9194</span>
+                              </a>
+                              <a
+                                href="mailto:gidzunipath@gmail.com"
+                                className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                              >
+                                <FaEnvelope className="w-4 h-4" />
+                                <span>Email: gidzunipath@gmail.com</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Smart Recommendations */}
                   <div>
                     <SmartRecommendations
@@ -871,19 +1065,219 @@ const ApplicantDetail = () => {
                 </div>
               )}
 
-              {activeTab === "analytics" && (
-                <div className="p-6 sm:p-8">
-                  <AnalyticsDashboard
-                    applicantData={applicant}
-                    applicationId={id}
-                    dashboardStats={dashboardStats}
-                  />
-                </div>
-              )}
-
-              {activeTab === "tasks" && (
+              {activeTab === "tasks" && !applicant?.lock_1 && (
                 <div className="p-6 sm:p-8 space-y-8">
                   <div>
+                    {/* Visa Application Submission Document Checklist */}
+                    <div className="mb-8">
+                      <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
+                        <FaPassport className="w-5 h-5 text-sky-500 mr-3" />
+                        Visa Application Submission – Document Checklist
+                      </h3>
+
+                      <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-3xl p-6">
+                        <div className="mb-6">
+                          <p className="text-appleGray-700 mb-4">
+                            To apply for your German student visa, please follow
+                            these steps and submit all required documents via
+                            WhatsApp or Email.
+                          </p>
+                        </div>
+
+                        {/* Step 1 */}
+                        <div className="mb-6">
+                          <div className="flex items-start space-x-3 mb-3">
+                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <FaCheckCircle className="w-3 h-3 text-white" />
+                            </div>
+                            <h4 className="text-lg font-semibold text-appleGray-800">
+                              STEP 1: Create a New Email Address
+                            </h4>
+                          </div>
+                          <p className="text-appleGray-600 ml-9">
+                            For a secure and organized visa process, please
+                            create a new Gmail account and password exclusively
+                            for visa communications.
+                          </p>
+                        </div>
+
+                        {/* Step 2 */}
+                        <div className="mb-6">
+                          <div className="flex items-start space-x-3 mb-4">
+                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <FaCheckCircle className="w-3 h-3 text-white" />
+                            </div>
+                            <h4 className="text-lg font-semibold text-appleGray-800">
+                              STEP 2: Submit the Following Documents
+                            </h4>
+                          </div>
+                          <p className="text-appleGray-600 ml-9 mb-6">
+                            Please send clear scanned copies of the following
+                            documents:
+                          </p>
+
+                          {/* Document Requirements */}
+                          <div className="ml-9 space-y-6">
+                            {/* Motivation Letter */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  1. Motivation Letter (for the Embassy)
+                                </h5>
+                              </div>
+                              <p className="text-sm text-appleGray-600 mb-3 ml-8">
+                                This is required along with your Admission
+                                Letter.
+                              </p>
+                              <div className="ml-8">
+                                <p className="text-sm font-medium text-appleGray-700 mb-2">
+                                  Your motivation letter should clearly include:
+                                </p>
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>• Why you want to study in Germany</li>
+                                  <li>
+                                    • Why you chose this specific degree and
+                                    university
+                                  </li>
+                                  <li>• Your academic background</li>
+                                  <li>• Your family background</li>
+                                  <li>
+                                    • Your goals after graduation and how you
+                                    plan to contribute to Sri Lanka after
+                                    returning
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Updated CV */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaIdCard className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  2. Updated CV (Curriculum Vitae)
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>• Preferably in tabular format</li>
+                                  <li>
+                                    • Include educational background, skills,
+                                    and any professional experience
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Passport Copy */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaPassport className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  3. Passport Copy
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>
+                                    • Include all passport pages with stamps,
+                                    and especially pages 2 to 9
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Biometric Photo */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaUserEdit className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  4. Biometric Photo
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>
+                                    • Must be a recent photo with a white
+                                    background
+                                  </li>
+                                  <li>
+                                    • Follows German visa photo specifications
+                                    (35mm x 45mm)
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Work Experience */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaCertificate className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  5. Work Experience / Courses
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>
+                                    • Include any job experience letters,
+                                    internships, or extra courses you have
+                                    completed (if applicable)
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Birth Certificate */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  6. Birth Certificate (English Translation)
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>
+                                    • Must be officially translated into English
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Submit Documents */}
+                            <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-4 border border-green-200">
+                              <div className="flex items-center space-x-2 mb-3">
+                                <FaEnvelope className="w-4 h-4 text-green-600" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  Submit Documents To: WhatsApp or Email
+                                </h5>
+                              </div>
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                                <a
+                                  href="https://wa.me/4915566389194"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                >
+                                  <FaPhone className="w-4 h-4" />
+                                  <span>WhatsApp: +49 155 6638 9194</span>
+                                </a>
+                                <a
+                                  href="mailto:gidzunipath@gmail.com"
+                                  className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                >
+                                  <FaEnvelope className="w-4 h-4" />
+                                  <span>Email: gidzunipath@gmail.com</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
                       <FaTasks className="w-5 h-5 text-sky-500 mr-3" />
                       Visa Application Tracker
@@ -1066,92 +1460,277 @@ const ApplicantDetail = () => {
                         </div>
                       </button>
                     </div>
-                    {/* Personal Information */}
-                    <div>
-                      <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-                        👤 Personal Information
-                      </h4>
-                      <div className="bg-appleGray-50 p-6 rounded-3xl">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                          {/* Personal Details */}
-                          <div className="space-y-4">
-                            <div className="flex items-center space-x-3">
-                              <FaCalendarAlt className="w-5 h-5 text-appleGray-400" />
-                              <div>
-                                <span className="text-sm font-medium text-appleGray-600">
-                                  Date of Birth
-                                </span>
-                                <p className="text-appleGray-800">
-                                  {applicant.date_of_birth || "N/A"}
-                                </p>
-                              </div>
-                            </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      {/* Call Us Card */}
+                      <div className="bg-white rounded-3xl p-8 shadow-large hover:shadow-xl transition-all duration-300 text-center group">
+                        <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                          <FaPhoneAlt className="w-8 h-8 text-white" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+                          Call Us
+                        </h3>
+                        <p className="text-appleGray-600 mb-4">
+                          Monday to Friday, 9:30 AM to 5:00 PM
+                        </p>
+                        <div className="space-y-2">
+                          <a
+                            href="tel:+4915566389194"
+                            className="block text-lg font-semibold text-sky-600 hover:text-sky-700 transition-colors"
+                          >
+                            +49 155 6638 9194
+                          </a>
+                          <div className="flex items-center justify-center space-x-2 text-appleGray-500">
+                            <FaClock className="w-4 h-4" />
+                            <span className="text-sm">
+                              Response within 1 hour
+                            </span>
+                          </div>
+                        </div>
+                      </div>
 
-                            <div className="flex items-center space-x-3">
-                              <FaPassport className="w-5 h-5 text-appleGray-400" />
-                              <div>
-                                <span className="text-sm font-medium text-appleGray-600">
-                                  Passport Number
-                                </span>
-                                <p className="text-appleGray-800">
-                                  {applicant.passport_number || "N/A"}
-                                </p>
-                              </div>
-                            </div>
+                      {/* Visit Us Card */}
+                      <div className="bg-white rounded-3xl p-8 shadow-large hover:shadow-xl transition-all duration-300 text-center group">
+                        <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                          <FaMapMarkerAlt className="w-8 h-8 text-white" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+                          Visit Us
+                        </h3>
+                        <p className="text-appleGray-600 mb-4">
+                          Monday to Friday, 9:30 AM to 5:00 PM
+                        </p>
+                        <div className="space-y-2">
+                          <p className="text-lg font-semibold text-appleGray-800">
+                            Arasady Road, Kaddudai
+                          </p>
+                          <p className="text-appleGray-600">
+                            Manipay, Jaffna, Sri Lanka
+                          </p>
+                          <div className="flex items-center justify-center space-x-2 text-appleGray-500">
+                            <FaMapMarkerAlt className="w-4 h-4" />
+                            <span className="text-sm">By appointment</span>
+                          </div>
+                        </div>
+                      </div>
 
-                            <div className="flex items-center space-x-3">
-                              <FaPhone className="w-5 h-5 text-appleGray-400" />
-                              <div>
-                                <span className="text-sm font-medium text-appleGray-600">
-                                  Telephone
-                                </span>
-                                <p className="text-appleGray-800">
-                                  {applicant.telephone || "N/A"}
-                                </p>
-                              </div>
-                            </div>
+                      {/* Email Us Card */}
+                      <div className="bg-white rounded-3xl p-8 shadow-large hover:shadow-xl transition-all duration-300 text-center group">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                          <FaEnvelope className="w-8 h-8 text-white" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+                          Email Us
+                        </h3>
+                        <p className="text-appleGray-600 mb-4">
+                          For general or business inquiries
+                        </p>
+                        <div className="space-y-2">
+                          <a
+                            href="mailto:gidzunipath@gmail.com"
+                            className="block text-lg font-semibold text-sky-600 hover:text-sky-700 transition-colors"
+                          >
+                            gidzunipath@gmail.com
+                          </a>
+                          <div className="flex items-center justify-center space-x-2 text-appleGray-500">
+                            <FaPaperPlane className="w-4 h-4" />
+                            <span className="text-sm">
+                              Response within 24 hours
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-                            <div className="flex items-center space-x-3">
-                              <FaEnvelope className="w-5 h-5 text-appleGray-400" />
-                              <div>
-                                <span className="text-sm font-medium text-appleGray-600">
-                                  Email
-                                </span>
-                                <p className="text-appleGray-800">
-                                  {applicant.email || "N/A"}
-                                </p>
-                              </div>
+              {activeTab === "profile" && (
+                <div className="p-6 sm:p-8 space-y-8">
+                  {/* Personal Information */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+                      👤 Personal Information
+                    </h4>
+                    <div className="bg-appleGray-50 p-6 rounded-3xl">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Personal Details */}
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-3">
+                            <FaUserEdit className="w-5 h-5 text-appleGray-400" />
+                            <div>
+                              <span className="text-sm font-medium text-appleGray-600">
+                                First Name
+                              </span>
+                              <p className="text-appleGray-800">
+                                {applicant.first_name || "N/A"}
+                              </p>
                             </div>
                           </div>
 
-                          {/* Profile Picture */}
-                          <div className="flex flex-col items-center justify-center space-y-4">
-                            <div className="relative">
-                              <div className="w-32 h-32 rounded-3xl overflow-hidden shadow-soft border-4 border-white">
-                                <Image
-                                  width={128}
-                                  height={128}
-                                  src={profilePicUrl || "/logo.png"}
-                                  alt="Profile"
-                                  className="w-full h-full object-cover"
+                          <div className="flex items-center space-x-3">
+                            <FaUserEdit className="w-5 h-5 text-appleGray-400" />
+                            <div>
+                              <span className="text-sm font-medium text-appleGray-600">
+                                Last Name
+                              </span>
+                              <p className="text-appleGray-800">
+                                {applicant.last_name || "N/A"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-3">
+                            <FaCalendarAlt className="w-5 h-5 text-appleGray-400" />
+                            <div>
+                              <span className="text-sm font-medium text-appleGray-600">
+                                Date of Birth
+                              </span>
+                              <p className="text-appleGray-800">
+                                {applicant.date_of_birth || "N/A"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-3">
+                            <FaPassport className="w-5 h-5 text-appleGray-400" />
+                            <div>
+                              <span className="text-sm font-medium text-appleGray-600">
+                                Passport Number
+                              </span>
+                              <p className="text-appleGray-800">
+                                {applicant.passport_number || "N/A"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-3">
+                            <FaPhone className="w-5 h-5 text-appleGray-400" />
+                            <div>
+                              <span className="text-sm font-medium text-appleGray-600">
+                                Telephone
+                              </span>
+                              <p className="text-appleGray-800">
+                                {applicant.telephone || "N/A"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-3">
+                            <FaEnvelope className="w-5 h-5 text-appleGray-400" />
+                            <div>
+                              <span className="text-sm font-medium text-appleGray-600">
+                                Email
+                              </span>
+                              <p className="text-appleGray-800">
+                                {applicant.email || "N/A"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Profile Picture */}
+                        <div className="flex flex-col items-center justify-center space-y-4">
+                          <div className="relative">
+                            <div className="w-32 h-32 rounded-3xl overflow-hidden shadow-soft border-4 border-white">
+                              <Image
+                                width={128}
+                                height={128}
+                                src={profilePicUrl || "/logo.png"}
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+
+                          {!profilePicUrl && (
+                            <div className="text-center">
+                              <label className="cursor-pointer bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-2xl text-sm font-medium transition-colors duration-200 inline-flex items-center space-x-2">
+                                <FaUpload className="w-4 h-4" />
+                                <span>Upload Photo</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleProfileUpload}
+                                  className="hidden"
                                 />
+                              </label>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Referral Code Section */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+                      🔗 Referral Code
+                    </h4>
+                    <div className="bg-gradient-to-r from-sky-50 to-sky-100 border border-sky-200 rounded-3xl p-6">
+                      <div className="text-center space-y-4">
+                        <div className="w-16 h-16 bg-sky-500 rounded-full flex items-center justify-center mx-auto">
+                          <FaIdCard className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <h5 className="text-xl font-semibold text-appleGray-800 mb-2">
+                            Share Your Referral Code
+                          </h5>
+                          <p className="text-sm text-appleGray-600 mb-4">
+                            Refer friends and family to earn rewards when they
+                            complete their application!
+                          </p>
+                        </div>
+
+                        <div className="bg-white rounded-2xl p-4 border-2 border-dashed border-sky-300">
+                          <div className="flex items-center justify-between space-x-4">
+                            <div className="flex-1">
+                              <span className="text-xs font-medium text-appleGray-600 uppercase tracking-wide">
+                                Your Referral Code
+                              </span>
+                              <div className="text-2xl font-bold text-sky-600 font-mono tracking-wider">
+                                {applicant?.referral_code ||
+                                  id?.slice(-8).toUpperCase() ||
+                                  "GIDZ2024"}
                               </div>
                             </div>
+                            <button
+                              onClick={() => {
+                                const referralCode =
+                                  applicant?.referral_code ||
+                                  id?.slice(-8).toUpperCase() ||
+                                  "GIDZ2024";
+                                navigator.clipboard
+                                  .writeText(referralCode)
+                                  .then(() => {
+                                    // You could add a toast notification here
+                                    alert("Referral code copied to clipboard!");
+                                  });
+                              }}
+                              className="flex items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                            >
+                              <FaCopy className="w-4 h-4" />
+                              <span>Copy</span>
+                            </button>
+                          </div>
+                        </div>
 
-                            {!profilePicUrl && (
-                              <div className="text-center">
-                                <label className="cursor-pointer bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-2xl text-sm font-medium transition-colors duration-200 inline-flex items-center space-x-2">
-                                  <FaUpload className="w-4 h-4" />
-                                  <span>Upload Photo</span>
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleProfileUpload}
-                                    className="hidden"
-                                  />
-                                </label>
-                              </div>
-                            )}
+                        <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <FaCheckCircle className="w-3 h-3 text-white" />
+                            </div>
+                            <div className="text-left">
+                              <h6 className="text-sm font-semibold text-green-800 mb-1">
+                                How it works:
+                              </h6>
+                              <ul className="text-xs text-green-700 space-y-1">
+                                <li>• Share your referral code with friends</li>
+                                <li>• They use it during their application</li>
+                                <li>
+                                  • You both get rewards when they complete!
+                                </li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
                       </div>
