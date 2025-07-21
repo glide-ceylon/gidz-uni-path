@@ -943,7 +943,7 @@ const ApplicantDetail = () => {
                           <div className="flex items-center space-x-2 mb-3">
                             <FaBook className="w-4 h-4 text-blue-600" />
                             <h5 className="text-base font-semibold text-appleGray-800">
-                              For Bachelor's Degree Applicants
+                              For Bachelor&apos;s Degree Applicants
                             </h5>
                           </div>
                           <div className="bg-white rounded-2xl p-4 space-y-2">
@@ -974,12 +974,12 @@ const ApplicantDetail = () => {
                           <div className="flex items-center space-x-2 mb-3">
                             <FaGraduationCap className="w-4 h-4 text-purple-600" />
                             <h5 className="text-base font-semibold text-appleGray-800">
-                              For Master's Degree Applicants
+                              For Master&apos;s Degree Applicants
                             </h5>
                           </div>
                           <p className="text-sm text-appleGray-600 mb-3">
-                            (Include all of the above Bachelor's requirements,
-                            plus the following:)
+                            (Include all of the above Bachelor&apos;s
+                            requirements, plus the following:)
                           </p>
                           <div className="bg-white rounded-2xl p-4 space-y-2">
                             {[
