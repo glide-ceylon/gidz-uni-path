@@ -1080,10 +1080,9 @@ const ApplicantDetail = () => {
                           <p className="text-appleGray-700 mb-4">
                             To apply for your German student visa, please follow
                             these steps and submit all required documents via
-                            WhatsApp or Email.
+                            <b> WhatsApp</b> or <b>Email</b>.
                           </p>
                         </div>
-
                         {/* Step 1 */}
                         <div className="mb-6">
                           <div className="flex items-start space-x-3 mb-3">
@@ -1091,7 +1090,62 @@ const ApplicantDetail = () => {
                               <FaCheckCircle className="w-3 h-3 text-white" />
                             </div>
                             <h4 className="text-lg font-semibold text-appleGray-800">
-                              STEP 1: Create a New Email Address
+                              STEP 1: Create a Blocked Account
+                            </h4>
+                          </div>
+                          <p className="text-appleGray-600 ml-9 mb-6">
+                            To show proof of Secure Livelihood for student visa
+                            application, you need to initiate the process of
+                            opening a blocked account through Expatrio, a
+                            recognized provider in Germany. This is part of
+                            Expatrio’s Value Package, which includes:
+                          </p>
+
+                          <div className="ml-9 space-y-6">
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <ul className="list-disc ml-6 text-sm text-appleGray-700 space-y-2">
+                                <li>
+                                  <span className="font-medium">
+                                    Blocked Account
+                                  </span>{" "}
+                                  (required proof of financial means)
+                                </li>
+                                <li>
+                                  <span className="font-medium">
+                                    Health Insurance
+                                  </span>{" "}
+                                  (public or private, depending on eligibility)
+                                </li>
+                                <li>
+                                  <span className="font-medium">
+                                    Travel Insurance
+                                  </span>{" "}
+                                  (valid for the visa duration before enrollment
+                                  in public health insurance)
+                                </li>
+                              </ul>
+                              <div className="mt-4">
+                                <a
+                                  href="https://www.expatrio.com?f=gideong1"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                >
+                                  <FaUniversity className="w-4 h-4" />
+                                  <span>Open with Expatrio</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Step 2 */}
+                        <div className="mb-6">
+                          <div className="flex items-start space-x-3 mb-3">
+                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <FaCheckCircle className="w-3 h-3 text-white" />
+                            </div>
+                            <h4 className="text-lg font-semibold text-appleGray-800">
+                              STEP 2: Create a New Email Address
                             </h4>
                           </div>
                           <p className="text-appleGray-600 ml-9">
@@ -1100,15 +1154,14 @@ const ApplicantDetail = () => {
                             for visa communications.
                           </p>
                         </div>
-
-                        {/* Step 2 */}
+                        {/* Step 3 */}
                         <div className="mb-6">
                           <div className="flex items-start space-x-3 mb-4">
                             <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                               <FaCheckCircle className="w-3 h-3 text-white" />
                             </div>
                             <h4 className="text-lg font-semibold text-appleGray-800">
-                              STEP 2: Submit the Following Documents
+                              STEP 3: Submit the Following Documents
                             </h4>
                           </div>
                           <p className="text-appleGray-600 ml-9 mb-6">
@@ -1383,7 +1436,7 @@ const ApplicantDetail = () => {
                     </div>
 
                     {/* All Application Options */}
-                    <div className="space-y-8">
+                    {/* <div className="space-y-8">
                       <ApplicationOptions
                         applicationId={id}
                         optionsToCheck={[
@@ -1408,7 +1461,7 @@ const ApplicantDetail = () => {
                         ]}
                         title="🏛️ University Enrollment"
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               )}

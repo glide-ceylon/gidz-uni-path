@@ -468,20 +468,22 @@ const StudentApplicationForm = () => {
     if (!file) return null;
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}_${Math.random()
+        .toString(36)
+        .substring(2)}.${fileExt}`;
       const filePath = `${folder}/${fileName}`;
 
       const { data, error } = await supabase.storage
-        .from('student_visa_files')
+        .from("student_visa_files")
         .upload(filePath, file);
 
       if (error) throw error;
 
       // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('student_visa_files')
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("student_visa_files").getPublicUrl(filePath);
 
       return publicUrl;
     } catch (error) {
@@ -501,58 +503,62 @@ const StudentApplicationForm = () => {
 
       // Upload files and replace with URLs
       if (formData.EducationalQualification.OLevel.ResultsDocument) {
-        processedData.EducationalQualification.OLevel.ResultsDocument = await uploadFile(
-          formData.EducationalQualification.OLevel.ResultsDocument,
-          'ol'
-        );
+        processedData.EducationalQualification.OLevel.ResultsDocument =
+          await uploadFile(
+            formData.EducationalQualification.OLevel.ResultsDocument,
+            "ol"
+          );
       }
 
       if (formData.EducationalQualification.ALevel.ResultsDocument) {
-        processedData.EducationalQualification.ALevel.ResultsDocument = await uploadFile(
-          formData.EducationalQualification.ALevel.ResultsDocument,
-          'al'
-        );
+        processedData.EducationalQualification.ALevel.ResultsDocument =
+          await uploadFile(
+            formData.EducationalQualification.ALevel.ResultsDocument,
+            "al"
+          );
       }
 
       if (formData.EducationalQualification.TranscriptOrAdditionalDocument) {
-        processedData.EducationalQualification.TranscriptOrAdditionalDocument = await uploadFile(
-          formData.EducationalQualification.TranscriptOrAdditionalDocument,
-          'transcript'
-        );
+        processedData.EducationalQualification.TranscriptOrAdditionalDocument =
+          await uploadFile(
+            formData.EducationalQualification.TranscriptOrAdditionalDocument,
+            "transcript"
+          );
       }
 
       if (formData.IELTSResults.Certificate) {
         processedData.IELTSResults.Certificate = await uploadFile(
           formData.IELTSResults.Certificate,
-          'ielts'
+          "ielts"
         );
       }
 
       if (formData.CVUpload.File) {
         processedData.CVUpload.File = await uploadFile(
           formData.CVUpload.File,
-          'cv'
+          "cv"
         );
       }
 
       if (formData.WhenApplyingMaster.BachelorsCertificate) {
-        processedData.WhenApplyingMaster.BachelorsCertificate = await uploadFile(
-          formData.WhenApplyingMaster.BachelorsCertificate,
-          'bachelors'
-        );
+        processedData.WhenApplyingMaster.BachelorsCertificate =
+          await uploadFile(
+            formData.WhenApplyingMaster.BachelorsCertificate,
+            "bachelors"
+          );
       }
 
       if (formData.WhenApplyingMaster.Transcript) {
         processedData.WhenApplyingMaster.Transcript = await uploadFile(
           formData.WhenApplyingMaster.Transcript,
-          'transcript'
+          "transcript"
         );
       }
 
       if (formData.FinancialProof.FinancialDocuments) {
         processedData.FinancialProof.FinancialDocuments = await uploadFile(
           formData.FinancialProof.FinancialDocuments,
-          'financial'
+          "financial"
         );
       }
 
@@ -1076,7 +1082,7 @@ const StudentApplicationForm = () => {
         </div>
 
         {/* O-Level Results Section */}
-        <div className="bg-appleGray-50 p-6 rounded-2xl">
+        {/* <div className="bg-appleGray-50 p-6 rounded-2xl">
           <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
             G.C.E. Ordinary Level (O/L) Results
           </h4>
@@ -1114,10 +1120,10 @@ const StudentApplicationForm = () => {
               </p>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* A-Level Results Section */}
-        <div className="bg-appleGray-50 p-6 rounded-2xl">
+        {/* <div className="bg-appleGray-50 p-6 rounded-2xl">
           <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
             G.C.E. Advanced Level (A/L) Results
           </h4>
@@ -1155,7 +1161,7 @@ const StudentApplicationForm = () => {
               </p>
             )}
           </div>
-        </div>
+        </div> */}
 
         <div className="bg-appleGray-50 p-6 rounded-2xl">
           <div className="flex items-center space-x-3 mb-4">
@@ -1205,8 +1211,26 @@ const StudentApplicationForm = () => {
                   placeholder="Enter your GPA (e.g., 3.75)"
                 />
               </div>
+              {/* <div>
+                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                  Name of your degree
+                </label>
+                <input
+                  type="text"
+                  value={formData.EducationalQualification.ALevel.DegreeName}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "EducationalQualification",
+                      "ALevel.DegreeName",
+                      e.target.value
+                    )
+                  }
+                  className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter your degree name"
+                />
+              </div> */}
 
-              <div className="bg-white p-6 rounded-2xl border border-appleGray-200">
+              {/* <div className="bg-white p-6 rounded-2xl border border-appleGray-200">
                 <h5 className="text-md font-semibold text-appleGray-800 mb-4">
                   For Master&apos;s Degree Applications
                 </h5>
@@ -1240,7 +1264,11 @@ const StudentApplicationForm = () => {
                       </p>
                       {formData.WhenApplyingMaster.BachelorsCertificate && (
                         <p className="text-sm text-green-600 mt-2">
-                          ✓ {formData.WhenApplyingMaster.BachelorsCertificate.name}
+                          ✓{" "}
+                          {
+                            formData.WhenApplyingMaster.BachelorsCertificate
+                              .name
+                          }
                         </p>
                       )}
                     </div>
@@ -1281,7 +1309,7 @@ const StudentApplicationForm = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           )}
         </div>
@@ -1314,9 +1342,14 @@ const StudentApplicationForm = () => {
             <p className="text-sm text-appleGray-500 mt-2">
               PDF, JPG, PNG up to 10MB
             </p>
-            {formData.EducationalQualification.TranscriptOrAdditionalDocument && (
+            {formData.EducationalQualification
+              .TranscriptOrAdditionalDocument && (
               <p className="text-sm text-green-600 mt-2">
-                ✓ {formData.EducationalQualification.TranscriptOrAdditionalDocument.name}
+                ✓{" "}
+                {
+                  formData.EducationalQualification
+                    .TranscriptOrAdditionalDocument.name
+                }
               </p>
             )}
           </div>
@@ -1577,9 +1610,8 @@ const StudentApplicationForm = () => {
               required
             >
               <option value="">Select academic term</option>
-              <option value="Fall">Fall</option>
-              <option value="Spring">Spring</option>
               <option value="Summer">Summer</option>
+              <option value="Winter">Winter</option>
             </select>
           </div>
         </div>
@@ -1746,7 +1778,7 @@ const StudentApplicationForm = () => {
         </div>
 
         {/* Financial Means Type */}
-        <div>
+        {/* <div>
           <label className="block text-sm font-semibold text-appleGray-700 mb-2">
             How will you finance your studies? *
           </label>
@@ -1755,7 +1787,7 @@ const StudentApplicationForm = () => {
               "Blocked Account (Sperrkonto)",
               "Declaration of Commitment (Verpflichtungserklärung)",
               "Scholarship",
-              "Other Financial Means"
+              "Other Financial Means",
             ].map((option) => (
               <label
                 key={option}
@@ -1765,7 +1797,9 @@ const StudentApplicationForm = () => {
                   type="radio"
                   name="financialMeansType"
                   value={option}
-                  checked={formData.FinancialProof.FinancialMeansType === option}
+                  checked={
+                    formData.FinancialProof.FinancialMeansType === option
+                  }
                   onChange={(e) =>
                     handleInputChange(
                       "FinancialProof",
@@ -1779,10 +1813,11 @@ const StudentApplicationForm = () => {
               </label>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Blocked Account Amount */}
-        {formData.FinancialProof.FinancialMeansType === "Blocked Account (Sperrkonto)" && (
+        {/* {formData.FinancialProof.FinancialMeansType ===
+          "Blocked Account (Sperrkonto)" && (
           <div className="bg-blue-50 p-6 rounded-2xl">
             <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
               Blocked Account Details
@@ -1806,14 +1841,16 @@ const StudentApplicationForm = () => {
                 min="11208"
               />
               <p className="text-sm text-appleGray-500 mt-2">
-                The minimum required amount for a German student visa is €11,208 per year
+                The minimum required amount for a German student visa is €11,208
+                per year
               </p>
             </div>
           </div>
-        )}
+        )} */}
 
-        {/* Declaration of Commitment */}
-        {formData.FinancialProof.FinancialMeansType === "Declaration of Commitment (Verpflichtungserklärung)" && (
+        {/* Declaration of Commitment
+        {formData.FinancialProof.FinancialMeansType ===
+          "Declaration of Commitment (Verpflichtungserklärung)" && (
           <div className="bg-green-50 p-6 rounded-2xl">
             <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
               Declaration of Commitment Details
@@ -1837,10 +1874,11 @@ const StudentApplicationForm = () => {
               />
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Other Financial Means */}
-        {formData.FinancialProof.FinancialMeansType === "Other Financial Means" && (
+        {/* {formData.FinancialProof.FinancialMeansType ===
+          "Other Financial Means" && (
           <div className="bg-yellow-50 p-6 rounded-2xl">
             <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
               Other Financial Means
@@ -1864,15 +1902,16 @@ const StudentApplicationForm = () => {
               />
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Financial Documents Upload */}
-        <div>
+        {/* <div>
           <label className="block text-sm font-semibold text-appleGray-700 mb-2">
             Financial Documents *
           </label>
           <p className="text-sm text-appleGray-600 mb-4">
-            Upload documents supporting your financial proof (bank statements, blocked account confirmation, scholarship letter, etc.)
+            Upload documents supporting your financial proof (bank statements,
+            blocked account confirmation, scholarship letter, etc.)
           </p>
           <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
             <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
@@ -1905,7 +1944,7 @@ const StudentApplicationForm = () => {
               </p>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
     );
   }
