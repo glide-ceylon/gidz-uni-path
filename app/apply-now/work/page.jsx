@@ -60,17 +60,13 @@ const WorkVisaApplicationForm = () => {
       englishCertificate: null,
       otherLanguages: [],
     },
-    GermanyExperience: {
+    ApplicationDetails: {
       previousStayInGermany: "",
       previousVisaType: "",
-    },
-    ApplicationDetails: {
-      applyingWithSpouse: false,
-      blockedAccount: false,
-      aboutYouAndYourNeeds: "",
-    },
-    FinancialProof: {
+      applyingWithSpouse: "",
       CanEarnLivingInGermany: "",
+      aboutYouAndYourNeeds: "",
+      referenceCode: "",
     },
   });
 
@@ -106,22 +102,8 @@ const WorkVisaApplicationForm = () => {
     },
     {
       id: 4,
-      title: "Germany Experience",
-      description: "Previous stays in Germany",
-      icon: FaPassport,
-      fields: ["GermanyExperience"],
-    },
-    {
-      id: 5,
-      title: "Financial Proof",
-      description: "Financial independence documentation",
-      icon: FaMoneyBillWave,
-      fields: ["FinancialProof"],
-    },
-    {
-      id: 6,
       title: "Application Details",
-      description: "Additional information",
+      description: "Additional information and requirements",
       icon: FaFileUpload,
       fields: ["ApplicationDetails"],
     },
@@ -267,8 +249,8 @@ const WorkVisaApplicationForm = () => {
     }
 
     // Financial Proof validation
-    if (!formData.FinancialProof.CanEarnLivingInGermany) {
-      newErrors["FinancialProof.CanEarnLivingInGermany"] =
+    if (!formData.ApplicationDetails.CanEarnLivingInGermany) {
+      newErrors["ApplicationDetails.CanEarnLivingInGermany"] =
         "Please answer the blocked account question.";
     }
 
@@ -378,18 +360,21 @@ const WorkVisaApplicationForm = () => {
 
       // Prepare data for database - standardize format to match existing records
       const applicationData = {
+        // Reference Code
+        referenceCode: formData.ApplicationDetails.referenceCode || "",
+
         // Personal Information
         firstName: formData.PersonalInformation.firstName,
         lastName: formData.PersonalInformation.lastName,
         dateOfBirth: formData.PersonalInformation.dateOfBirth,
         nationality: formData.PersonalInformation.nationality || "",
-        passportNumber: formData.PersonalInformation.passportNumber || "",
+        // passportNumber: formData.PersonalInformation.passportNumber || "",
 
         // Contact Information
         mobileNumber: formData.ContactInformation.mobileNumber,
         email: formData.ContactInformation.email,
         currentAddress: formData.ContactInformation.currentAddress || "",
-        country: formData.ContactInformation.country || "",
+        // country: formData.ContactInformation.country || "",
 
         // Education & Experience
         educationType: formData.QualificationsAndExperience.educationType || "",
@@ -407,22 +392,18 @@ const WorkVisaApplicationForm = () => {
 
         // Germany Experience - standardize format
         previousStayInGermany:
-          formData.GermanyExperience.previousStayInGermany || "None",
-        previousVisaType: formData.GermanyExperience.previousVisaType || "",
+          formData.ApplicationDetails.previousStayInGermany || "None",
+        previousVisaType: formData.ApplicationDetails.previousVisaType || "",
 
-        // Application Details - convert boolean to string format
-        applyingWithSpouse: formData.ApplicationDetails.applyingWithSpouse
-          ? "Yes"
-          : "No",
-        blockedAccount: formData.ApplicationDetails.blockedAccount
-          ? "Yes"
-          : "No",
+        // Application Details - convert string to string format
+        applyingWithSpouse:
+          formData.ApplicationDetails.applyingWithSpouse || "No",
         aboutYouAndYourNeeds:
           formData.ApplicationDetails.aboutYouAndYourNeeds || "",
 
         // Financial Proof
         CanEarnLivingInGermany:
-          formData.FinancialProof.CanEarnLivingInGermany || "",
+          formData.ApplicationDetails.CanEarnLivingInGermany || "",
 
         // File URLs - match existing database field names (without 'Url' suffix)
         bachelorOrMasterDegreeCertificate: bachelorOrMasterDegreeCertificateUrl,
@@ -464,13 +445,13 @@ const WorkVisaApplicationForm = () => {
           lastName: "",
           dateOfBirth: "",
           nationality: "",
-          passportNumber: "",
+          // passportNumber: "",
         },
         ContactInformation: {
           mobileNumber: "",
           email: "",
           currentAddress: "",
-          country: "",
+          // country: "",
         },
         QualificationsAndExperience: {
           educationType: "",
@@ -487,17 +468,13 @@ const WorkVisaApplicationForm = () => {
           englishCertificate: null,
           otherLanguages: [],
         },
-        GermanyExperience: {
+        ApplicationDetails: {
           previousStayInGermany: "",
           previousVisaType: "",
-        },
-        ApplicationDetails: {
-          applyingWithSpouse: false,
-          blockedAccount: false,
-          aboutYouAndYourNeeds: "",
-        },
-        FinancialProof: {
+          applyingWithSpouse: "",
           CanEarnLivingInGermany: "",
+          aboutYouAndYourNeeds: "",
+          referenceCode: "",
         },
       });
       setCurrentStep(0);
@@ -731,10 +708,6 @@ const WorkVisaApplicationForm = () => {
       case 3:
         return renderLanguageSkills();
       case 4:
-        return renderGermanyExperience();
-      case 5:
-        return renderFinancialProof();
-      case 6:
         return renderApplicationDetails();
       default:
         return null;
@@ -847,7 +820,7 @@ const WorkVisaApplicationForm = () => {
             />
           </div>
 
-          <div className="md:col-span-2">
+          {/* <div className="md:col-span-2">
             <label className="block text-sm font-semibold text-appleGray-700 mb-2">
               Passport Number
             </label>
@@ -864,7 +837,7 @@ const WorkVisaApplicationForm = () => {
               className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
               placeholder="Enter your passport number"
             />
-          </div>
+          </div> */}
         </div>
       </div>
     );
@@ -928,7 +901,7 @@ const WorkVisaApplicationForm = () => {
             )}
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-semibold text-appleGray-700 mb-2">
               Country
             </label>
@@ -945,7 +918,7 @@ const WorkVisaApplicationForm = () => {
               className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
               placeholder="Enter your country"
             />
-          </div>
+          </div> */}
 
           <div className="md:col-span-2">
             <label className="block text-sm font-semibold text-appleGray-700 mb-2">
@@ -1330,65 +1303,69 @@ const WorkVisaApplicationForm = () => {
     );
   }
 
-  function renderGermanyExperience() {
+  function renderApplicationDetails() {
     return (
       <div className="space-y-6">
         <div className="text-center mb-8">
-          <FaPassport className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+          <FaFileUpload className="w-12 h-12 text-sky-500 mx-auto mb-4" />
           <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
-            Germany Experience
+            Application Details
           </h3>
           <p className="text-appleGray-600">
-            Tell us about any previous stays in Germany
+            Additional information and requirements for your application
           </p>
         </div>
 
-        <div className="bg-appleGray-50 p-6 rounded-2xl">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                Have you been to Germany before?
-              </label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {["Yes", "No"].map((option) => (
-                  <label
-                    key={option}
-                    className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200"
-                  >
-                    <input
-                      type="radio"
-                      name="previousStayInGermany"
-                      value={option}
-                      checked={
-                        formData.GermanyExperience.previousStayInGermany ===
-                        option
-                      }
-                      onChange={(e) =>
-                        handleInputChange(
-                          "GermanyExperience",
-                          "previousStayInGermany",
-                          e.target.value
-                        )
-                      }
-                      className="w-4 h-4 text-sky-500 border-appleGray-300 focus:ring-sky-500"
-                    />
-                    <span className="text-appleGray-700">{option}</span>
-                  </label>
-                ))}
+        <div className="space-y-6">
+          {/* Germany Experience Section */}
+          <div className="bg-appleGray-50 p-6 rounded-2xl">
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+              Germany Experience
+            </h4>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                  Have you been to Germany before?
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {["Yes", "No"].map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200"
+                    >
+                      <input
+                        type="radio"
+                        name="previousStayInGermany"
+                        value={option}
+                        checked={
+                          formData.ApplicationDetails.previousStayInGermany ===
+                          option
+                        }
+                        onChange={(e) =>
+                          handleInputChange(
+                            "ApplicationDetails",
+                            "previousStayInGermany",
+                            e.target.value
+                          )
+                        }
+                        className="w-4 h-4 text-sky-500 border-appleGray-300 focus:ring-sky-500"
+                      />
+                      <span className="text-appleGray-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {formData.GermanyExperience.previousStayInGermany === "Yes" && (
-              <>
+              {formData.ApplicationDetails.previousStayInGermany === "Yes" && (
                 <div>
                   <label className="block text-sm font-semibold text-appleGray-700 mb-2">
                     Previous Visa Type
                   </label>
                   <select
-                    value={formData.GermanyExperience.previousVisaType}
+                    value={formData.ApplicationDetails.previousVisaType}
                     onChange={(e) =>
                       handleInputChange(
-                        "GermanyExperience",
+                        "ApplicationDetails",
                         "previousVisaType",
                         e.target.value
                       )
@@ -1403,73 +1380,87 @@ const WorkVisaApplicationForm = () => {
                     <option value="Other">Other</option>
                   </select>
                 </div>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
+              )}
 
-  function renderApplicationDetails() {
-    return (
-      <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaFileUpload className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
-            Application Details
-          </h3>
-          <p className="text-appleGray-600">
-            Additional information for your application
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200">
-              <input
-                type="checkbox"
-                id="applyingWithSpouse"
-                checked={formData.ApplicationDetails.applyingWithSpouse}
-                onChange={(e) =>
-                  handleInputChange(
-                    "ApplicationDetails",
-                    "applyingWithSpouse",
-                    e.target.checked
-                  )
-                }
-                className="w-4 h-4 text-sky-500 border-appleGray-300 rounded focus:ring-sky-500"
-              />
-              <label
-                htmlFor="applyingWithSpouse"
-                className="text-sm font-semibold text-appleGray-700"
-              >
-                I am applying with my spouse/partner
-              </label>
-            </div>
-
-            <div className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200">
-              <input
-                type="checkbox"
-                id="blockedAccount"
-                checked={formData.ApplicationDetails.blockedAccount}
-                onChange={(e) =>
-                  handleInputChange(
-                    "ApplicationDetails",
-                    "blockedAccount",
-                    e.target.checked
-                  )
-                }
-                className="w-4 h-4 text-sky-500 border-appleGray-300 rounded focus:ring-sky-500"
-              />
-              <label
-                htmlFor="blockedAccount"
-                className="text-sm font-semibold text-appleGray-700"
-              >
-                I have or plan to open a blocked account (Sperrkonto)
-              </label>
+              {/* Applying with Spouse Question */}
+              <div>
+                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                  Are you applying with your spouse/partner? (A spouse is a
+                  legally married partner)
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {["Yes", "No"].map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200"
+                    >
+                      <input
+                        type="radio"
+                        name="applyingWithSpouse"
+                        value={option}
+                        checked={
+                          formData.ApplicationDetails.applyingWithSpouse ===
+                          option
+                        }
+                        onChange={(e) =>
+                          handleInputChange(
+                            "ApplicationDetails",
+                            "applyingWithSpouse",
+                            e.target.value
+                          )
+                        }
+                        className="w-4 h-4 text-sky-500 border-appleGray-300 focus:ring-sky-500"
+                      />
+                      <span className="text-appleGray-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Financial Proof Section */}
+          <div className="bg-appleGray-50 p-6 rounded-2xl">
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+              Financial Requirements
+            </h4>
+            <div>
+              <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                Do you know about Blocked Account?
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {["Yes", "No"].map((option) => (
+                  <label
+                    key={option}
+                    className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200"
+                  >
+                    <input
+                      type="radio"
+                      name="canEarnLivingWork"
+                      value={option}
+                      checked={
+                        formData.ApplicationDetails.CanEarnLivingInGermany ===
+                        option
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          "ApplicationDetails",
+                          "CanEarnLivingInGermany",
+                          e.target.value
+                        )
+                      }
+                      className="w-4 h-4 text-sky-500 border-appleGray-300 focus:ring-sky-500"
+                    />
+                    <span className="text-appleGray-700 font-medium">
+                      {option}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* About You Section */}
           <div>
             <label className="block text-sm font-semibold text-appleGray-700 mb-2">
               About You and Your Needs
@@ -1490,55 +1481,30 @@ const WorkVisaApplicationForm = () => {
             <p className="text-sm text-appleGray-500 mt-2">
               This helps us provide you with the best possible assistance
             </p>
-          </div>{" "}
-        </div>
-      </div>
-    );
-  }
+          </div>
 
-  function renderFinancialProof() {
-    return (
-      <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaMoneyBillWave className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
-            Financial Proof
-          </h3>
-          <p className="text-appleGray-600">
-            Prove your financial independence for working in Germany
-          </p>
-        </div>
-
-        {/* Do You Know About Blocked Account */}
-        <div className="bg-appleGray-50 p-6 rounded-2xl">
-          <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
-            Do you know about Blocked Account?
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {["Yes", "No"].map((option) => (
-              <label
-                key={option}
-                className="flex items-center space-x-3 p-4 border border-appleGray-200 rounded-2xl hover:bg-appleGray-50 cursor-pointer transition-all duration-200"
-              >
-                <input
-                  type="radio"
-                  name="canEarnLivingWork"
-                  value={option}
-                  checked={
-                    formData.FinancialProof.CanEarnLivingInGermany === option
-                  }
-                  onChange={(e) =>
-                    handleInputChange(
-                      "FinancialProof",
-                      "CanEarnLivingInGermany",
-                      e.target.value
-                    )
-                  }
-                  className="w-4 h-4 text-sky-500 border-appleGray-300 focus:ring-sky-500"
-                />
-                <span className="text-appleGray-700 font-medium">{option}</span>
-              </label>
-            ))}
+          {/* Reference Code Section */}
+          <div>
+            <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+              Reference Code (Optional)
+            </label>
+            <input
+              type="text"
+              value={formData.ApplicationDetails.referenceCode}
+              onChange={(e) =>
+                handleInputChange(
+                  "ApplicationDetails",
+                  "referenceCode",
+                  e.target.value
+                )
+              }
+              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              placeholder="Enter reference code if you have one from our consultation"
+            />
+            <p className="text-sm text-appleGray-500 mt-2">
+              If you received a reference code during consultation, enter it
+              here
+            </p>
           </div>
         </div>
       </div>

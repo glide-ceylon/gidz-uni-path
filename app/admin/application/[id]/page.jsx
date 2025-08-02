@@ -1073,10 +1073,10 @@ const ApplicantDetail = () => {
                       applicationId={id}
                       optionsToCheck={[
                         { name: "Application Document", option: false },
-                        { name: "Client Review", option: false },
-                        { name: "Appointment Date", option: false },
-                        { name: "Interview Preparation", option: false },
                         { name: "Submit Documents", option: false },
+                        { name: "Client Review", option: false },
+                        { name: "Interview Preparation", option: false },
+                        { name: "Appointment Date", option: false },
                       ]}
                       title="Application Tracker"
                     />

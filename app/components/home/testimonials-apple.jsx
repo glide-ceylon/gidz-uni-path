@@ -10,7 +10,8 @@ import {
 } from "react-icons/fa";
 import Image from "next/image";
 
-const testimonialsData = [
+// Default testimonials data
+const defaultTestimonialsData = [
   {
     id: 5,
     text: "I applied for my visa through GIDZ UniPath, and their consultants made my journey to Germany seamless. The entire process was quick and efficient, allowing me to focus on my goals without unnecessary stress. They guided me through every step with exceptional support and expertise. I highly recommend GIDZ UniPath to anyone looking to start their journey abroad with confidence.",
@@ -56,6 +57,53 @@ const testimonialsData = [
 export default function TestimonialsCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [testimonialsData, setTestimonialsData] = useState(
+    defaultTestimonialsData
+  );
+
+  // Fetch approved feedbacks and merge with default testimonials
+  useEffect(() => {
+    const fetchApprovedFeedbacks = async () => {
+      try {
+        const response = await fetch("/api/feedbacks?status=approved");
+        const result = await response.json();
+
+        if (result.success && result.data.length > 0) {
+          // Transform feedback data to testimonial format
+          const feedbackTestimonials = result.data.map((feedback) => ({
+            id: `feedback_${feedback.id}`,
+            text: feedback.message,
+            name: feedback.allow_display_name
+              ? feedback.client_name
+              : "Anonymous Student",
+            avatar: null, // No avatars for feedbacks for now
+            program: feedback.program_type || "Student",
+            university: feedback.university || "Germany",
+            rating: feedback.rating,
+            location: feedback.university
+              ? `${feedback.university}, Germany`
+              : "Germany",
+            isFromFeedback: true, // Flag to identify feedback-based testimonials
+          }));
+
+          // Combine default testimonials with feedback testimonials
+          // Limit total to a reasonable number (e.g., 8-10)
+          const combinedTestimonials = [
+            ...defaultTestimonialsData,
+            ...feedbackTestimonials.slice(0, 6), // Add up to 6 feedback testimonials
+          ];
+
+          setTestimonialsData(combinedTestimonials);
+        }
+      } catch (error) {
+        console.error("Error fetching approved feedbacks:", error);
+        // If error, fallback to default testimonials
+        setTestimonialsData(defaultTestimonialsData);
+      }
+    };
+
+    fetchApprovedFeedbacks();
+  }, []);
 
   const handlePrev = () => {
     setActiveIndex((prevIndex) =>
@@ -115,9 +163,9 @@ export default function TestimonialsCarousel() {
               </div>
 
               {/* Testimonial Content */}
-              <div className="grid lg:grid-cols-3 gap-8 items-center">
+              <div className="grid gap-8 items-center">
                 {/* Text Content */}
-                <div className="lg:col-span-2">
+                <div className="">
                   {/* Stars */}
                   <div className="flex items-center space-x-1 mb-6">
                     {[...Array(testimonialsData[activeIndex].rating)].map(
@@ -149,9 +197,9 @@ export default function TestimonialsCarousel() {
                       <div className="font-bold text-appleGray-800 text-lg">
                         {testimonialsData[activeIndex].name}
                       </div>
-                      <div className="text-appleGray-600 text-sm">
+                      {/* <div className="text-appleGray-600 text-sm">
                         {testimonialsData[activeIndex].program}
-                      </div>
+                      </div> */}
                       <div className="text-sky-500 font-semibold text-sm">
                         {testimonialsData[activeIndex].university}
                       </div>
@@ -160,7 +208,7 @@ export default function TestimonialsCarousel() {
                 </div>
 
                 {/* Visual Element */}
-                <div className="flex justify-center lg:justify-end">
+                {/* <div className="flex justify-center lg:justify-end">
                   <div className="w-64 h-64 bg-gradient-to-br from-sky-700 to-sky-400 rounded-3xl shadow-large flex items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0"></div>
                     <div className="relative z-10 text-center text-white">
@@ -171,7 +219,7 @@ export default function TestimonialsCarousel() {
                       <div className="text-sm opacity-90">Living the Dream</div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

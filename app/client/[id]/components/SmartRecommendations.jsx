@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { FaUserFriends, FaCheckCircle, FaStar, FaPlay } from "react-icons/fa";
+import {
+  FaUserFriends,
+  FaCheckCircle,
+  FaStar,
+  FaPlay,
+  FaGlobe,
+} from "react-icons/fa";
 
 const SmartRecommendations = ({
   applicantData,
@@ -110,8 +116,8 @@ const SmartRecommendations = ({
                         onClick={() => handleWatchVideo(rec.youtube_link)}
                         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
                       >
-                        <FaPlay className="w-3 h-3" />
-                        <span>Watch Video</span>
+                        <FaGlobe className="w-3 h-3" />
+                        <span>Visit</span>
                       </button>
                     )}
                   </div>

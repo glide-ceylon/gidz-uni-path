@@ -136,7 +136,7 @@ export default function RootLayout({ children }) {
                       </span>
                     </Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link
                       href="/application"
                       className="text-appleGray-300 hover:text-sky-400 transition-colors duration-300 flex items-center space-x-2 group"
@@ -146,7 +146,7 @@ export default function RootLayout({ children }) {
                         →
                       </span>
                     </Link>
-                  </li>
+                  </li> */}
                   {/* <li>
                     <Link
                       href="/applications"
