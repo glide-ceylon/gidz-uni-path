@@ -127,7 +127,7 @@ export default function TestimonialsCarousel() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, testimonialsData.length]);
 
   const handleDotClick = (index) => {
     setActiveIndex(index);

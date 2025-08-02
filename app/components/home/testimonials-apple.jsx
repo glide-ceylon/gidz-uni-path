@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   FaStar,
   FaQuoteLeft,
@@ -111,11 +111,11 @@ export default function TestimonialsCarousel() {
     );
   };
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setActiveIndex((prevIndex) =>
       prevIndex === testimonialsData.length - 1 ? 0 : prevIndex + 1
     );
-  };
+  }, [testimonialsData.length]);
 
   // Auto-play functionality
   useEffect(() => {
@@ -126,7 +126,7 @@ export default function TestimonialsCarousel() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [activeIndex, isAutoPlaying]);
+  }, [handleNext, isAutoPlaying]);
 
   const handleDotClick = (index) => {
     setActiveIndex(index);

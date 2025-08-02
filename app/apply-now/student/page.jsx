@@ -1530,8 +1530,8 @@ const StudentApplicationForm = () => {
               required
             >
               <option value="">Select course level</option>
-              <option value="Bachelors">Bachelor's Degree</option>
-              <option value="Masters">Master's Degree</option>
+              <option value="Bachelors">Bachelor&apos;s Degree</option>
+              <option value="Masters">Master&apos;s Degree</option>
               <option value="PHD">PhD (Doctorate)</option>
             </select>
           </div>

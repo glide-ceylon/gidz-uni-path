@@ -541,7 +541,7 @@ const FeedbackManagement = () => {
                   </h4>
                   <div className="bg-appleGray-50 rounded-2xl p-6">
                     <p className="text-appleGray-700 leading-relaxed">
-                      "{selectedFeedback.message}"
+                      &quot;{selectedFeedback.message}&quot;
                     </p>
                   </div>
                 </div>

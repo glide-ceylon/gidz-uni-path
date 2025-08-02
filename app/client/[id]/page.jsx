@@ -313,7 +313,7 @@ const ApplicantDetail = () => {
         console.error("Error fetching applicant:", error.message);
       }
     },
-    [calculateDashboardStats]
+    [calculateDashboardStats, fetchVisaStepsStatus]
   );
 
   useEffect(() => {
