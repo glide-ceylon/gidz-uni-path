@@ -113,34 +113,38 @@ export default function Nav() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "glass-effect shadow-medium backdrop-blur-xl"
-          : "bg-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
+        isScrolled ? "pt-3" : ""
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        className={`mx-auto transition-all duration-500 ease-out ${
+          isScrolled
+            ? "max-w-5xl px-6 glass-effect shadow-medium backdrop-blur-xl rounded-2xl"
+            : "max-w-7xl px-4 sm:px-6 lg:px-8 bg-transparent"
+        }`}
+      >
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             {/* <div className="w-10 h-10 bg-gradient-to-br from-german-red to-german-gold rounded-xl flex items-center justify-center shadow-soft transition-all duration-300 group-hover:scale-110"> */}
             <button className="flex items-center">
               <Image
-                width={40}
-                height={40}
+                width={64}
+                height={64}
                 src="/gidz-transperant.png"
                 alt="Gidzuni Education Pathways Logo"
-                className="h-10 w-10 object-contain"
+                className="h-16 w-16 object-contain"
               />
             </button>
             {/* </div> */}
             <div className="hidden sm:block">
-              <div className="text-xl font-bold text-appleGray-800">
+              <div className="text-2xl font-bold text-appleGray-800">
                 GIDZ UniPath
               </div>
-              <div className="text-xs text-appleGray-500 -mt-1">
+              {/* <div className="text-xs text-appleGray-500 -mt-1">
                 German Excellence
-              </div>
+              </div> */}
             </div>
           </Link>
 

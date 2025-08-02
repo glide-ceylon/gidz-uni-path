@@ -29,6 +29,8 @@ import {
   FaCertificate,
   FaIdCard,
   FaCopy,
+  FaQuestionCircle,
+  FaLightbulb,
 } from "react-icons/fa";
 import { supabase } from "../../../lib/supabase";
 import { useRouter } from "next/navigation"; // Add useRouter
@@ -44,6 +46,7 @@ import NotificationSystem from "./components/NotificationSystem";
 import TimelineView from "./components/TimelineView";
 import SmartRecommendations from "./components/SmartRecommendations";
 import AnalyticsDashboard from "./components/AnalyticsDashboard";
+import FeedbackDialog from "./components/FeedbackDialog";
 import Image from "next/image";
 
 const ApplicantDetail = () => {
@@ -54,6 +57,7 @@ const ApplicantDetail = () => {
   const [progress, setProgress] = useState(0);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showCreateApointemen, setShowCreateApointement] = useState(false);
+  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [notifications, setNotifications] = useState([]);
   const [dashboardStats, setDashboardStats] = useState({
@@ -65,6 +69,106 @@ const ApplicantDetail = () => {
     universitiesApplied: 0,
     nextDeadline: null,
   });
+
+  const [visaStepsStatus, setVisaStepsStatus] = useState([]);
+
+  // Define visa steps with their mapping to database options
+  const getVisaSteps = () => [
+    {
+      step: 1,
+      title: "Application Document",
+      description: "Complete and submit your visa application documents",
+      dbOptionName: "Application Document",
+      icon: FaFileAlt,
+    },
+    {
+      step: 2,
+      title: "Document Submitted on waiting list",
+      description: "Your documents are submitted and in the processing queue",
+      dbOptionName: "Submit Documents",
+      icon: FaClock,
+    },
+    {
+      step: 3,
+      title: "Under Preliminary Review",
+      description:
+        "Embassy is conducting preliminary review of your application",
+      dbOptionName: "Client Review",
+      icon: FaSearch,
+    },
+    {
+      step: 4,
+      title: "Interview Preparation",
+      description: "Prepare for your visa interview if required",
+      dbOptionName: "Interview Preparation",
+      icon: FaComments,
+    },
+    {
+      step: 5,
+      title: "Appointment Date",
+      description: "Schedule and attend your visa appointment",
+      dbOptionName: "Appointment Date",
+      icon: FaCalendarAlt,
+    },
+  ];
+
+  // Function to fetch visa steps status from database
+  const fetchVisaStepsStatus = async (applicationId) => {
+    try {
+      const steps = getVisaSteps();
+      const stepsWithStatus = await Promise.all(
+        steps.map(async (step) => {
+          const { data, error } = await supabase
+            .from("options")
+            .select("option")
+            .eq("application_id", applicationId)
+            .eq("name", step.dbOptionName);
+
+          if (error) {
+            console.error(
+              `Error fetching status for ${step.dbOptionName}:`,
+              error
+            );
+            return { ...step, status: "pending" };
+          }
+
+          console.log(`Fetched status for ${step.dbOptionName}:`, data);
+
+          // If the option exists in database, it's completed
+          const status =
+            data && data.length > 0 && data[0].option ? "completed" : "pending";
+          return { ...step, status };
+        })
+      );
+
+      // Determine current step: first step that is not completed
+      let currentStepFound = false;
+      const finalSteps = stepsWithStatus.map((step) => {
+        if (step.status === "pending" && !currentStepFound) {
+          currentStepFound = true;
+          return { ...step, status: "current" };
+        }
+        return step;
+      });
+
+      // If all steps are completed, make the last step current (for any final actions)
+      if (!currentStepFound) {
+        const lastIndex = finalSteps.length - 1;
+        if (lastIndex >= 0) {
+          finalSteps[lastIndex] = {
+            ...finalSteps[lastIndex],
+            status: "current",
+          };
+        }
+      }
+
+      setVisaStepsStatus(finalSteps);
+      return finalSteps;
+    } catch (error) {
+      console.error("Error fetching visa steps status:", error);
+      return [];
+    }
+  };
 
   const router = useRouter();
   const {
@@ -158,8 +262,8 @@ const ApplicantDetail = () => {
 
         // Set default totals if no documents exist yet
         const finalUniversityTotal =
-          universityDocumentsTotal > 0 ? universityDocumentsTotal : 10;
-        const finalVisaTotal = visaDocumentsTotal > 0 ? visaDocumentsTotal : 8;
+          universityDocumentsTotal > 0 ? universityDocumentsTotal : 0;
+        const finalVisaTotal = visaDocumentsTotal > 0 ? visaDocumentsTotal : 0;
 
         setDashboardStats({
           progressPercentage,
@@ -199,6 +303,9 @@ const ApplicantDetail = () => {
           } // Calculate dashboard statistics
           calculateDashboardStats(data);
 
+          // Fetch visa steps status from database
+          await fetchVisaStepsStatus(applicantId);
+
           // Generate notifications based on application status
           generateNotifications(data);
         }
@@ -206,7 +313,7 @@ const ApplicantDetail = () => {
         console.error("Error fetching applicant:", error.message);
       }
     },
-    [calculateDashboardStats]
+    [calculateDashboardStats, fetchVisaStepsStatus]
   );
 
   useEffect(() => {
@@ -1080,10 +1187,9 @@ const ApplicantDetail = () => {
                           <p className="text-appleGray-700 mb-4">
                             To apply for your German student visa, please follow
                             these steps and submit all required documents via
-                            WhatsApp or Email.
+                            <b> WhatsApp</b> or <b>Email</b>.
                           </p>
                         </div>
-
                         {/* Step 1 */}
                         <div className="mb-6">
                           <div className="flex items-start space-x-3 mb-3">
@@ -1091,7 +1197,62 @@ const ApplicantDetail = () => {
                               <FaCheckCircle className="w-3 h-3 text-white" />
                             </div>
                             <h4 className="text-lg font-semibold text-appleGray-800">
-                              STEP 1: Create a New Email Address
+                              STEP 1: Create a Blocked Account
+                            </h4>
+                          </div>
+                          <p className="text-appleGray-600 ml-9 mb-6">
+                            To show proof of Secure Livelihood for student visa
+                            application, you need to initiate the process of
+                            opening a blocked account through Expatrio, a
+                            recognized provider in Germany. This is part of
+                            Expatrio’s Value Package, which includes:
+                          </p>
+
+                          <div className="ml-9 space-y-6">
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <ul className="list-disc ml-6 text-sm text-appleGray-700 space-y-2">
+                                <li>
+                                  <span className="font-medium">
+                                    Blocked Account
+                                  </span>{" "}
+                                  (required proof of financial means)
+                                </li>
+                                <li>
+                                  <span className="font-medium">
+                                    Health Insurance
+                                  </span>{" "}
+                                  (public or private, depending on eligibility)
+                                </li>
+                                <li>
+                                  <span className="font-medium">
+                                    Travel Insurance
+                                  </span>{" "}
+                                  (valid for the visa duration before enrollment
+                                  in public health insurance)
+                                </li>
+                              </ul>
+                              <div className="mt-4">
+                                <a
+                                  href="https://www.expatrio.com?f=gideong1"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                >
+                                  <FaUniversity className="w-4 h-4" />
+                                  <span>Open with Expatrio</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Step 2 */}
+                        <div className="mb-6">
+                          <div className="flex items-start space-x-3 mb-3">
+                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <FaCheckCircle className="w-3 h-3 text-white" />
+                            </div>
+                            <h4 className="text-lg font-semibold text-appleGray-800">
+                              STEP 2: Create a New Email Address
                             </h4>
                           </div>
                           <p className="text-appleGray-600 ml-9">
@@ -1100,15 +1261,14 @@ const ApplicantDetail = () => {
                             for visa communications.
                           </p>
                         </div>
-
-                        {/* Step 2 */}
+                        {/* Step 3 */}
                         <div className="mb-6">
                           <div className="flex items-start space-x-3 mb-4">
                             <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                               <FaCheckCircle className="w-3 h-3 text-white" />
                             </div>
                             <h4 className="text-lg font-semibold text-appleGray-800">
-                              STEP 2: Submit the Following Documents
+                              STEP 3: Submit the Following Documents
                             </h4>
                           </div>
                           <p className="text-appleGray-600 ml-9 mb-6">
@@ -1278,112 +1438,288 @@ const ApplicantDetail = () => {
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
-                      <FaTasks className="w-5 h-5 text-sky-500 mr-3" />
-                      Visa Application Tracker
-                    </h3>
+                    {/* Visa Application Tracker */}
+                    <div className="mb-8">
+                      <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
+                        <FaTasks className="w-5 h-5 text-sky-500 mr-3" />
+                        Visa Application Tracker
+                      </h3>
 
-                    {/* Visa Application Tracker Steps */}
-                    <div className="bg-gradient-to-r from-sky-50 to-sky-100 border border-sky-200 rounded-3xl p-6 mb-6">
-                      <h4 className="text-lg font-semibold text-sky-800 mb-6 flex items-center">
-                        <FaPassport className="w-5 h-5 text-sky-600 mr-3" />
-                        Visa Application Progress
-                      </h4>
+                      <div className="bg-gradient-to-r from-sky-50 to-sky-100 border border-sky-200 rounded-3xl p-6 mb-6">
+                        <h4 className="text-lg font-semibold text-sky-800 mb-6 flex items-center">
+                          <FaPassport className="w-5 h-5 text-sky-600 mr-3" />
+                          Visa Application Progress
+                        </h4>
 
-                      <div className="space-y-4">
-                        {[
-                          {
-                            step: 1,
-                            title: "Application Document",
-                            description:
-                              "Complete and submit your visa application documents",
-                            status: "completed", // can be: completed, current, pending
-                            icon: FaFileAlt,
-                          },
-                          {
-                            step: 2,
-                            title: "Document Submitted on waiting list",
-                            description:
-                              "Your documents are submitted and in the processing queue",
-                            status: "current",
-                            icon: FaClock,
-                          },
-                          {
-                            step: 3,
-                            title: "Under Preliminary Review",
-                            description:
-                              "Embassy is conducting preliminary review of your application",
-                            status: "pending",
-                            icon: FaSearch,
-                          },
-                          {
-                            step: 4,
-                            title: "Interview Preparation",
-                            description:
-                              "Prepare for your visa interview if required",
-                            status: "pending",
-                            icon: FaComments,
-                          },
-                          {
-                            step: 5,
-                            title: "Appointment Date",
-                            description:
-                              "Schedule and attend your visa appointment",
-                            status: "pending",
-                            icon: FaCalendarAlt,
-                          },
-                        ].map((item, index) => (
-                          <div
-                            key={index}
-                            className="flex items-start space-x-4 p-4 bg-white rounded-xl shadow-sm"
-                          >
+                        <div className="space-y-4">
+                          {visaStepsStatus.map((item, index) => (
                             <div
-                              className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                                item.status === "completed"
-                                  ? "bg-green-100 text-green-600"
-                                  : item.status === "current"
-                                  ? "bg-blue-100 text-blue-600"
-                                  : "bg-gray-100 text-gray-400"
-                              }`}
+                              key={index}
+                              className="flex items-start space-x-4 p-4 bg-white rounded-xl shadow-sm"
                             >
-                              {item.status === "completed" ? (
-                                <FaCheckCircle className="w-5 h-5" />
-                              ) : (
-                                <item.icon className="w-5 h-5" />
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between">
-                                <h5 className="text-sm font-semibold text-appleGray-800">
-                                  Step {item.step}: {item.title}
-                                </h5>
-                                <span
-                                  className={`text-xs px-2 py-1 rounded-full ${
-                                    item.status === "completed"
-                                      ? "bg-green-100 text-green-700"
-                                      : item.status === "current"
-                                      ? "bg-blue-100 text-blue-700"
-                                      : "bg-gray-100 text-gray-600"
-                                  }`}
-                                >
-                                  {item.status === "completed"
-                                    ? "Completed"
+                              <div
+                                className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                  item.status === "completed"
+                                    ? "bg-green-100 text-green-600"
                                     : item.status === "current"
-                                    ? "In Progress"
-                                    : "Pending"}
-                                </span>
+                                    ? "bg-blue-100 text-blue-600"
+                                    : "bg-gray-100 text-gray-400"
+                                }`}
+                              >
+                                {item.status === "completed" ? (
+                                  <FaCheckCircle className="w-5 h-5" />
+                                ) : (
+                                  <item.icon className="w-5 h-5" />
+                                )}
                               </div>
-                              <p className="text-sm text-appleGray-600 mt-1">
-                                {item.description}
-                              </p>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <h5 className="text-sm font-semibold text-appleGray-800">
+                                    Step {item.step}: {item.title}
+                                  </h5>
+                                  <span
+                                    className={`text-xs px-2 py-1 rounded-full ${
+                                      item.status === "completed"
+                                        ? "bg-green-100 text-green-700"
+                                        : item.status === "current"
+                                        ? "bg-blue-100 text-blue-700"
+                                        : "bg-gray-100 text-gray-600"
+                                    }`}
+                                  >
+                                    {item.status === "completed"
+                                      ? "Completed"
+                                      : item.status === "current"
+                                      ? "In Progress"
+                                      : "Pending"}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-appleGray-600 mt-1">
+                                  {item.description}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Interview Questions Section - Show when step 4 is current */}
+                      {visaStepsStatus.find((step) => step.step === 4)
+                        ?.status === "current" && (
+                        <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-3xl p-6 mb-6">
+                          <h4 className="text-xl font-semibold text-blue-800 mb-6 flex items-center">
+                            <FaComments className="w-5 h-5 text-blue-600 mr-3" />
+                            German Student Visa Interview: General Questions &
+                            Sample Answers
+                          </h4>
+
+                          <div className="space-y-6">
+                            {[
+                              {
+                                question: "Q1: What is your name?",
+                                answer: "My name is [Your Full Name].",
+                              },
+                              {
+                                question: "Q2: What do your parents do?",
+                                answer:
+                                  "My father is a [father's occupation], and my mother is a [mother's occupation or \"homemaker\"].",
+                              },
+                              {
+                                question:
+                                  "Q3: Why do you want to study in Germany?",
+                                answer:
+                                  "Germany offers world-class education with affordable or no tuition fees, modern facilities, and globally recognized degrees. It's also known for research and innovation, especially in fields like engineering, business, and sciences.",
+                              },
+                              {
+                                question: "Q4: What did you study previously?",
+                                answer:
+                                  "For my [A-levels / Bachelor's], I studied [subjects] and obtained [grades or degree].\n\nExample for Bachelor's applicant: \"I studied Mathematics, Physics, and Chemistry in A-levels and received [your grades].\"\n\nExample for Master's applicant: \"I completed my Bachelor's in [Your Program] with a GPA of [X.XX].\"",
+                              },
+                              {
+                                question:
+                                  "Q5: Which university are you going to in Germany?",
+                                answer:
+                                  "I have been admitted to [University Name] in [City].",
+                              },
+                              {
+                                question:
+                                  "Q6: What is the duration of your program?",
+                                answer:
+                                  "My program lasts for [3.5 years for Bachelor's / 1.5 or 2 years for Master's], depending on the course structure.",
+                              },
+                              {
+                                question:
+                                  "Q7: What are your plans after graduation?",
+                                answer:
+                                  "I intend to return to my home country and apply the skills and knowledge I gain in Germany to contribute to its development, especially in my field of study.",
+                              },
+                              {
+                                question:
+                                  "Q8: Who is financing your education in Germany?",
+                                answer:
+                                  "My [father/parents/sponsor] is supporting my education. I also have a blocked account as financial proof.",
+                              },
+                              {
+                                question: "Q9: Where will you stay in Germany?",
+                                answer:
+                                  "I have applied for student accommodation near the university. If unavailable, I will arrange for private housing nearby.",
+                              },
+                              {
+                                question:
+                                  "Q10: How did you find and apply to the university?",
+                                answer:
+                                  "I researched universities online and applied directly through the university website or Uni-Assist (if applicable).",
+                              },
+                              {
+                                question:
+                                  "Q11: Do you have any work experience?",
+                                answer:
+                                  "• If no experience: I do not have professional experience yet.\n• If yes: Yes, I worked as a [position] at [company] for [duration].",
+                              },
+                              {
+                                question:
+                                  "Q12: What is the address of your university?",
+                                answer:
+                                  "[University Name], [Street Address], [Postal Code] [City], Germany.",
+                              },
+                              {
+                                question: "Q13: Where is your family based?",
+                                answer:
+                                  "My family lives in [City], [Sri Lanka].",
+                              },
+                              {
+                                question:
+                                  "Q14: Do you plan to return to your country after your studies?",
+                                answer:
+                                  "Yes, I plan to return and contribute to my country's development through my expertise.",
+                              },
+                              {
+                                question:
+                                  "Q15: Do you have any relatives in Germany?",
+                                answer:
+                                  "• If no: No, I don't have any relatives in Germany.",
+                              },
+                              {
+                                question:
+                                  "Q16: What do you know about German culture?",
+                                answer:
+                                  "Germany values punctuality, discipline, and efficiency. It's also rich in history, art, and technology, with a strong emphasis on education and environmental consciousness.",
+                              },
+                              {
+                                question:
+                                  "Q17: Why did you choose this specific course?",
+                                answer:
+                                  "The course aligns with my interests and career goals. It combines theoretical knowledge with practical training, which will prepare me well for future challenges.",
+                              },
+                              {
+                                question: "Q18: What are your career goals?",
+                                answer:
+                                  "I aim to build a strong professional career in [field], gain industry experience, and eventually contribute to innovation and development in my home country.",
+                              },
+                              {
+                                question: "Q19: Do you speak German?",
+                                answer:
+                                  "I am currently learning basic German. However, my program is in English.",
+                              },
+                              {
+                                question:
+                                  "Q20: What challenges do you anticipate in Germany?",
+                                answer:
+                                  "Initially, I might face language and cultural differences, as well as adapting to the weather. But I am motivated to overcome these by engaging with local communities and continuing language studies.",
+                              },
+                              {
+                                question:
+                                  "Q21: How will you manage your living expenses?",
+                                answer:
+                                  "I have opened a blocked account as required and will manage my finances carefully.",
+                              },
+                              {
+                                question:
+                                  "Q22: What is a blocked account, and how much is required?",
+                                answer:
+                                  "A blocked account is a German bank account for international students, where a fixed amount (currently €11,208 per year) is deposited to cover living expenses.",
+                              },
+                              {
+                                question:
+                                  "Q23: How will this course support your career?",
+                                answer:
+                                  "The course provides up-to-date academic knowledge and practical experience, equipping me with the necessary skills to succeed in the global job market.",
+                              },
+                              {
+                                question:
+                                  "Q24: Can you explain the course modules?",
+                                answer:
+                                  "• For Bachelor's: Check your modules on the university website\n• For Master's: Check your modules on the university website",
+                              },
+                              {
+                                question:
+                                  "Q25: Why did you choose Germany over countries like the UK or USA?",
+                                answer:
+                                  "Germany offers excellent education quality with low or no tuition fees. It has strong industry-academia connections, a high standard of living, and opportunities for international students.",
+                              },
+                            ].map((item, index) => (
+                              <div
+                                key={index}
+                                className="bg-white rounded-2xl p-5 border border-blue-200"
+                              >
+                                <h5 className="text-base font-semibold text-appleGray-800 mb-3 flex items-start">
+                                  <FaQuestionCircle className="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+                                  {item.question}
+                                </h5>
+                                <div className="ml-6">
+                                  <div className="bg-blue-50 rounded-xl p-4">
+                                    <div className="flex items-start space-x-2">
+                                      <FaLightbulb className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                                      <div className="text-sm text-appleGray-700 whitespace-pre-line">
+                                        {item.answer}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="mt-8 bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-6 border border-green-200">
+                            <div className="flex items-start space-x-3">
+                              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <FaCheckCircle className="w-4 h-4 text-white" />
+                              </div>
+                              <div>
+                                <h5 className="text-lg font-semibold text-green-800 mb-2">
+                                  Interview Tips:
+                                </h5>
+                                <ul className="text-sm text-green-700 space-y-1">
+                                  <li>• Be confident and speak clearly</li>
+                                  <li>• Dress professionally</li>
+                                  <li>• Arrive early for your appointment</li>
+                                  <li>
+                                    • Bring all required documents organized
+                                  </li>
+                                  <li>• Practice these questions beforehand</li>
+                                  <li>
+                                    • Be honest and consistent in your answers
+                                  </li>
+                                </ul>
+                              </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      )}
+
+                      {/* Appointment Scheduling Section - Show when step 5 is current */}
+                      {visaStepsStatus.find((step) => step.step === 5)
+                        ?.status === "current" && (
+                        <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-3xl p-6 mb-6">
+                          <h4 className="text-xl font-semibold text-purple-800 mb-6 flex items-center">
+                            <FaCalendarAlt className="w-5 h-5 text-purple-600 mr-3" />
+                            Visa Appointment Scheduling
+                          </h4>
+                        </div>
+                      )}
                     </div>
 
                     {/* All Application Options */}
-                    <div className="space-y-8">
+                    {/* <div className="space-y-8">
                       <ApplicationOptions
                         applicationId={id}
                         optionsToCheck={[
@@ -1408,7 +1744,7 @@ const ApplicantDetail = () => {
                         ]}
                         title="🏛️ University Enrollment"
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               )}
@@ -1736,6 +2072,60 @@ const ApplicantDetail = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Feedback Section */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-appleGray-800 mb-4">
+                      💬 Share Your Experience
+                    </h4>
+                    <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-3xl p-6">
+                      <div className="text-center space-y-4">
+                        <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto">
+                          <FaComments className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <h5 className="text-xl font-semibold text-appleGray-800 mb-2">
+                            Help Others with Your Journey
+                          </h5>
+                          <p className="text-sm text-appleGray-600 mb-4">
+                            Share your experience with GIDZ UniPath to help
+                            future students. Your feedback might be featured in
+                            our testimonials!
+                          </p>
+                        </div>
+
+                        <button
+                          onClick={() => setShowFeedbackDialog(true)}
+                          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-2xl font-semibold transition-all duration-200 inline-flex items-center space-x-2 shadow-soft hover:shadow-medium"
+                        >
+                          <FaComments className="w-5 h-5" />
+                          <span>Write Feedback</span>
+                        </button>
+
+                        <div className="bg-white rounded-2xl p-4 border border-orange-200">
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <FaLightbulb className="w-3 h-3 text-white" />
+                            </div>
+                            <div className="text-left">
+                              <h6 className="text-sm font-semibold text-orange-800 mb-1">
+                                Your feedback helps us:
+                              </h6>
+                              <ul className="text-xs text-orange-700 space-y-1">
+                                <li>
+                                  • Improve our services for future students
+                                </li>
+                                <li>
+                                  • Build trust with prospective applicants
+                                </li>
+                                <li>• Showcase success stories from Germany</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -1752,6 +2142,13 @@ const ApplicantDetail = () => {
             <AppointmentModal onClose={() => setShowCreateApointement(false)} />
           </Modal>
         )}
+        {/* Feedback Dialog */}
+        <FeedbackDialog
+          isOpen={showFeedbackDialog}
+          onClose={() => setShowFeedbackDialog(false)}
+          applicationId={id}
+          clientData={applicant}
+        />
       </div>
     </div>
   );

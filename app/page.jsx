@@ -1,17 +1,17 @@
+"use client";
 import Image from "next/image";
+import { useState } from "react";
 import Expertise from "./components/home/expertise";
 import Testimonials from "./components/home/testimonials-apple";
+import AppointmentModal from "./client/[id]/components/AppointmentModal";
 import {
-  FaGraduationCap,
   FaUserShield,
   FaHandshake,
   FaCheckCircle,
   FaGlobe,
   FaHeart,
-  FaRocket,
   FaShieldAlt,
   FaCrown,
-  FaEnvelope,
   FaUniversity,
   FaPassport,
   FaHome,
@@ -19,22 +19,33 @@ import {
   FaMoneyBillWave,
   FaUserTie,
   FaAward,
-  FaChartLine,
-  FaPhone,
-  FaWhatsapp,
-  FaMapMarkerAlt,
-  FaClock,
-  FaCode,
   FaArrowRight,
-  FaStar,
   FaPlay,
-  FaUsers,
-  FaBookOpen,
-  FaMapPin,
+  FaTimes,
 } from "react-icons/fa";
 import Link from "next/link";
 
 export default function Home() {
+  const [showCreateApointement, setShowCreateApointement] = useState(false);
+
+  // Define the Modal component inside the same file.
+  const Modal = ({ children, onClose }) => {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="relative bg-white p-8 rounded-3xl shadow-large border border-appleGray-200 w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12 max-w-2xl">
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-appleGray-400 hover:text-appleGray-600 hover:bg-appleGray-100 rounded-full transition-all duration-200"
+          >
+            <FaTimes className="w-4 h-4" />
+          </button>
+          {children}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-appleGray-50 relative overflow-hidden">
       {/* Floating Background Elements */}
@@ -95,9 +106,12 @@ export default function Home() {
                 <FaArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
 
-              <button className="group bg-appleGray-100 text-appleGray-700 px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 border border-appleGray-200 hover:border-sky-300 hover:text-sky-600">
+              <button
+                onClick={() => setShowCreateApointement(true)}
+                className="group bg-appleGray-100 text-appleGray-700 px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover flex items-center space-x-2 border border-appleGray-200 hover:border-sky-300 hover:text-sky-600"
+              >
                 <FaPlay className="w-4 h-4" />
-                <span>Watch Our Story</span>
+                <span>Schedule a Call</span>
               </button>
             </div>
           </div>
@@ -105,20 +119,31 @@ export default function Home() {
           {/* Hero Image/Visual */}
           <div className="mt-20 relative">
             <div className="relative max-w-4xl mx-auto">
-              <div className="aspect-video bg-gradient-to-br from-slate-900 via-sky-500 to-sky-600 rounded-3xl shadow-large overflow-hidden">
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <div className="aspect-video rounded-3xl shadow-large overflow-hidden relative">
+                <Image
+                  src="/student-visa.png"
+                  alt="German University Campus - Students studying in modern facilities"
+                  fill
+                  className="object-cover"
+                  priority
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                />
+                {/* <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                   <div className="text-center text-white space-y-4 animate-fade-in-up">
-                    <FaGraduationCap className="w-16 h-16 mx-auto animate-float" />
-                    <h3 className="text-2xl font-bold">
-                      Discover German Education
-                    </h3>
-                    <p className="text-lg opacity-90">
-                      Where precision meets opportunity
-                    </p>
+                    <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 border border-white/30">
+                      <FaPlay className="w-12 h-12 mx-auto mb-3 animate-pulse cursor-pointer hover:scale-110 transition-transform" />
+                      <h3 className="text-xl font-bold">
+                        Discover German Education
+                      </h3>
+                      <p className="text-sm opacity-90">
+                        Where precision meets opportunity
+                      </p>
+                    </div>
                   </div>
-                </div>
+                </div> */}
               </div>
-              {/* Floating Elements */}{" "}
+              {/* Floating Elements */}
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-sky-400 rounded-full shadow-medium flex items-center justify-center animate-float">
                 <FaUniversity className="w-8 h-8 text-white" />
               </div>
@@ -370,7 +395,10 @@ export default function Home() {
                 <button className="bg-white text-sky-500 px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft hover:bg-sky-50">
                   Start Application
                 </button>
-                <button className="border-2 border-white text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover hover:bg-white/10">
+                <button
+                  onClick={() => setShowCreateApointement(true)}
+                  className="border-2 border-white text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover hover:bg-white/10"
+                >
                   Free Consultation
                 </button>
               </div>
@@ -538,13 +566,22 @@ export default function Home() {
                 Schedule a complimentary consultation to discuss your German
                 education goals and get personalized guidance.
               </p>{" "}
-              <button className="w-full bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft hover:from-sky-600 hover:to-sky-700">
+              <button
+                onClick={() => setShowCreateApointement(true)}
+                className="w-full bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft hover:from-sky-600 hover:to-sky-700"
+              >
                 Book Your Consultation
               </button>
             </div>
           </div>
         </div>
       </section>
+      {/* Appointment Modal */}
+      {showCreateApointement && (
+        <Modal onClose={() => setShowCreateApointement(false)}>
+          <AppointmentModal onClose={() => setShowCreateApointement(false)} />
+        </Modal>
+      )}
     </div>
   );
 }

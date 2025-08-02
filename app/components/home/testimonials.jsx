@@ -10,7 +10,8 @@ import {
 } from "react-icons/fa";
 import Image from "next/image";
 
-const testimonialsData = [
+// Default testimonials data
+const defaultTestimonialsData = [
   {
     id: 5,
     text: "I applied for my visa through GIDZ UniPath, and their consultants made my journey to Germany seamless. The entire process was quick and efficient, allowing me to focus on my goals without unnecessary stress. They guided me through every step with exceptional support and expertise. I highly recommend GIDZ UniPath to anyone looking to start their journey abroad with confidence.",
@@ -56,6 +57,53 @@ const testimonialsData = [
 export default function TestimonialsCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [testimonialsData, setTestimonialsData] = useState(
+    defaultTestimonialsData
+  );
+
+  // Fetch approved feedbacks and merge with default testimonials
+  useEffect(() => {
+    const fetchApprovedFeedbacks = async () => {
+      try {
+        const response = await fetch("/api/feedbacks?status=approved");
+        const result = await response.json();
+
+        if (result.success && result.data.length > 0) {
+          // Transform feedback data to testimonial format
+          const feedbackTestimonials = result.data.map((feedback) => ({
+            id: `feedback_${feedback.id}`,
+            text: feedback.message,
+            name: feedback.allow_display_name
+              ? feedback.client_name
+              : "Anonymous Student",
+            avatar: null, // No avatars for feedbacks for now
+            program: feedback.program_type || "Student",
+            university: feedback.university || "Germany",
+            rating: feedback.rating,
+            location: feedback.university
+              ? `${feedback.university}, Germany`
+              : "Germany",
+            isFromFeedback: true, // Flag to identify feedback-based testimonials
+          }));
+
+          // Combine default testimonials with feedback testimonials
+          // Limit total to a reasonable number (e.g., 8-10)
+          const combinedTestimonials = [
+            ...defaultTestimonialsData,
+            ...feedbackTestimonials.slice(0, 6), // Add up to 6 feedback testimonials
+          ];
+
+          setTestimonialsData(combinedTestimonials);
+        }
+      } catch (error) {
+        console.error("Error fetching approved feedbacks:", error);
+        // If error, fallback to default testimonials
+        setTestimonialsData(defaultTestimonialsData);
+      }
+    };
+
+    fetchApprovedFeedbacks();
+  }, []);
 
   const handlePrev = () => {
     setActiveIndex((prevIndex) =>
@@ -79,7 +127,7 @@ export default function TestimonialsCarousel() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, testimonialsData.length]);
 
   const handleDotClick = (index) => {
     setActiveIndex(index);

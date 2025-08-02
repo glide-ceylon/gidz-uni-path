@@ -79,7 +79,7 @@ const EditableField = ({
   const isTextarea = label === "Special Notes";
 
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-100 hover:border-gray-200 transition-all duration-200 group">
+    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-100 hover:border-gray-200 transition-all duration-200 group">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <label className="text-sm font-semibold text-gray-700 mb-2 block">
@@ -1018,6 +1018,7 @@ const ApplicantDetail = () => {
                         { name: "Passport", option: false },
                         { name: "Biometric Photo", option: false },
                         { name: "Blocked Account", option: false },
+                        { name: "Health Insurance ", option: false },
                       ]}
                       title="Essential Documents"
                     />
@@ -1035,6 +1036,7 @@ const ApplicantDetail = () => {
                         { name: "Submitted", option: false },
                         { name: "Appointment Date", option: false },
                         { name: "Interview", option: false },
+                        { name: "Dorms", option: false },
                       ]}
                       title="Admin"
                     />
@@ -1071,10 +1073,10 @@ const ApplicantDetail = () => {
                       applicationId={id}
                       optionsToCheck={[
                         { name: "Application Document", option: false },
-                        { name: "Client Review", option: false },
-                        { name: "Appointment Date", option: false },
-                        { name: "Interview Preparation", option: false },
                         { name: "Submit Documents", option: false },
+                        { name: "Client Review", option: false },
+                        { name: "Interview Preparation", option: false },
+                        { name: "Appointment Date", option: false },
                       ]}
                       title="Application Tracker"
                     />
