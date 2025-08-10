@@ -185,10 +185,10 @@ export default function RootLayout({ children }) {
                     </div>
                     <div>
                       <p className="text-appleGray-300 font-medium">
-                        123 Main Street
+                        Arasady Road, Kaddudai
                       </p>
                       <p className="text-appleGray-400">
-                        Colombo 03, Sri Lanka
+                        Manipay, Jaffna, Sri Lanka
                       </p>
                     </div>
                   </div>
@@ -197,10 +197,10 @@ export default function RootLayout({ children }) {
                       <FaPhone className="w-5 h-5 text-white" />
                     </div>
                     <a
-                      href="tel:+94701234567"
+                      href="tel:+4915566389194"
                       className="text-appleGray-300 hover:text-white transition-colors duration-300"
                     >
-                      +94 70 123 4567
+                      +49 155 6638 9194
                     </a>
                   </div>
                   <div className="flex items-center space-x-4">
@@ -208,10 +208,10 @@ export default function RootLayout({ children }) {
                       <FaEnvelope className="w-5 h-5 text-white" />
                     </div>
                     <a
-                      href="mailto:info@gidzunipath.com"
+                      href="mailto:gidzunipath@gmail.com"
                       className="text-appleGray-300 hover:text-white transition-colors duration-300"
                     >
-                      info@gidzunipath.com
+                      gidzunipath@gmail.com
                     </a>
                   </div>{" "}
                   <div className="flex items-start space-x-4">

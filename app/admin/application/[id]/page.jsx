@@ -326,59 +326,120 @@ const ApplicantDetail = () => {
           if (authError) throw authError;
           */
           const emailTemp = `
-           <!DOCTYPE html>
+            <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Welcome to Gidz Uni Path</title>
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+                </style>
             </head>
-            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f4f4f4;">
-                <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
-                    <!-- Header with Logo -->
-                   <div style="display: flex; align-items: center; justify-content: center; padding: 20px 0; background-color: #003366; margin-bottom: 30px;">
-                    <img src="https://www.gidzunipath.com/logo.png" style="height: 70px; width: auto; margin-right: 10px;" /> 
-                    <h1 style="color: #ffffff; margin-left: 10px; font-size: 28px;">Gidz Uni Path</h1>
-                </div>
-                    <!-- Main Content -->
-                    <div style="padding: 0 20px;">
-                        <p style="font-size: 16px; margin-bottom: 20px;">Dear ${applicant.first_name},</p>
+            <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; line-height: 1.6; color: #1f2937; background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #e6f3ff 100%); min-height: 100vh;">
+                <div style="max-width: 650px; margin: 0 auto; padding: 24px;">
+                    <!-- Main Container with Glass Effect -->
+                    <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.2); overflow: hidden;">
                         
-                        <p style="font-size: 16px; margin-bottom: 20px;">Welcome to Gidz Uni Path! We're thrilled to support you in achieving your dream of studying in Germany.</p>
-
-                        <!-- Login Details Box -->
-                        <div style="background-color: #f8f9fa; border-left: 4px solid #003366; padding: 20px; margin-bottom: 30px;">
-                            <h2 style="color: #003366; margin: 0 0 15px 0; font-size: 20px;">Your Login Details</h2>
-                            <p style="margin: 5px 0;">Username: <strong>${applicant.email}</strong></p>
-                            <p style="margin: 5px 0;">Password: <strong>${tempPassword}</strong></p>
-                            <a href="https://www.gidzunipath.com/login" style="display: inline-block; background-color: #003366; color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 5px; margin-top: 15px;">Login Here</a>
+                        <!-- Header with Modern Gradient -->
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 32px 32px 40px 32px; position: relative;">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
+                                <div style="width: 48px; height: 48px; background: rgba(255, 255, 255, 0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+                                    <img src="https://www.gidzunipath.com/logo.png" style="height: 32px; width: auto;" alt="Gidz Uni Path Logo" />
+                                </div>
+                                <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.025em;">Gidz Uni Path</h1>
+                            </div>
+                            <!-- Decorative Elements -->
+                            <div style="position: absolute; top: -50%; right: -20%; width: 200px; height: 200px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; transform: rotate(45deg);"></div>
+                            <div style="position: absolute; bottom: -30%; left: -10%; width: 150px; height: 150px; background: rgba(255, 255, 255, 0.05); border-radius: 50%;"></div>
                         </div>
 
-                        <!-- Contact Information -->
-                        <div style="margin-bottom: 30px;">
-                            <h2 style="color: #003366; font-size: 20px;">Need Assistance?</h2>
-                            <p style="margin-bottom: 15px;">Our team is here to help! Contact us at:</p>
-                            <ul style="list-style: none; padding: 0; margin: 0;">
-                                <li style="margin-bottom: 10px;">
-                                    <span style="color: #003366;">📞</span> 
-                                    <strong>Phone:</strong> +49 155 66389194
-                                    <div style="margin-left: 25px; color: #666666; font-size: 14px;">(Monday to Friday, 9:30 am to 5:00 pm)</div>
-                                </li>
-                                <li style="margin-bottom: 10px;">
-                                    <span style="color: #003366;">✉</span>
-                                    <strong>Email:</strong> 
-                                    <a href="mailto:gidzunipath@gmail.com" style="color: #003366; text-decoration: none;">gidzunipath@gmail.com</a>
-                                </li>
-                            </ul>
+                        <!-- Main Content with Modern Styling -->
+                        <div style="padding: 40px 32px;">
+                            <!-- Welcome Section -->
+                            <div style="margin-bottom: 32px;">
+                                <h2 style="color: #1f2937; font-size: 24px; font-weight: 600; margin: 0 0 16px 0;">Welcome, ${applicant.first_name}! 👋</h2>
+                                <p style="font-size: 16px; color: #6b7280; margin: 0; line-height: 1.7;">We're thrilled to support you in achieving your dream of studying in Germany. Your journey to academic excellence starts here!</p>
+                            </div>
+
+                            <!-- Login Details Card with Modern Design -->
+                            <div style="background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%); border-radius: 20px; padding: 28px; margin-bottom: 32px; border: 1px solid #e5e7eb; position: relative; overflow: hidden;">
+                                <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: linear-gradient(135deg, #3b82f6, #1e40af); border-radius: 50%; opacity: 0.1;"></div>
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #1e40af); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="color: white; font-size: 18px;">🔑</span>
+                                    </div>
+                                    <h3 style="color: #1f2937; margin: 0; font-size: 20px; font-weight: 600;">Your Login Credentials</h3>
+                                </div>
+                                <div style="background: rgba(255, 255, 255, 0.8); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(8px);">
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="color: #6b7280; font-size: 14px; font-weight: 500;">Username</span>
+                                        <p style="margin: 4px 0 0 0; color: #1f2937; font-weight: 600; font-family: 'Monaco', 'Menlo', monospace; font-size: 15px;">${applicant.email}</p>
+                                    </div>
+                                    <div>
+                                        <span style="color: #6b7280; font-size: 14px; font-weight: 500;">Password</span>
+                                        <p style="margin: 4px 0 0 0; color: #1f2937; font-weight: 600; font-family: 'Monaco', 'Menlo', monospace; font-size: 15px;">${tempPassword}</p>
+                                    </div>
+                                </div>
+                                <a href="https://www.gidzunipath.com/login" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #3b82f6, #1e40af); color: #ffffff; text-decoration: none; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.2s;">
+                                    <span>🚀</span> Access Your Portal
+                                </a>
+                            </div>
+
+                            <!-- Contact Information with Modern Cards -->
+                            <div style="margin-bottom: 32px;">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                        <span style="color: white; font-size: 18px;">💬</span>
+                                    </div>
+                                    <h3 style="color: #1f2937; margin: 0; font-size: 20px; font-weight: 600;">Need Assistance?</h3>
+                                </div>
+                                <p style="margin-bottom: 20px; color: #6b7280; font-size: 16px;">Our dedicated team is here to help you every step of the way!</p>
+                                
+                                <!-- Contact Cards -->
+                                <div style="display: grid; gap: 16px;">
+                                    <div style="background: rgba(255, 255, 255, 0.8); border-radius: 16px; padding: 20px; border: 1px solid #e5e7eb;">
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                                <span style="color: white; font-size: 14px;">📞</span>
+                                            </div>
+                                            <div>
+                                                <p style="margin: 0; color: #1f2937; font-weight: 600;">+49 155 66389194</p>
+                                                <p style="margin: 2px 0 0 0; color: #6b7280; font-size: 13px;">Monday to Friday, 9:30 AM - 5:00 PM</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="background: rgba(255, 255, 255, 0.8); border-radius: 16px; padding: 20px; border: 1px solid #e5e7eb;">
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                                <span style="color: white; font-size: 14px;">✉️</span>
+                                            </div>
+                                            <div>
+                                                <a href="mailto:gidzunipath@gmail.com" style="margin: 0; color: #3b82f6; font-weight: 600; text-decoration: none;">gidzunipath@gmail.com</a>
+                                                <p style="margin: 2px 0 0 0; color: #6b7280; font-size: 13px;">24/7 Email Support</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Journey Message -->
+                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin-bottom: 32px; border: 1px solid #f59e0b;">
+                                <p style="margin: 0; color: #92400e; font-size: 16px; font-weight: 500; text-align: center;">
+                                    🎓 We're excited to be part of your educational journey and look forward to assisting you every step of the way!
+                                </p>
+                            </div>
                         </div>
 
-                        <p style="margin-bottom: 20px;">For quick answers, visit our <a href="#" style="color: #003366; text-decoration: none; font-weight: bold;">Help Center</a>.</p>
-
-                        <p style="margin-bottom: 30px;">We're excited to be part of your educational journey and look forward to assisting you every step of the way!</p>
-
-                        <!-- Footer -->
-                        <div style="border-top: 2px solid #f4f4f4; padding-top: 20px; text-align: center;">
-                            <p style="color: #666666; font-size: 14px;">Best regards,<br>The Gidz Uni Path Team</p>
+                        <!-- Modern Footer -->
+                        <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 24px 32px; border-top: 1px solid #e5e7eb;">
+                            <div style="text-align: center;">
+                                <p style="margin: 0 0 8px 0; color: #1f2937; font-weight: 600; font-size: 16px;">Best regards,</p>
+                                <p style="margin: 0; color: #6b7280; font-size: 14px;">The Gidz Uni Path Team</p>
+                                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+                                    <p style="margin: 0; color: #9ca3af; font-size: 12px;">© 2025 Gidz Uni Path. All rights reserved.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
