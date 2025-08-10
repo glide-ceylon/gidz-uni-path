@@ -113,33 +113,70 @@ const ApplicantDetail = () => {
   ];
 
   // Function to fetch visa steps status from database
-  const fetchVisaStepsStatus = async (applicationId) => {
+  const fetchVisaStepsStatus = useCallback(async (applicationId) => {
     try {
+      // Check if applicationId is valid
+      if (!applicationId) {
+        console.warn("No applicationId provided to fetchVisaStepsStatus");
+        return [];
+      }
+
+      console.log(
+        "Starting fetchVisaStepsStatus for applicationId:",
+        applicationId
+      );
+
       const steps = getVisaSteps();
+      console.log(
+        "Visa steps to check:",
+        steps.map((s) => s.dbOptionName)
+      );
+
       const stepsWithStatus = await Promise.all(
         steps.map(async (step) => {
-          const { data, error } = await supabase
-            .from("options")
-            .select("option")
-            .eq("application_id", applicationId)
-            .eq("name", step.dbOptionName);
+          try {
+            console.log(`Querying database for step: ${step.dbOptionName}`);
 
-          if (error) {
+            const { data, error } = await supabase
+              .from("options")
+              .select("option")
+              .eq("application_id", applicationId)
+              .eq("name", step.dbOptionName);
+
+            if (error) {
+              console.error(`Error fetching status for ${step.dbOptionName}:`, {
+                message: error.message,
+                details: error.details,
+                hint: error.hint,
+                code: error.code,
+                fullError: error,
+              });
+              return { ...step, status: "pending" };
+            }
+
+            console.log(`Fetched status for ${step.dbOptionName}:`, data);
+
+            // If the option exists in database, it's completed
+            const status =
+              data && data.length > 0 && data[0].option
+                ? "completed"
+                : "pending";
+            return { ...step, status };
+          } catch (stepError) {
             console.error(
-              `Error fetching status for ${step.dbOptionName}:`,
-              error
+              `Exception while fetching status for ${step.dbOptionName}:`,
+              {
+                message: stepError.message,
+                stack: stepError.stack,
+                fullError: stepError,
+              }
             );
             return { ...step, status: "pending" };
           }
-
-          console.log(`Fetched status for ${step.dbOptionName}:`, data);
-
-          // If the option exists in database, it's completed
-          const status =
-            data && data.length > 0 && data[0].option ? "completed" : "pending";
-          return { ...step, status };
         })
       );
+
+      console.log("All steps processed:", stepsWithStatus);
 
       // Determine current step: first step that is not completed
       let currentStepFound = false;
@@ -162,13 +199,25 @@ const ApplicantDetail = () => {
         }
       }
 
+      console.log("Final steps with status:", finalSteps);
       setVisaStepsStatus(finalSteps);
       return finalSteps;
     } catch (error) {
-      console.error("Error fetching visa steps status:", error);
-      return [];
+      console.error("Error fetching visa steps status:", {
+        message: error.message,
+        stack: error.stack,
+        fullError: error,
+      });
+      // Set default visa steps with pending status on error
+      const steps = getVisaSteps();
+      const defaultSteps = steps.map((step, index) => ({
+        ...step,
+        status: index === 0 ? "current" : "pending",
+      }));
+      setVisaStepsStatus(defaultSteps);
+      return defaultSteps;
     }
-  };
+  }, []); // Empty dependency array since the function doesn't depend on any external variables
 
   const router = useRouter();
   const {
@@ -284,6 +333,12 @@ const ApplicantDetail = () => {
   const fetchApplicant = useCallback(
     async (applicantId) => {
       try {
+        // Validate applicantId
+        if (!applicantId) {
+          console.warn("No applicantId provided to fetchApplicant");
+          return;
+        }
+
         const { data, error } = await supabase
           .from("applications")
           .select("*, documents(*)")
@@ -304,13 +359,27 @@ const ApplicantDetail = () => {
           calculateDashboardStats(data);
 
           // Fetch visa steps status from database
-          await fetchVisaStepsStatus(applicantId);
+          try {
+            await fetchVisaStepsStatus(applicantId);
+          } catch (visaStepsError) {
+            console.error(
+              "Error fetching visa steps:",
+              visaStepsError.message || visaStepsError
+            );
+          }
 
           // Generate notifications based on application status
-          generateNotifications(data);
+          try {
+            generateNotifications(data);
+          } catch (notificationError) {
+            console.error(
+              "Error generating notifications:",
+              notificationError.message || notificationError
+            );
+          }
         }
       } catch (error) {
-        console.error("Error fetching applicant:", error.message);
+        console.error("Error fetching applicant:", error.message || error);
       }
     },
     [calculateDashboardStats, fetchVisaStepsStatus]
@@ -1175,269 +1244,6 @@ const ApplicantDetail = () => {
               {activeTab === "tasks" && !applicant?.lock_1 && (
                 <div className="p-6 sm:p-8 space-y-8">
                   <div>
-                    {/* Visa Application Submission Document Checklist */}
-                    <div className="mb-8">
-                      <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
-                        <FaPassport className="w-5 h-5 text-sky-500 mr-3" />
-                        Visa Application Submission – Document Checklist
-                      </h3>
-
-                      <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-3xl p-6">
-                        <div className="mb-6">
-                          <p className="text-appleGray-700 mb-4">
-                            To apply for your German student visa, please follow
-                            these steps and submit all required documents via
-                            <b> WhatsApp</b> or <b>Email</b>.
-                          </p>
-                        </div>
-                        {/* Step 1 */}
-                        <div className="mb-6">
-                          <div className="flex items-start space-x-3 mb-3">
-                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <FaCheckCircle className="w-3 h-3 text-white" />
-                            </div>
-                            <h4 className="text-lg font-semibold text-appleGray-800">
-                              STEP 1: Create a Blocked Account
-                            </h4>
-                          </div>
-                          <p className="text-appleGray-600 ml-9 mb-6">
-                            To show proof of Secure Livelihood for student visa
-                            application, you need to initiate the process of
-                            opening a blocked account through Expatrio, a
-                            recognized provider in Germany. This is part of
-                            Expatrio’s Value Package, which includes:
-                          </p>
-
-                          <div className="ml-9 space-y-6">
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
-                              <ul className="list-disc ml-6 text-sm text-appleGray-700 space-y-2">
-                                <li>
-                                  <span className="font-medium">
-                                    Blocked Account
-                                  </span>{" "}
-                                  (required proof of financial means)
-                                </li>
-                                <li>
-                                  <span className="font-medium">
-                                    Health Insurance
-                                  </span>{" "}
-                                  (public or private, depending on eligibility)
-                                </li>
-                                <li>
-                                  <span className="font-medium">
-                                    Travel Insurance
-                                  </span>{" "}
-                                  (valid for the visa duration before enrollment
-                                  in public health insurance)
-                                </li>
-                              </ul>
-                              <div className="mt-4">
-                                <a
-                                  href="https://www.expatrio.com?f=gideong1"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
-                                >
-                                  <FaUniversity className="w-4 h-4" />
-                                  <span>Open with Expatrio</span>
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* Step 2 */}
-                        <div className="mb-6">
-                          <div className="flex items-start space-x-3 mb-3">
-                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <FaCheckCircle className="w-3 h-3 text-white" />
-                            </div>
-                            <h4 className="text-lg font-semibold text-appleGray-800">
-                              STEP 2: Create a New Email Address
-                            </h4>
-                          </div>
-                          <p className="text-appleGray-600 ml-9">
-                            For a secure and organized visa process, please
-                            create a new Gmail account and password exclusively
-                            for visa communications.
-                          </p>
-                        </div>
-                        {/* Step 3 */}
-                        <div className="mb-6">
-                          <div className="flex items-start space-x-3 mb-4">
-                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <FaCheckCircle className="w-3 h-3 text-white" />
-                            </div>
-                            <h4 className="text-lg font-semibold text-appleGray-800">
-                              STEP 3: Submit the Following Documents
-                            </h4>
-                          </div>
-                          <p className="text-appleGray-600 ml-9 mb-6">
-                            Please send clear scanned copies of the following
-                            documents:
-                          </p>
-
-                          {/* Document Requirements */}
-                          <div className="ml-9 space-y-6">
-                            {/* Motivation Letter */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
-                              <div className="flex items-start space-x-3 mb-3">
-                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
-                                  1. Motivation Letter (for the Embassy)
-                                </h5>
-                              </div>
-                              <p className="text-sm text-appleGray-600 mb-3 ml-8">
-                                This is required along with your Admission
-                                Letter.
-                              </p>
-                              <div className="ml-8">
-                                <p className="text-sm font-medium text-appleGray-700 mb-2">
-                                  Your motivation letter should clearly include:
-                                </p>
-                                <ul className="text-sm text-appleGray-600 space-y-1">
-                                  <li>• Why you want to study in Germany</li>
-                                  <li>
-                                    • Why you chose this specific degree and
-                                    university
-                                  </li>
-                                  <li>• Your academic background</li>
-                                  <li>• Your family background</li>
-                                  <li>
-                                    • Your goals after graduation and how you
-                                    plan to contribute to Sri Lanka after
-                                    returning
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-
-                            {/* Updated CV */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
-                              <div className="flex items-start space-x-3 mb-3">
-                                <FaIdCard className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
-                                  2. Updated CV (Curriculum Vitae)
-                                </h5>
-                              </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
-                                  <li>• Preferably in tabular format</li>
-                                  <li>
-                                    • Include educational background, skills,
-                                    and any professional experience
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-
-                            {/* Passport Copy */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
-                              <div className="flex items-start space-x-3 mb-3">
-                                <FaPassport className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
-                                  3. Passport Copy
-                                </h5>
-                              </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
-                                  <li>
-                                    • Include all passport pages with stamps,
-                                    and especially pages 2 to 9
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-
-                            {/* Biometric Photo */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
-                              <div className="flex items-start space-x-3 mb-3">
-                                <FaUserEdit className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
-                                  4. Biometric Photo
-                                </h5>
-                              </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
-                                  <li>
-                                    • Must be a recent photo with a white
-                                    background
-                                  </li>
-                                  <li>
-                                    • Follows German visa photo specifications
-                                    (35mm x 45mm)
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-
-                            {/* Work Experience */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
-                              <div className="flex items-start space-x-3 mb-3">
-                                <FaCertificate className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
-                                  5. Work Experience / Courses
-                                </h5>
-                              </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
-                                  <li>
-                                    • Include any job experience letters,
-                                    internships, or extra courses you have
-                                    completed (if applicable)
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-
-                            {/* Birth Certificate */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
-                              <div className="flex items-start space-x-3 mb-3">
-                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
-                                  6. Birth Certificate (English Translation)
-                                </h5>
-                              </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
-                                  <li>
-                                    • Must be officially translated into English
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-
-                            {/* Submit Documents */}
-                            <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-4 border border-green-200">
-                              <div className="flex items-center space-x-2 mb-3">
-                                <FaEnvelope className="w-4 h-4 text-green-600" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
-                                  Submit Documents To: WhatsApp or Email
-                                </h5>
-                              </div>
-                              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                                <a
-                                  href="https://wa.me/4915566389194"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
-                                >
-                                  <FaPhone className="w-4 h-4" />
-                                  <span>WhatsApp: +49 155 6638 9194</span>
-                                </a>
-                                <a
-                                  href="mailto:gidzunipath@gmail.com"
-                                  className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
-                                >
-                                  <FaEnvelope className="w-4 h-4" />
-                                  <span>Email: gidzunipath@gmail.com</span>
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
                     {/* Visa Application Tracker */}
                     <div className="mb-8">
                       <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
@@ -1716,6 +1522,269 @@ const ApplicantDetail = () => {
                           </h4>
                         </div>
                       )}
+                    </div>
+
+                    {/* Visa Application Submission Document Checklist */}
+                    <div className="mb-8">
+                      <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
+                        <FaPassport className="w-5 h-5 text-sky-500 mr-3" />
+                        Visa Application Submission – Document Checklist
+                      </h3>
+
+                      <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-3xl p-6">
+                        <div className="mb-6">
+                          <p className="text-appleGray-700 mb-4">
+                            To apply for your German student visa, please follow
+                            these steps and submit all required documents via
+                            <b> WhatsApp</b> or <b>Email</b>.
+                          </p>
+                        </div>
+                        {/* Step 1 */}
+                        <div className="mb-6">
+                          <div className="flex items-start space-x-3 mb-3">
+                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <FaCheckCircle className="w-3 h-3 text-white" />
+                            </div>
+                            <h4 className="text-lg font-semibold text-appleGray-800">
+                              STEP 1: Create a Blocked Account
+                            </h4>
+                          </div>
+                          <p className="text-appleGray-600 ml-9 mb-6">
+                            To show proof of Secure Livelihood for student visa
+                            application, you need to initiate the process of
+                            opening a blocked account through Expatrio, a
+                            recognized provider in Germany. This is part of
+                            Expatrio’s Value Package, which includes:
+                          </p>
+
+                          <div className="ml-9 space-y-6">
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <ul className="list-disc ml-6 text-sm text-appleGray-700 space-y-2">
+                                <li>
+                                  <span className="font-medium">
+                                    Blocked Account
+                                  </span>{" "}
+                                  (required proof of financial means)
+                                </li>
+                                <li>
+                                  <span className="font-medium">
+                                    Health Insurance
+                                  </span>{" "}
+                                  (public or private, depending on eligibility)
+                                </li>
+                                <li>
+                                  <span className="font-medium">
+                                    Travel Insurance
+                                  </span>{" "}
+                                  (valid for the visa duration before enrollment
+                                  in public health insurance)
+                                </li>
+                              </ul>
+                              <div className="mt-4">
+                                <a
+                                  href="https://www.expatrio.com?f=gideong1"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                >
+                                  <FaUniversity className="w-4 h-4" />
+                                  <span>Open with Expatrio</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Step 2 */}
+                        <div className="mb-6">
+                          <div className="flex items-start space-x-3 mb-3">
+                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <FaCheckCircle className="w-3 h-3 text-white" />
+                            </div>
+                            <h4 className="text-lg font-semibold text-appleGray-800">
+                              STEP 2: Create a New Email Address
+                            </h4>
+                          </div>
+                          <p className="text-appleGray-600 ml-9">
+                            For a secure and organized visa process, please
+                            create a new Gmail account and password exclusively
+                            for visa communications.
+                          </p>
+                        </div>
+                        {/* Step 3 */}
+                        <div className="mb-6">
+                          <div className="flex items-start space-x-3 mb-4">
+                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <FaCheckCircle className="w-3 h-3 text-white" />
+                            </div>
+                            <h4 className="text-lg font-semibold text-appleGray-800">
+                              STEP 3: Submit the Following Documents
+                            </h4>
+                          </div>
+                          <p className="text-appleGray-600 ml-9 mb-6">
+                            Please send clear scanned copies of the following
+                            documents:
+                          </p>
+
+                          {/* Document Requirements */}
+                          <div className="ml-9 space-y-6">
+                            {/* Motivation Letter */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  1. Motivation Letter (for the Embassy)
+                                </h5>
+                              </div>
+                              <p className="text-sm text-appleGray-600 mb-3 ml-8">
+                                This is required along with your Admission
+                                Letter.
+                              </p>
+                              <div className="ml-8">
+                                <p className="text-sm font-medium text-appleGray-700 mb-2">
+                                  Your motivation letter should clearly include:
+                                </p>
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>• Why you want to study in Germany</li>
+                                  <li>
+                                    • Why you chose this specific degree and
+                                    university
+                                  </li>
+                                  <li>• Your academic background</li>
+                                  <li>• Your family background</li>
+                                  <li>
+                                    • Your goals after graduation and how you
+                                    plan to contribute to Sri Lanka after
+                                    returning
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Updated CV */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaIdCard className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  2. Updated CV (Curriculum Vitae)
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>• Preferably in tabular format</li>
+                                  <li>
+                                    • Include educational background, skills,
+                                    and any professional experience
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Passport Copy */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaPassport className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  3. Passport Copy
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>
+                                    • Include all passport pages with stamps,
+                                    and especially pages 2 to 9
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Biometric Photo */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaUserEdit className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  4. Biometric Photo
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>
+                                    • Must be a recent photo with a white
+                                    background
+                                  </li>
+                                  <li>
+                                    • Follows German visa photo specifications
+                                    (35mm x 45mm)
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Work Experience */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaCertificate className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  5. Work Experience / Courses
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>
+                                    • Include any job experience letters,
+                                    internships, or extra courses you have
+                                    completed (if applicable)
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Birth Certificate */}
+                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                              <div className="flex items-start space-x-3 mb-3">
+                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  6. Birth Certificate (English Translation)
+                                </h5>
+                              </div>
+                              <div className="ml-8">
+                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                  <li>
+                                    • Must be officially translated into English
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Submit Documents */}
+                            <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-4 border border-green-200">
+                              <div className="flex items-center space-x-2 mb-3">
+                                <FaEnvelope className="w-4 h-4 text-green-600" />
+                                <h5 className="text-base font-semibold text-appleGray-800">
+                                  Submit Documents To: WhatsApp or Email
+                                </h5>
+                              </div>
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                                <a
+                                  href="https://wa.me/4915566389194"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                >
+                                  <FaPhone className="w-4 h-4" />
+                                  <span>WhatsApp: +49 155 6638 9194</span>
+                                </a>
+                                <a
+                                  href="mailto:gidzunipath@gmail.com"
+                                  className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                >
+                                  <FaEnvelope className="w-4 h-4" />
+                                  <span>Email: gidzunipath@gmail.com</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* All Application Options */}

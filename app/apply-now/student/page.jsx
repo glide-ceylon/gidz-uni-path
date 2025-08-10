@@ -43,56 +43,6 @@ const StudentApplicationForm = () => {
     "Science for Technology",
   ];
 
-  // O-Level subjects list
-  const oLevelSubjects = [
-    // Compulsory Subjects
-    "Sinhala Language",
-    "Tamil Language",
-    "English Language",
-    "Mathematics",
-    "Science",
-    "Buddhism",
-    "Hinduism",
-    "Islam",
-    "Christianity",
-    "History",
-    // Optional Subjects
-    "Business & Accounting Studies",
-    "Geography",
-    "Civic Education",
-    "Health & Physical Education",
-    "Information & Communication Technology (ICT)",
-    "Agricultural Science",
-    "Eastern Music",
-    "Western Music",
-    "Carnatic Music",
-    "Art",
-    "Kandyan Dancing",
-    "Bharatha Dancing",
-    "Low Country Dancing",
-    "Drama and Theatre (Sinhala)",
-    "Drama and Theatre (Tamil)",
-    "Drama and Theatre (English)",
-    "Second Language (Tamil)",
-    "Second Language (Sinhala)",
-    "Apparel and Textiles",
-    "Home Science",
-    "Food & Nutrition",
-    "Design & Technology",
-    "Woodwork",
-    "Metalwork",
-    "Technical Drawing",
-    "Arabic",
-    "Pali",
-    "Sanskrit",
-    "French",
-    "Japanese",
-    "German",
-    "Hindi",
-    "Korean",
-    "Chinese",
-  ];
-
   const countries = [
     "Afghanistan",
     "Albania",
@@ -324,6 +274,7 @@ const StudentApplicationForm = () => {
       Writing: "",
       Listening: "",
       Speaking: "",
+      OverallScore: "",
       Certificate: null,
     },
     CVUpload: {
@@ -489,22 +440,6 @@ const StudentApplicationForm = () => {
       const processedData = JSON.parse(JSON.stringify(formData));
 
       // Upload files and replace with URLs
-      if (formData.EducationalQualification.OLevel.ResultsDocument) {
-        processedData.EducationalQualification.OLevel.ResultsDocument =
-          await uploadFile(
-            formData.EducationalQualification.OLevel.ResultsDocument,
-            "ol"
-          );
-      }
-
-      if (formData.EducationalQualification.ALevel.ResultsDocument) {
-        processedData.EducationalQualification.ALevel.ResultsDocument =
-          await uploadFile(
-            formData.EducationalQualification.ALevel.ResultsDocument,
-            "al"
-          );
-      }
-
       if (formData.EducationalQualification.TranscriptOrAdditionalDocument) {
         processedData.EducationalQualification.TranscriptOrAdditionalDocument =
           await uploadFile(
@@ -553,11 +488,45 @@ const StudentApplicationForm = () => {
       processedData.ApplicationDate = new Date().toISOString();
       processedData.MarkasRead = false;
 
-      // Insert into student_visa table with data as JSON string
-      const { data, error } = await supabase
-        .from("student_visa")
-        .insert([{ data: JSON.stringify(processedData) }]);
+      // Ensure all array fields are properly formatted
+      const sanitizedData = {
+        ...processedData,
+        PersonalInformation: {
+          ...processedData.PersonalInformation,
+          UniversityType: Array.isArray(
+            processedData.PersonalInformation.UniversityType
+          )
+            ? processedData.PersonalInformation.UniversityType
+            : [],
+        },
+        AdditionalInformation: {
+          ...processedData.AdditionalInformation,
+          CoursePreferences: Array.isArray(
+            processedData.AdditionalInformation.CoursePreferences
+          )
+            ? processedData.AdditionalInformation.CoursePreferences.filter(
+                (item) => item && item.trim() !== ""
+              )
+            : [],
+          UniversityPreferences: Array.isArray(
+            processedData.AdditionalInformation.UniversityPreferences
+          )
+            ? processedData.AdditionalInformation.UniversityPreferences.filter(
+                (item) => item && item.trim() !== ""
+              )
+            : [],
+        },
+      };
 
+      // Insert into student_visa table - handle text[] column type correctly
+      // The database expects an array with a single JSON string element
+      const dataToInsert = JSON.stringify(sanitizedData);
+
+      const insertResult = await supabase
+        .from("student_visa")
+        .insert([{ data: [dataToInsert] }]); // Wrap in array for text[] column
+
+      const { data, error } = insertResult;
       if (error) throw error;
 
       alert("Application submitted successfully!");
@@ -577,11 +546,12 @@ const StudentApplicationForm = () => {
           Country: "",
         },
         EducationalQualification: {
-          OLevel: {
-            ResultsDocument: null,
-          },
           ALevel: {
-            ResultsDocument: null,
+            SubjectResults: [
+              { Subject: "", Result: "" },
+              { Subject: "", Result: "" },
+              { Subject: "", Result: "" },
+            ],
             GPA: {
               RequiredForMasters: false,
               Value: "",
@@ -596,6 +566,7 @@ const StudentApplicationForm = () => {
           Writing: "",
           Listening: "",
           Speaking: "",
+          OverallScore: "",
           Certificate: null,
         },
         CVUpload: {
@@ -626,8 +597,68 @@ const StudentApplicationForm = () => {
       });
       setCurrentStep(0);
     } catch (error) {
-      console.error("Error submitting application:", error);
-      alert("Error submitting application. Please try again.");
+      // Enhanced error logging with detailed error information
+      const errorDetails = {
+        message: error?.message || "Unknown error",
+        code: error?.code || "",
+        details: error?.details || "",
+        hint: error?.hint || "",
+        statusCode: error?.statusCode || error?.status || "",
+        stack: error?.stack || "",
+      };
+
+      console.error("Error submitting application:", {
+        error: errorDetails,
+        timestamp: new Date().toISOString(),
+        formDataSnapshot: {
+          hasPersonalInfo: !!formData.PersonalInformation?.FirstName,
+          hasContactInfo: !!formData.ContactInformation?.Email,
+          hasALevelData:
+            formData.EducationalQualification?.ALevel?.SubjectResults?.length >
+            0,
+          hasIELTSData: !!formData.IELTSResults?.ScoreOption,
+          step: currentStep,
+        },
+      });
+
+      // User-friendly error message
+      let userMessage = "Error submitting application. Please try again.";
+      if (
+        error?.message?.includes("network") ||
+        error?.message?.includes("fetch")
+      ) {
+        userMessage =
+          "Network error. Please check your connection and try again.";
+      } else if (
+        error?.message?.includes("validation") ||
+        error?.code === "VALIDATION_ERROR"
+      ) {
+        userMessage = "Please check all required fields and try again.";
+      } else if (
+        error?.message?.includes("file") ||
+        error?.message?.includes("upload")
+      ) {
+        userMessage =
+          "File upload error. Please check your files and try again.";
+      } else if (
+        error?.message?.includes("malformed array literal") ||
+        error?.message?.includes("invalid input syntax") ||
+        error?.code === "22P02"
+      ) {
+        userMessage =
+          "Data format error. Please check your selections and try again.";
+        console.error(
+          "Database format error - this may require developer attention"
+        );
+      } else if (
+        error?.message?.includes("duplicate key") ||
+        error?.code === "23505"
+      ) {
+        userMessage =
+          "This application may already exist. Please contact support if you continue to have issues.";
+      }
+
+      alert(userMessage);
     } finally {
       setIsLoading(false);
     }
@@ -1145,6 +1176,7 @@ const StudentApplicationForm = () => {
                       <option value="B">B</option>
                       <option value="C">C</option>
                       <option value="S">S</option>
+                      <option value="W">W</option>
                     </select>
                   </div>
                 </div>
@@ -1343,6 +1375,29 @@ const StudentApplicationForm = () => {
                     </div>
                   )
                 )}
+              </div>
+
+              {/* Overall Score */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
+                  Overall Score
+                </label>
+                <input
+                  type="number"
+                  step="0.5"
+                  min="0"
+                  max="9"
+                  value={formData.IELTSResults.OverallScore}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "IELTSResults",
+                      "OverallScore",
+                      e.target.value
+                    )
+                  }
+                  className="w-full md:w-48 px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                  placeholder="0.0"
+                />
               </div>
 
               <div>

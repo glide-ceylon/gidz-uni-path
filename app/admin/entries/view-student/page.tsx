@@ -11,6 +11,7 @@ const StudentDetails = () => {
   const [bachelorsUrl, setBachelorsUrl] = useState(null);
   const [transUrl, setTransUrl] = useState(null);
   const [cvUrl, setCvUrl] = useState(null);
+  const [financialDocUrl, setFinancialDocUrl] = useState(null);
 
   useEffect(() => {
     const fetchWorkDetails = async () => {
@@ -67,24 +68,30 @@ const StudentDetails = () => {
           return data.publicUrl;
         };
         // Fetch file URLs
-        const [ieltsUrl, transcriptUrl, cvUrl, bachelorsUrl, transUrl] =
-          await Promise.all([
-            fetchFileUrls("ielts", parsedData.IELTSResults?.Certificate),
-            fetchFileUrls(
-              "transcript",
-              parsedData.EducationalQualification
-                ?.TranscriptOrAdditionalDocument
-            ),
-            fetchFileUrls("cv", parsedData.CVUpload?.File),
-            fetchFileUrls(
-              "bachelors",
-              parsedData.WhenApplyingMaster?.BachelorsCertificate
-            ),
-            fetchFileUrls(
-              "bachelors",
-              parsedData.WhenApplyingMaster?.Transcript
-            ),
-          ]);
+        const [
+          ieltsUrl,
+          transcriptUrl,
+          cvUrl,
+          bachelorsUrl,
+          transUrl,
+          financialUrl,
+        ] = await Promise.all([
+          fetchFileUrls("ielts", parsedData.IELTSResults?.Certificate),
+          fetchFileUrls(
+            "transcript",
+            parsedData.EducationalQualification?.TranscriptOrAdditionalDocument
+          ),
+          fetchFileUrls("cv", parsedData.CVUpload?.File),
+          fetchFileUrls(
+            "bachelors",
+            parsedData.WhenApplyingMaster?.BachelorsCertificate
+          ),
+          fetchFileUrls("bachelors", parsedData.WhenApplyingMaster?.Transcript),
+          fetchFileUrls(
+            "financial",
+            parsedData.FinancialProof?.FinancialDocuments
+          ),
+        ]);
         console.log("Ielts Url", ieltsUrl);
 
         setIeltsDocumentUrl(ieltsUrl);
@@ -92,6 +99,7 @@ const StudentDetails = () => {
         setCvUrl(cvUrl);
         setBachelorsUrl(bachelorsUrl);
         setTransUrl(transUrl);
+        setFinancialDocUrl(financialUrl);
       } catch (err) {
         console.error("Error fetching work details:", err.message);
       } finally {
@@ -256,15 +264,10 @@ const StudentDetails = () => {
                     <span>University Type</span>
                   </label>
                   <div className="flex flex-wrap gap-3">
-                    {["Public University", "Private University"]
-                      .filter((option) =>
-                        student.PersonalInformation?.UniversityType?.includes(
-                          option
-                        )
-                      )
-                      .map((option) => (
+                    {student.PersonalInformation?.UniversityType?.map(
+                      (option, index) => (
                         <div
-                          key={option}
+                          key={index}
                           className="bg-sky-100 text-sky-700 px-4 py-2 rounded-2xl flex items-center space-x-2"
                         >
                           <Icon
@@ -273,7 +276,12 @@ const StudentDetails = () => {
                           />
                           <span className="font-medium">{option}</span>
                         </div>
-                      ))}
+                      )
+                    ) || (
+                      <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-600">
+                        No university type specified
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -344,6 +352,7 @@ const StudentDetails = () => {
               </h2>
             </div>
             <div className="p-6 space-y-6">
+              {/* A-Level Subjects */}
               <div>
                 <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
                   <Icon
@@ -357,14 +366,85 @@ const StudentDetails = () => {
                     (subject, index) => (
                       <div
                         key={index}
-                        className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800"
+                        className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800 flex justify-between items-center"
                       >
-                        {subject.Subject}: {subject.Result}
+                        <span className="font-medium">{subject.Subject}</span>
+                        <span className="bg-sky-100 text-sky-700 px-3 py-1 rounded-xl font-semibold">
+                          {subject.Result}
+                        </span>
                       </div>
                     )
+                  ) || (
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-600">
+                      No A-Level subjects provided
+                    </div>
                   )}
                 </div>
               </div>
+
+              {/* GPA Section */}
+              {student.EducationalQualification?.ALevel?.GPA && (
+                <div>
+                  <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:trending-up"
+                      className="text-lg text-appleGray-500"
+                    />
+                    <span>GPA Information</span>
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-medium text-appleGray-600 mb-1 block">
+                        Required for Masters
+                      </label>
+                      <div
+                        className={`px-4 py-3 rounded-2xl flex items-center space-x-2 ${
+                          student.EducationalQualification.ALevel.GPA
+                            .RequiredForMasters
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        <Icon
+                          icon={
+                            student.EducationalQualification.ALevel.GPA
+                              .RequiredForMasters
+                              ? "material-symbols:check-circle"
+                              : "material-symbols:cancel"
+                          }
+                          className="text-lg"
+                        />
+                        <span className="font-medium">
+                          {student.EducationalQualification.ALevel.GPA
+                            .RequiredForMasters
+                            ? "Yes"
+                            : "No"}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-appleGray-600 mb-1 block">
+                        GPA Value
+                      </label>
+                      <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                        {student.EducationalQualification.ALevel.GPA.Value ||
+                          "Not provided"}
+                      </div>
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-xs font-medium text-appleGray-600 mb-1 block">
+                        Degree Name
+                      </label>
+                      <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                        {student.EducationalQualification.ALevel.GPA
+                          .DegreeName || "Not provided"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Transcript Section */}
               <div>
                 <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
                   <Icon
@@ -410,6 +490,46 @@ const StudentDetails = () => {
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:quiz"
+                      className="text-lg text-appleGray-500"
+                    />
+                    <span>Score Option</span>
+                  </label>
+                  <div
+                    className={`px-4 py-3 rounded-2xl flex items-center space-x-2 ${
+                      student.IELTSResults?.ScoreOption === "Yes"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    <Icon
+                      icon={
+                        student.IELTSResults?.ScoreOption === "Yes"
+                          ? "material-symbols:check-circle"
+                          : "material-symbols:cancel"
+                      }
+                      className="text-lg"
+                    />
+                    <span className="font-medium">
+                      {student.IELTSResults?.ScoreOption || "Not provided"}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:stars"
+                      className="text-lg text-appleGray-500"
+                    />
+                    <span>Overall Score</span>
+                  </label>
+                  <div className="bg-sky-100 border border-sky-200 rounded-2xl px-4 py-3 text-sky-800 font-semibold text-center">
+                    {student.IELTSResults?.OverallScore || "Not provided"}
+                  </div>
+                </div>
                 {[
                   {
                     name: "Reading",
@@ -677,38 +797,6 @@ const StudentDetails = () => {
                 </div>
               </div>
 
-              {/* City Preferences */}
-              <div className="mb-6">
-                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
-                  <Icon
-                    icon="material-symbols:location-city"
-                    className="text-lg text-appleGray-500"
-                  />
-                  <span>City Preferences</span>
-                </label>
-                <div className="space-y-3">
-                  {Array.isArray(
-                    student.AdditionalInformation?.CityPreferences
-                  ) ? (
-                    student.AdditionalInformation.CityPreferences.map(
-                      (preference, index) => (
-                        <div
-                          key={index}
-                          className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800"
-                        >
-                          {preference}
-                        </div>
-                      )
-                    )
-                  ) : (
-                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
-                      {student.AdditionalInformation?.CityPreferences ||
-                        "Not provided"}
-                    </div>
-                  )}
-                </div>
-              </div>
-
               {/* University Preferences */}
               <div className="mb-6">
                 <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
@@ -741,35 +829,144 @@ const StudentDetails = () => {
                 </div>
               </div>
 
-              {/* Open for Other Options */}
+              {/* Personal Statement */}
               <div>
-                <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
                   <Icon
-                    icon="material-symbols:open-in-new"
+                    icon="material-symbols:article"
                     className="text-lg text-appleGray-500"
                   />
-                  <span>Open for Other Options</span>
+                  <span>Personal Statement</span>
                 </label>
-                <div
-                  className={`px-4 py-3 rounded-2xl flex items-center space-x-2 ${
-                    student.AdditionalInformation?.OpenForOtherOptions
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  <Icon
-                    icon={
-                      student.AdditionalInformation?.OpenForOtherOptions
-                        ? "material-symbols:check-circle"
-                        : "material-symbols:cancel"
-                    }
-                    className="text-lg"
-                  />
-                  <span className="font-medium">
-                    {student.AdditionalInformation?.OpenForOtherOptions
-                      ? "Yes"
-                      : "No"}
-                  </span>
+                <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-4 text-appleGray-800 min-h-[100px] whitespace-pre-wrap">
+                  {student.AdditionalInformation?.PersonalStatement ||
+                    "Not provided"}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Financial Proof */}
+          <div className="bg-white rounded-3xl shadow-large border border-appleGray-200 overflow-hidden">
+            <div className="bg-appleGray-50 px-6 py-4 border-b border-appleGray-200">
+              <h2 className="text-xl font-semibold text-appleGray-800 flex items-center space-x-2">
+                <Icon
+                  icon="material-symbols:account-balance-wallet"
+                  className="text-xl text-sky-500"
+                />
+                <span>Financial Proof</span>
+              </h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Can Earn Living in Germany */}
+                <div className="md:col-span-2">
+                  <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:work"
+                      className="text-lg text-appleGray-500"
+                    />
+                    <span>Can Earn Living in Germany</span>
+                  </label>
+                  <div
+                    className={`px-4 py-3 rounded-2xl flex items-center space-x-2 ${
+                      student.FinancialProof?.CanEarnLivingInGermany === "Yes"
+                        ? "bg-green-100 text-green-700"
+                        : student.FinancialProof?.CanEarnLivingInGermany ===
+                          "No"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-appleGray-100 text-appleGray-600"
+                    }`}
+                  >
+                    <Icon
+                      icon={
+                        student.FinancialProof?.CanEarnLivingInGermany === "Yes"
+                          ? "material-symbols:check-circle"
+                          : student.FinancialProof?.CanEarnLivingInGermany ===
+                            "No"
+                          ? "material-symbols:cancel"
+                          : "material-symbols:help"
+                      }
+                      className="text-lg"
+                    />
+                    <span className="font-medium">
+                      {student.FinancialProof?.CanEarnLivingInGermany ||
+                        "Not specified"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Financial Information Fields */}
+                {[
+                  {
+                    name: "FinancialMeansType",
+                    label: "Financial Means Type",
+                    icon: "material-symbols:payments",
+                  },
+                  {
+                    name: "BlockedAccountAmount",
+                    label: "Blocked Account Amount",
+                    icon: "material-symbols:savings",
+                  },
+                  {
+                    name: "DeclarationOfCommitment",
+                    label: "Declaration of Commitment",
+                    icon: "material-symbols:gavel",
+                  },
+                  {
+                    name: "SponsorDetails",
+                    label: "Sponsor Details",
+                    icon: "material-symbols:person-add",
+                  },
+                  {
+                    name: "OtherFinancialMeans",
+                    label: "Other Financial Means",
+                    icon: "material-symbols:account-balance",
+                  },
+                ].map(({ name, label, icon }) => (
+                  <div key={name} className="md:col-span-1">
+                    <label className="text-sm font-medium text-appleGray-700 mb-2 flex items-center space-x-2">
+                      <Icon
+                        icon={icon}
+                        className="text-lg text-appleGray-500"
+                      />
+                      <span>{label}</span>
+                    </label>
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-800">
+                      {student.FinancialProof?.[name] || "Not provided"}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Financial Documents */}
+                <div className="md:col-span-2">
+                  <label className="text-sm font-medium text-appleGray-700 mb-3 flex items-center space-x-2">
+                    <Icon
+                      icon="material-symbols:attach-file"
+                      className="text-lg text-appleGray-500"
+                    />
+                    <span>Financial Documents</span>
+                  </label>
+                  {financialDocUrl ? (
+                    <button
+                      onClick={() => openFileInNewTab(financialDocUrl)}
+                      className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-2xl transition-colors duration-200 flex items-center space-x-2 font-medium shadow-md hover:shadow-lg"
+                    >
+                      <Icon
+                        icon="material-symbols:visibility"
+                        className="text-lg"
+                      />
+                      <span>View Financial Documents</span>
+                    </button>
+                  ) : (
+                    <div className="bg-appleGray-100 border border-appleGray-200 rounded-2xl px-4 py-3 text-appleGray-600 flex items-center space-x-2">
+                      <Icon
+                        icon="material-symbols:description-off"
+                        className="text-lg"
+                      />
+                      <span>No financial documents uploaded</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
