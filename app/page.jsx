@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Expertise from "./components/home/expertise";
 import Testimonials from "./components/home/testimonials-apple";
 import AppointmentModal from "./client/[id]/components/AppointmentModal";
@@ -22,11 +22,30 @@ import {
   FaArrowRight,
   FaPlay,
   FaTimes,
+  FaStop,
+  FaPushed,
+  FaPause,
 } from "react-icons/fa";
 import Link from "next/link";
 
 export default function Home() {
   const [showCreateApointement, setShowCreateApointement] = useState(false);
+
+  // inside your component
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handleToggleVideo = () => {
+    if (!videoRef.current) return;
+
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current.play();
+      setIsPlaying(true);
+    }
+  };
 
   // Define the Modal component inside the same file.
   const Modal = ({ children, onClose }) => {
@@ -120,7 +139,31 @@ export default function Home() {
           <div className="mt-20 relative">
             <div className="relative max-w-4xl mx-auto">
               <div className="aspect-video rounded-3xl shadow-large overflow-hidden relative">
-                <Image
+                <video
+                  ref={videoRef}
+                  className="w-full h-full object-cover"
+                  src="/german-education-promo.mov"
+                  // loop
+                  playsInline
+                  // muted  // uncomment if you want autoplay muted behavior
+                >
+                  Your browser does not support the video tag.
+                </video>
+                {/* Overlay button */}
+                <div
+                  className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/30 hover:bg-black/20 transition"
+                  onClick={handleToggleVideo}
+                >
+                  <div className="bg-white/30 backdrop-blur-sm p-4 rounded-full">
+                    {isPlaying ? (
+                      <FaPause className="w-8 h-8 text-white" />
+                    ) : (
+                      <FaPlay className="w-8 h-8 text-white" />
+                    )}
+                  </div>
+                </div>
+
+                {/* <Image
                   src="/student-visa.png"
                   alt="German University Campus - Students studying in modern facilities"
                   fill
@@ -128,7 +171,7 @@ export default function Home() {
                   priority
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                />
+                /> */}
                 {/* <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                   <div className="text-center text-white space-y-4 animate-fade-in-up">
                     <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 border border-white/30">
