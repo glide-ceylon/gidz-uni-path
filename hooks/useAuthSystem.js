@@ -366,6 +366,11 @@ export const useAuthSystem = () => {
               href: "/admin/check-list",
               label: "Checklist Management",
               description: "Manage checklist items",
+            },
+            {
+              href: "/admin/feedbacks",
+              label: "Feedback Management",
+              description: "Manage feedbacks",
             }
           );
         }
