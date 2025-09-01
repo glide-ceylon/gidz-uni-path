@@ -386,19 +386,146 @@ const StudentApplicationForm = () => {
 
   // Navigate between steps
   const nextStep = () => {
+    // Validate current step before proceeding
+    if (!validateCurrentStep()) {
+      return; // Don't proceed if validation fails
+    }
+
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+      // Scroll to top of the form section smoothly
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      // Scroll to top of the form section smoothly
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
     }
   };
 
   const goToStep = (stepIndex) => {
     setCurrentStep(stepIndex);
+    // Scroll to top of the form section smoothly
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
+  };
+
+  // Validation function for mandatory fields
+  const validateCurrentStep = () => {
+    const newErrors = {};
+
+    switch (currentStep) {
+      case 0: // Personal Information - Mandatory
+        if (!formData.PersonalInformation.FirstName.trim()) {
+          newErrors["PersonalInformation.FirstName"] = "First name is required";
+        }
+        if (!formData.PersonalInformation.LastName.trim()) {
+          newErrors["PersonalInformation.LastName"] = "Last name is required";
+        }
+        if (!formData.PersonalInformation.Gender) {
+          newErrors["PersonalInformation.Gender"] = "Gender is required";
+        }
+        if (!formData.PersonalInformation.DateOfBirth) {
+          newErrors["PersonalInformation.DateOfBirth"] =
+            "Date of birth is required";
+        }
+        break;
+
+      case 1: // Contact Information - Mandatory
+        if (!formData.ContactInformation.Email.trim()) {
+          newErrors["ContactInformation.Email"] = "Email is required";
+        }
+        if (!formData.ContactInformation.MobileNo.trim()) {
+          newErrors["ContactInformation.MobileNo"] =
+            "Mobile number is required";
+        }
+        if (!formData.ContactInformation.Address.trim()) {
+          newErrors["ContactInformation.Address"] = "Address is required";
+        }
+        if (!formData.ContactInformation.Country) {
+          newErrors["ContactInformation.Country"] = "Country is required";
+        }
+        break;
+
+      case 2: // Academic & Language Qualifications - IELTS Mandatory
+        if (!formData.IELTSResults.ScoreOption) {
+          newErrors["IELTSResults.ScoreOption"] =
+            "IELTS information is required";
+        }
+        // If they have IELTS scores, validate the scores
+        if (formData.IELTSResults.ScoreOption === "Yes") {
+          if (
+            !formData.IELTSResults.Reading ||
+            formData.IELTSResults.Reading === ""
+          ) {
+            newErrors["IELTSResults.Reading"] = "Reading score is required";
+          }
+          if (
+            !formData.IELTSResults.Writing ||
+            formData.IELTSResults.Writing === ""
+          ) {
+            newErrors["IELTSResults.Writing"] = "Writing score is required";
+          }
+          if (
+            !formData.IELTSResults.Listening ||
+            formData.IELTSResults.Listening === ""
+          ) {
+            newErrors["IELTSResults.Listening"] = "Listening score is required";
+          }
+          if (
+            !formData.IELTSResults.Speaking ||
+            formData.IELTSResults.Speaking === ""
+          ) {
+            newErrors["IELTSResults.Speaking"] = "Speaking score is required";
+          }
+          if (
+            !formData.IELTSResults.OverallScore ||
+            formData.IELTSResults.OverallScore === ""
+          ) {
+            newErrors["IELTSResults.OverallScore"] =
+              "Overall score is required";
+          }
+        }
+        break;
+
+      case 3: // Documents & Financial Proof - Both Mandatory
+        // CV is mandatory
+        if (!formData.CVUpload.File) {
+          newErrors["CVUpload.File"] = "CV/Resume is required";
+        }
+        // Financial proof is mandatory
+        if (!formData.FinancialProof.CanEarnLivingInGermany) {
+          newErrors["FinancialProof.CanEarnLivingInGermany"] =
+            "Financial information is required";
+        }
+        break;
+
+      case 4: // Preferences - Course Preference Mandatory
+        if (!formData.AdditionalInformation.Course.trim()) {
+          newErrors["AdditionalInformation.Course"] =
+            "Preferred course level is required";
+        }
+        if (!formData.AdditionalInformation.AcademicYear.trim()) {
+          newErrors["AdditionalInformation.AcademicYear"] =
+            "Academic year is required";
+        }
+        if (!formData.AdditionalInformation.AcademicTerm.trim()) {
+          newErrors["AdditionalInformation.AcademicTerm"] =
+            "Academic term is required";
+        }
+        break;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   // Upload file to storage bucket
@@ -433,6 +560,76 @@ const StudentApplicationForm = () => {
   // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate all mandatory fields before submission
+    const finalErrors = {};
+
+    // Personal Information - Mandatory
+    if (!formData.PersonalInformation.FirstName.trim()) {
+      finalErrors["PersonalInformation.FirstName"] = "First name is required";
+    }
+    if (!formData.PersonalInformation.LastName.trim()) {
+      finalErrors["PersonalInformation.LastName"] = "Last name is required";
+    }
+    if (!formData.PersonalInformation.Gender) {
+      finalErrors["PersonalInformation.Gender"] = "Gender is required";
+    }
+    if (!formData.PersonalInformation.DateOfBirth) {
+      finalErrors["PersonalInformation.DateOfBirth"] =
+        "Date of birth is required";
+    }
+
+    // Contact Information - Mandatory
+    if (!formData.ContactInformation.Email.trim()) {
+      finalErrors["ContactInformation.Email"] = "Email is required";
+    }
+    if (!formData.ContactInformation.MobileNo.trim()) {
+      finalErrors["ContactInformation.MobileNo"] = "Mobile number is required";
+    }
+    if (!formData.ContactInformation.Address.trim()) {
+      finalErrors["ContactInformation.Address"] = "Address is required";
+    }
+    if (!formData.ContactInformation.Country) {
+      finalErrors["ContactInformation.Country"] = "Country is required";
+    }
+
+    // IELTS - Mandatory
+    if (!formData.IELTSResults.ScoreOption) {
+      finalErrors["IELTSResults.ScoreOption"] = "IELTS information is required";
+    }
+
+    // Financial Proof - Mandatory
+    if (!formData.FinancialProof.CanEarnLivingInGermany) {
+      finalErrors["FinancialProof.CanEarnLivingInGermany"] =
+        "Financial information is required";
+    }
+
+    // Course Preferences - Mandatory
+    if (!formData.AdditionalInformation.Course.trim()) {
+      finalErrors["AdditionalInformation.Course"] =
+        "Preferred course level is required";
+    }
+    if (!formData.AdditionalInformation.AcademicYear.trim()) {
+      finalErrors["AdditionalInformation.AcademicYear"] =
+        "Academic year is required";
+    }
+    if (!formData.AdditionalInformation.AcademicTerm.trim()) {
+      finalErrors["AdditionalInformation.AcademicTerm"] =
+        "Academic term is required";
+    }
+
+    // CV/Resume - Mandatory
+    if (!formData.CVUpload.File) {
+      finalErrors["CVUpload.File"] = "CV/Resume is required";
+    }
+
+    if (Object.keys(finalErrors).length > 0) {
+      setErrors(finalErrors);
+      alert("Please fill in all required fields before submitting.");
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -529,7 +726,7 @@ const StudentApplicationForm = () => {
       const { data, error } = insertResult;
       if (error) throw error;
 
-      alert("Application submitted successfully!");
+      alert("Application submitted successfully! We will contact you soon.");
       // Reset form or redirect
       setFormData({
         PersonalInformation: {
@@ -872,10 +1069,19 @@ const StudentApplicationForm = () => {
                   e.target.value
                 )
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["PersonalInformation.FirstName"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               placeholder="Enter your first name"
               required
             />
+            {errors["PersonalInformation.FirstName"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["PersonalInformation.FirstName"]}
+              </p>
+            )}
           </div>
 
           <div>
@@ -892,10 +1098,19 @@ const StudentApplicationForm = () => {
                   e.target.value
                 )
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["PersonalInformation.LastName"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               placeholder="Enter your last name"
               required
             />
+            {errors["PersonalInformation.LastName"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["PersonalInformation.LastName"]}
+              </p>
+            )}
           </div>
 
           <div>
@@ -911,7 +1126,11 @@ const StudentApplicationForm = () => {
                   e.target.value
                 )
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["PersonalInformation.Gender"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               required
             >
               <option value="">Select gender</option>
@@ -919,6 +1138,11 @@ const StudentApplicationForm = () => {
               <option value="Female">Female</option>
               <option value="Other">Other</option>
             </select>
+            {errors["PersonalInformation.Gender"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["PersonalInformation.Gender"]}
+              </p>
+            )}
           </div>
 
           <div>
@@ -935,9 +1159,18 @@ const StudentApplicationForm = () => {
                   e.target.value
                 )
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["PersonalInformation.DateOfBirth"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               required
             />
+            {errors["PersonalInformation.DateOfBirth"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["PersonalInformation.DateOfBirth"]}
+              </p>
+            )}
           </div>
         </div>
 
@@ -1581,7 +1814,11 @@ const StudentApplicationForm = () => {
                   e.target.value
                 )
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["AdditionalInformation.Course"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               required
             >
               <option value="">Select course level</option>
@@ -1589,6 +1826,11 @@ const StudentApplicationForm = () => {
               <option value="Masters">Master&apos;s Degree</option>
               <option value="PHD">PhD (Doctorate)</option>
             </select>
+            {errors["AdditionalInformation.Course"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["AdditionalInformation.Course"]}
+              </p>
+            )}
           </div>
 
           <div>
@@ -1604,7 +1846,11 @@ const StudentApplicationForm = () => {
                   e.target.value
                 )
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["AdditionalInformation.AcademicYear"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               required
             >
               <option value="">Select academic year</option>
@@ -1612,6 +1858,11 @@ const StudentApplicationForm = () => {
               <option value="2026">2026</option>
               <option value="2027">2027</option>
             </select>
+            {errors["AdditionalInformation.AcademicYear"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["AdditionalInformation.AcademicYear"]}
+              </p>
+            )}
           </div>
 
           <div>
@@ -1627,7 +1878,11 @@ const StudentApplicationForm = () => {
                   e.target.value
                 )
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["AdditionalInformation.AcademicTerm"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               required
             >
               <option value="">Select academic term</option>
@@ -1665,6 +1920,11 @@ const StudentApplicationForm = () => {
                 );
               })()}
             </select>
+            {errors["AdditionalInformation.AcademicTerm"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["AdditionalInformation.AcademicTerm"]}
+              </p>
+            )}
           </div>
           <p className="lg:col-span-3 text-sm text-appleGray-500 mt-2">
             Terms may not be available if application deadlines have passed
