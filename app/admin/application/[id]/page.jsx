@@ -850,9 +850,6 @@ const ApplicantDetail = () => {
                     height={140}
                     className="w-35 h-35 rounded-2xl object-cover border-4 border-white shadow-lg"
                   />
-                  <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                    <Icon icon="mdi:camera" className="text-white text-sm" />
-                  </div>
                 </div>
                 <ProfilePic applicationId={id} />
               </div>

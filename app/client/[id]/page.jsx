@@ -48,6 +48,8 @@ import SmartRecommendations from "./components/SmartRecommendations";
 import AnalyticsDashboard from "./components/AnalyticsDashboard";
 import FeedbackDialog from "./components/FeedbackDialog";
 import Image from "next/image";
+import ReactCrop from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 const ApplicantDetail = () => {
   const [applicant, setApplicant] = useState(null);
@@ -60,6 +62,20 @@ const ApplicantDetail = () => {
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [notifications, setNotifications] = useState([]);
+
+  // Image cropping states
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [crop, setCrop] = useState({
+    unit: "%",
+    width: 90,
+    height: 90,
+    x: 5,
+    y: 5,
+    aspect: 1, // Square aspect ratio for profile pictures
+  });
+  const [completedCrop, setCompletedCrop] = useState(null);
+  const [imgRef, setImgRef] = useState(null);
   const [dashboardStats, setDashboardStats] = useState({
     progressPercentage: 0,
     universityDocumentsUploaded: 0,
@@ -461,16 +477,77 @@ const ApplicantDetail = () => {
       return;
     }
 
+    // Create a URL for the selected file and show cropping modal
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedImage({
+        file: file,
+        url: reader.result,
+        name: file.name,
+      });
+      setShowCropModal(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Function to create a cropped image blob
+  const getCroppedImg = (image, crop) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+
+      canvas.width = crop.width * scaleX;
+      canvas.height = crop.height * scaleY;
+
+      ctx.drawImage(
+        image,
+        crop.x * scaleX,
+        crop.y * scaleY,
+        crop.width * scaleX,
+        crop.height * scaleY,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      canvas.toBlob(
+        (blob) => {
+          resolve(blob);
+        },
+        "image/jpeg",
+        0.9
+      );
+    });
+  };
+
+  // Function to handle cropped image upload
+  const handleCroppedUpload = async () => {
+    if (!completedCrop || !imgRef || !selectedImage) return;
+
     setUploading(true);
     setProgress(0);
 
     try {
-      const filePath = `profile/${id}-${Date.now()}-${file.name}`;
+      // Get the cropped image blob
+      const croppedImageBlob = await getCroppedImg(imgRef, completedCrop);
 
-      // Upload the file with a progress callback
+      // Create a file from the blob
+      const croppedFile = new File(
+        [croppedImageBlob],
+        `cropped-${selectedImage.name}`,
+        { type: "image/jpeg" }
+      );
+
+      const filePath = `profile/${id}-${Date.now()}-${croppedFile.name}`;
+
+      // Upload the cropped file with a progress callback
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("documents")
-        .upload(filePath, file, {
+        .upload(filePath, croppedFile, {
           cacheControl: "3600",
           upsert: true,
           onUploadProgress: (event) => {
@@ -490,26 +567,65 @@ const ApplicantDetail = () => {
         setProfilePicUrl(imageDetails.publicUrl);
       }
 
-      // Insert a record into the documents table
-      const { error: docInsertError } = await supabase
+      // Check if a profile picture already exists for this application
+      const { data: existingPic, error: checkError } = await supabase
         .from("documents")
-        .insert([
-          {
-            application_id: id,
-            name: "Profile Picture",
-            upload_by: "Client",
+        .select("id")
+        .eq("application_id", id)
+        .eq("name", "Profile Picture")
+        .single();
+
+      if (checkError && checkError.code !== "PGRST116") {
+        // Error other than "not found"
+        throw checkError;
+      }
+
+      if (existingPic) {
+        // Update existing profile picture record
+        const { error: docUpdateError } = await supabase
+          .from("documents")
+          .update({
             url: imageDetails.publicUrl,
-          },
-        ]);
+            upload_by: "Client",
+          })
+          .eq("id", existingPic.id);
 
-      if (docInsertError) throw docInsertError;
+        if (docUpdateError) throw docUpdateError;
+      } else {
+        // Insert new profile picture record
+        const { error: docInsertError } = await supabase
+          .from("documents")
+          .insert([
+            {
+              application_id: id,
+              name: "Profile Picture",
+              upload_by: "Client",
+              url: imageDetails.publicUrl,
+            },
+          ]);
 
+        if (docInsertError) throw docInsertError;
+      }
+
+      // Close modal and reset states
+      setShowCropModal(false);
+      setSelectedImage(null);
       setUploading(false);
       setProgress(0);
+      setCompletedCrop(null);
+      setImgRef(null);
     } catch (error) {
-      console.error("Error uploading profile picture:", error);
+      console.error("Error uploading cropped profile picture:", error);
       setUploading(false);
     }
+  };
+
+  // Function to cancel cropping
+  const handleCropCancel = () => {
+    setShowCropModal(false);
+    setSelectedImage(null);
+    setCompletedCrop(null);
+    setImgRef(null);
   };
   // Define the Modal component inside the same file.
   const Modal = ({ children, onClose }) => {
@@ -567,7 +683,7 @@ const ApplicantDetail = () => {
     );
   }
   return (
-    <div className="min-h-screen bg-gradient-to-br from-appleGray-50 via-white to-sky-50 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-appleGray-50 via-white to-sky-50 relative overflow-hidden pt-20">
       {/* Notification System */}
       <NotificationSystem
         notifications={notifications}
@@ -916,8 +1032,75 @@ const ApplicantDetail = () => {
             {" "}
             {/* Tab Headers */}
             <div className="border-b border-appleGray-200">
-              <nav className="flex overflow-x-auto tab-navigation">
-                {" "}
+              {/* Mobile Tab Headers - Grid Layout */}
+              <nav className="grid grid-cols-3 gap-1 p-2 md:hidden">
+                {[
+                  { id: "overview", label: "Overview", icon: FaChartLine },
+                  // { id: "timeline", label: "Timeline", icon: FaCalendarAlt },
+                  { id: "documents", label: "Documents", icon: FaFileAlt },
+                  {
+                    id: "universities",
+                    label: "Universities",
+                    icon: FaUniversity,
+                  },
+                  { id: "tasks", label: "Visa", icon: FaPassport },
+                  { id: "support", label: "Support", icon: FaLifeRing },
+                  { id: "profile", label: "Profile", icon: FaUserEdit },
+                ].map((tab) => {
+                  const isVisaTabLocked =
+                    tab.id === "tasks" && applicant?.lock_1;
+
+                  return (
+                    <button
+                      key={`mobile-${tab.id}`}
+                      onClick={() => {
+                        if (!isVisaTabLocked) {
+                          setActiveTab(tab.id);
+                        }
+                      }}
+                      disabled={isVisaTabLocked}
+                      className={`relative flex flex-col items-center justify-center p-3 rounded-xl text-xs font-medium transition-all duration-200 ${
+                        isVisaTabLocked
+                          ? "text-appleGray-400 cursor-not-allowed opacity-50 bg-appleGray-50"
+                          : activeTab === tab.id
+                          ? "text-sky-600 bg-sky-100 border border-sky-200"
+                          : "text-appleGray-600 hover:text-appleGray-800 hover:bg-appleGray-50 cursor-pointer"
+                      }`}
+                    >
+                      <tab.icon className="w-5 h-5 mb-1" />
+                      <span className="text-center leading-tight">
+                        {tab.label}
+                      </span>
+                      {/* Mobile Tab badges */}
+                      {tab.id === "tasks" &&
+                        (dashboardStats.visaDocumentsUploaded <
+                          Math.floor(dashboardStats.visaDocumentsTotal * 0.4) ||
+                          !applicant?.payment1 ||
+                          !applicant?.payment2) && (
+                          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                            !
+                          </span>
+                        )}
+                      {tab.id === "documents" &&
+                        (dashboardStats.universityDocumentsUploaded <
+                          Math.floor(
+                            dashboardStats.universityDocumentsTotal * 0.5
+                          ) ||
+                          dashboardStats.visaDocumentsUploaded <
+                            Math.floor(
+                              dashboardStats.visaDocumentsTotal * 0.4
+                            )) && (
+                          <span className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                            !
+                          </span>
+                        )}
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {/* Desktop Tab Headers - Horizontal Layout */}
+              <nav className="hidden md:flex overflow-x-auto tab-navigation">
                 {[
                   { id: "overview", label: "Overview", icon: FaChartLine },
                   // { id: "timeline", label: "Timeline", icon: FaCalendarAlt },
@@ -953,7 +1136,7 @@ const ApplicantDetail = () => {
                     >
                       <tab.icon className="w-4 h-4" />
                       <span>{tab.label}</span>
-                      {/* Tab badge for urgent items */}
+                      {/* Desktop Tab badges */}
                       {tab.id === "tasks" &&
                         (dashboardStats.visaDocumentsUploaded <
                           Math.floor(dashboardStats.visaDocumentsTotal * 0.4) ||
@@ -2045,6 +2228,23 @@ const ApplicantDetail = () => {
                                 className="w-full h-full object-cover"
                               />
                             </div>
+                            {/* Always show replace/upload button as overlay */}
+                            <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 rounded-3xl transition-all duration-200 flex items-center justify-center group cursor-pointer">
+                              <label className="cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <div className="bg-white bg-opacity-90 hover:bg-opacity-100 text-appleGray-800 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 inline-flex items-center space-x-2 shadow-soft">
+                                  <FaUpload className="w-4 h-4" />
+                                  <span>
+                                    {profilePicUrl ? "Replace" : "Upload"}
+                                  </span>
+                                </div>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleProfileUpload}
+                                  className="hidden"
+                                />
+                              </label>
+                            </div>
                           </div>
 
                           {!profilePicUrl && (
@@ -2209,6 +2409,96 @@ const ApplicantDetail = () => {
         {showCreateApointemen && (
           <Modal onClose={() => setShowCreateApointement(false)}>
             <AppointmentModal onClose={() => setShowCreateApointement(false)} />
+          </Modal>
+        )}
+        {/* Image Crop Modal */}
+        {showCropModal && selectedImage && (
+          <Modal onClose={handleCropCancel}>
+            <div className="space-y-6">
+              <div className="text-center">
+                <h3 className="text-2xl font-semibold text-appleGray-800 mb-2">
+                  Crop Your Profile Picture
+                </h3>
+                <p className="text-appleGray-600">
+                  Adjust the crop area to select the part of your image you want
+                  to use
+                </p>
+              </div>
+
+              <div className="flex justify-center">
+                <div className="max-w-lg w-full">
+                  <ReactCrop
+                    crop={crop}
+                    onChange={(c) => setCrop(c)}
+                    onComplete={(c) => setCompletedCrop(c)}
+                    aspect={1} // Square aspect ratio
+                    circularCrop={false}
+                    className="max-h-96"
+                  >
+                    <img
+                      ref={(ref) => setImgRef(ref)}
+                      alt="Crop me"
+                      src={selectedImage.url}
+                      style={{ maxHeight: "400px", width: "auto" }}
+                      onLoad={() => {
+                        // Set initial crop when image loads
+                        const newCrop = {
+                          unit: "%",
+                          width: 90,
+                          height: 90,
+                          x: 5,
+                          y: 5,
+                          aspect: 1,
+                        };
+                        setCrop(newCrop);
+                        setCompletedCrop(newCrop);
+                      }}
+                    />
+                  </ReactCrop>
+                </div>
+              </div>
+
+              {uploading && (
+                <div className="space-y-2">
+                  <div className="w-full bg-appleGray-200 rounded-full h-2">
+                    <div
+                      className="bg-sky-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-center text-sm text-appleGray-600">
+                    Uploading... {progress}%
+                  </p>
+                </div>
+              )}
+
+              <div className="flex space-x-4 justify-end">
+                <button
+                  onClick={handleCropCancel}
+                  disabled={uploading}
+                  className="px-6 py-2 border border-appleGray-300 text-appleGray-700 rounded-xl hover:bg-appleGray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCroppedUpload}
+                  disabled={!completedCrop || uploading}
+                  className="px-6 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center space-x-2"
+                >
+                  {uploading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaUpload className="w-4 h-4" />
+                      <span>Upload Cropped Image</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </Modal>
         )}
         {/* Feedback Dialog */}

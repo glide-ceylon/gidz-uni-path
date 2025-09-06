@@ -134,16 +134,15 @@ const WorkVisaApplicationForm = () => {
   const handleFileChange = (section, field, file) => {
     if (!file) return;
 
-    // Validate file size (10MB)
+    // Validate file size (10MB) - just return without modal
     if (file.size > 10 * 1024 * 1024) {
-      setModalMessage(
+      console.warn(
         "File size must be less than 10MB. Please choose a smaller file."
       );
-      setIsModalOpen(true);
       return;
     }
 
-    // Validate file type
+    // Validate file type - just return without modal
     const allowedTypes = {
       cv: [".pdf", ".doc", ".docx"],
       bachelorOrMasterDegreeCertificate: [".pdf", ".jpg", ".jpeg", ".png"],
@@ -163,12 +162,11 @@ const WorkVisaApplicationForm = () => {
     ];
 
     if (!allowedExtensions.includes(fileExtension)) {
-      setModalMessage(
+      console.warn(
         `Invalid file type. Please upload a file with one of these extensions: ${allowedExtensions.join(
           ", "
         )}`
       );
-      setIsModalOpen(true);
       return;
     }
 
@@ -183,75 +181,174 @@ const WorkVisaApplicationForm = () => {
 
   // Navigate between steps
   const nextStep = () => {
+    // Validate current step before proceeding
+    if (!validateCurrentStep()) {
+      return; // Don't proceed if validation fails
+    }
+
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+      // Scroll to top of the form section smoothly
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      // Scroll to top of the form section smoothly
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
     }
   };
 
   const goToStep = (stepIndex) => {
     setCurrentStep(stepIndex);
+    // Scroll to top of the form section smoothly
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
+  };
+
+  // Validation function for mandatory fields
+  const validateCurrentStep = () => {
+    const newErrors = {};
+
+    switch (currentStep) {
+      case 0: // Personal Information - Mandatory
+        if (!formData.PersonalInformation.firstName.trim()) {
+          newErrors["PersonalInformation.firstName"] = "First name is required";
+        }
+        if (!formData.PersonalInformation.lastName.trim()) {
+          newErrors["PersonalInformation.lastName"] = "Last name is required";
+        }
+        if (!formData.PersonalInformation.dateOfBirth) {
+          newErrors["PersonalInformation.dateOfBirth"] =
+            "Date of birth is required";
+        }
+        if (!formData.PersonalInformation.nationality.trim()) {
+          newErrors["PersonalInformation.nationality"] =
+            "Nationality is required";
+        }
+        if (!formData.PersonalInformation.passportNumber.trim()) {
+          newErrors["PersonalInformation.passportNumber"] =
+            "Passport number is required";
+        }
+        break;
+
+      case 1: // Contact Information - Mandatory
+        if (!formData.ContactInformation.email.trim()) {
+          newErrors["ContactInformation.email"] = "Email is required";
+        }
+        if (!formData.ContactInformation.mobileNumber.trim()) {
+          newErrors["ContactInformation.mobileNumber"] =
+            "Mobile number is required";
+        }
+        if (!formData.ContactInformation.currentAddress.trim()) {
+          newErrors["ContactInformation.currentAddress"] =
+            "Current address is required";
+        }
+        if (!formData.ContactInformation.country.trim()) {
+          newErrors["ContactInformation.country"] = "Country is required";
+        }
+        break;
+
+      case 2: // Qualifications & Experience - Optional step
+        // No mandatory validation for this step
+        break;
+
+      case 3: // Language Skills - Mandatory
+        if (!formData.LanguageSkills.germanLanguageLevel) {
+          newErrors["LanguageSkills.germanLanguageLevel"] =
+            "German language level is required";
+        }
+        if (!formData.LanguageSkills.englishLanguageLevel) {
+          newErrors["LanguageSkills.englishLanguageLevel"] =
+            "English language level is required";
+        }
+        break;
+
+      case 4: // Application Details - Germany Experience and Financial Requirements Mandatory
+        if (!formData.ApplicationDetails.germanyExperience) {
+          newErrors["ApplicationDetails.germanyExperience"] =
+            "Germany experience information is required";
+        }
+        if (!formData.ApplicationDetails.financialRequirements) {
+          newErrors["ApplicationDetails.financialRequirements"] =
+            "Financial requirements information is required";
+        }
+        break;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
   // Validation
   const validate = () => {
     const newErrors = {};
 
-    // Personal Information validation
-    if (!formData.PersonalInformation.firstName) {
+    // Personal Information validation - Mandatory
+    if (!formData.PersonalInformation.firstName.trim()) {
       newErrors["PersonalInformation.firstName"] = "First name is required.";
     }
-    if (!formData.PersonalInformation.lastName) {
+    if (!formData.PersonalInformation.lastName.trim()) {
       newErrors["PersonalInformation.lastName"] = "Last name is required.";
     }
     if (!formData.PersonalInformation.dateOfBirth) {
       newErrors["PersonalInformation.dateOfBirth"] =
         "Date of birth is required.";
     }
+    if (!formData.PersonalInformation.nationality.trim()) {
+      newErrors["PersonalInformation.nationality"] = "Nationality is required.";
+    }
+    if (!formData.PersonalInformation.passportNumber.trim()) {
+      newErrors["PersonalInformation.passportNumber"] =
+        "Passport number is required.";
+    }
 
-    // Contact Information validation
-    if (!formData.ContactInformation.mobileNumber) {
+    // Contact Information validation - Mandatory
+    if (!formData.ContactInformation.mobileNumber.trim()) {
       newErrors["ContactInformation.mobileNumber"] =
         "Mobile number is required.";
     }
-    if (!formData.ContactInformation.email) {
+    if (!formData.ContactInformation.email.trim()) {
       newErrors["ContactInformation.email"] = "Email is required.";
     } else if (
       !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.ContactInformation.email)
     ) {
       newErrors["ContactInformation.email"] = "Invalid email format.";
     }
-
-    // Only validate other sections if they have been started/filled
-    // This prevents validation errors for sections the user hasn't reached yet
-
-    // Qualifications validation (only if education type is selected)
-    if (
-      formData.QualificationsAndExperience.educationType &&
-      !formData.QualificationsAndExperience.yearsOfProfessionalExperience
-    ) {
-      newErrors["QualificationsAndExperience.yearsOfProfessionalExperience"] =
-        "Years of professional experience is required.";
+    if (!formData.ContactInformation.currentAddress.trim()) {
+      newErrors["ContactInformation.currentAddress"] =
+        "Current address is required.";
+    }
+    if (!formData.ContactInformation.country.trim()) {
+      newErrors["ContactInformation.country"] = "Country is required.";
     }
 
-    // Language Skills validation (only if German level is selected)
-    if (
-      formData.LanguageSkills.germanLanguageLevel &&
-      formData.LanguageSkills.germanLanguageLevel !== "None" &&
-      !formData.LanguageSkills.germanCertificate
-    ) {
-      // Optional: Only require certificate for certain levels
-      // newErrors["LanguageSkills.germanCertificate"] = "German certificate is required.";
+    // Language Skills validation - Mandatory
+    if (!formData.LanguageSkills.germanLanguageLevel) {
+      newErrors["LanguageSkills.germanLanguageLevel"] =
+        "German language level is required.";
+    }
+    if (!formData.LanguageSkills.englishLanguageLevel) {
+      newErrors["LanguageSkills.englishLanguageLevel"] =
+        "English language level is required.";
     }
 
-    // Financial Proof validation
-    if (!formData.ApplicationDetails.CanEarnLivingInGermany) {
-      newErrors["ApplicationDetails.CanEarnLivingInGermany"] =
-        "Please answer the blocked account question.";
+    // Germany Experience validation - Mandatory
+    if (!formData.ApplicationDetails.germanyExperience) {
+      newErrors["ApplicationDetails.germanyExperience"] =
+        "Germany experience information is required.";
+    }
+
+    // Financial Requirements validation - Mandatory
+    if (!formData.ApplicationDetails.financialRequirements) {
+      newErrors["ApplicationDetails.financialRequirements"] =
+        "Financial requirements information is required.";
     }
 
     setErrors(newErrors);

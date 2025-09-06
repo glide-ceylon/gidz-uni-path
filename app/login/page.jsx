@@ -149,7 +149,7 @@ export default function Login() {
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <div className="hidden absolute inset-y-0 left-0 pl-4 md:flex items-center pointer-events-none">
                     <FaEnvelope className="w-4 h-4 text-appleGray-400" />
                   </div>
                   <input
@@ -173,7 +173,7 @@ export default function Login() {
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <div className="hidden absolute inset-y-0 left-0 pl-4 md:flex items-center pointer-events-none">
                     <FaLock className="w-4 h-4 text-appleGray-400" />
                   </div>
                   <input

@@ -87,7 +87,59 @@ export default function HorizontalStepper({ currentStep = 1 }) {
 
   return (
     <div className="w-full">
-      <ol className="flex items-center justify-between w-full">
+      {/* Mobile Layout - Vertical */}
+      <ol className="flex flex-col space-y-4 md:hidden">
+        {steps.map((step, index) => {
+          const status = getStatus(step.id);
+          const isLastStep = index === steps.length - 1;
+
+          return (
+            <li key={step.id} className="relative flex items-start space-x-4">
+              {/* Step Icon */}
+              <div className="flex-shrink-0">
+                {renderIcon(status, step.icon)}
+              </div>
+
+              {/* Step Details */}
+              <div className="flex-1 min-w-0">
+                <h3
+                  className={`font-semibold text-base ${
+                    status === "completed"
+                      ? "text-green-600"
+                      : status === "inProgress"
+                      ? "text-sky-600"
+                      : "text-appleGray-500"
+                  }`}
+                >
+                  {step.title}
+                </h3>
+                <p className="text-sm text-appleGray-500 mt-1">
+                  {step.subtitle}
+                </p>
+                <span className="text-xs text-appleGray-400 mt-1 block">
+                  Step {step.id}
+                </span>
+              </div>
+
+              {/* Vertical connecting line for mobile */}
+              {!isLastStep && (
+                <div
+                  className={`absolute left-2 top-12 w-0.5 h-8 ${
+                    status === "completed"
+                      ? "bg-green-500"
+                      : status === "inProgress"
+                      ? "bg-sky-500"
+                      : "bg-appleGray-300"
+                  }`}
+                />
+              )}
+            </li>
+          );
+        })}
+      </ol>
+
+      {/* Desktop Layout - Horizontal */}
+      <ol className="hidden md:flex items-center justify-between w-full">
         {steps.map((step, index) => {
           const status = getStatus(step.id);
           const isLastStep = index === steps.length - 1;
@@ -123,7 +175,7 @@ export default function HorizontalStepper({ currentStep = 1 }) {
                 </div>
               </div>
 
-              {/* Connecting line for all but the last step */}
+              {/* Horizontal connecting line for desktop */}
               {!isLastStep && (
                 <div
                   className={`absolute top-6 left-1/2 w-full h-0.5 -translate-y-1/2 translate-x-6 ${

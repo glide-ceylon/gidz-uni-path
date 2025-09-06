@@ -53,15 +53,17 @@ async function createAdminUser() {
   console.log("1. super_admin - Full system access");
   console.log("2. admin - Most permissions except admin management");
   console.log("3. manager - Read/update permissions + request approval");
-  console.log("4. staff - Basic read permissions");
+  console.log("4. staff - Basic read permissions (Student Visa Consultant)");
+  console.log("5. finance_manager - Applications read-only access");
 
-  const roleChoice = await askQuestion("Select role (1-4): ");
+  const roleChoice = await askQuestion("Select role (1-5): ");
 
   const roles = {
     1: "super_admin",
     2: "admin",
     3: "manager",
     4: "staff",
+    5: "finance_manager",
   };
 
   const role = roles[roleChoice] || "staff";

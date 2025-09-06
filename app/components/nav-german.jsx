@@ -138,14 +138,12 @@ export default function Nav() {
               />
             </button>
             {/* </div> */}
-            <div className="hidden sm:block">
-              <div className="text-2xl font-bold text-appleGray-800">
-                GIDZ UniPath
-              </div>
-              {/* <div className="text-xs text-appleGray-500 -mt-1">
+            <div className="montserrat text-2xl font-bold text-appleGray-800">
+              GIDZ <span className="text-sky-500">UniPath</span>
+            </div>
+            {/* <div className="text-xs text-appleGray-500 -mt-1">
                 German Excellence
               </div> */}
-            </div>
           </Link>
 
           {/* Desktop Navigation */}

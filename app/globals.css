@@ -58,6 +58,10 @@ html {
   scroll-behavior: smooth;
 }
 
+.montserrat {
+  font-family: "Montserrat", sans-serif;
+}
+
 /* German flag gradient */
 .german-gradient {
   background: linear-gradient(135deg, #000000 0%, #dd0000 50%, #ffcc02 100%);
