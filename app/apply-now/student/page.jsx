@@ -18,6 +18,8 @@ import {
 const StudentApplicationForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   // Form validation errors
   const [errors, setErrors] = useState({});
@@ -625,7 +627,8 @@ const StudentApplicationForm = () => {
 
     if (Object.keys(finalErrors).length > 0) {
       setErrors(finalErrors);
-      alert("Please fill in all required fields before submitting.");
+      setModalMessage("Please fill in all required fields before submitting.");
+      setIsModalOpen(true);
       setIsLoading(false);
       return;
     }
@@ -726,7 +729,10 @@ const StudentApplicationForm = () => {
       const { data, error } = insertResult;
       if (error) throw error;
 
-      alert("Application submitted successfully! We will contact you soon.");
+      setModalMessage(
+        "Application submitted successfully! We will contact you soon."
+      );
+      setIsModalOpen(true);
       // Reset form or redirect
       setFormData({
         PersonalInformation: {
@@ -855,7 +861,8 @@ const StudentApplicationForm = () => {
           "This application may already exist. Please contact support if you continue to have issues.";
       }
 
-      alert(userMessage);
+      setModalMessage(userMessage);
+      setIsModalOpen(true);
     } finally {
       setIsLoading(false);
     }
@@ -863,45 +870,45 @@ const StudentApplicationForm = () => {
 
   return (
     <div className="min-h-screen bg-appleGray-50 relative overflow-hidden">
-      {/* Floating Background Elements */}
-      <div className="absolute top-32 left-10 w-20 h-20 bg-sky-400/10 rounded-full animate-float"></div>
+      {/* Floating Background Elements - Hidden on mobile */}
+      <div className="hidden sm:block absolute top-32 left-10 w-20 h-20 bg-sky-400/10 rounded-full animate-float"></div>
       <div
-        className="absolute top-64 right-16 w-16 h-16 bg-sky-500/15 rounded-2xl animate-float"
+        className="hidden sm:block absolute top-64 right-16 w-16 h-16 bg-sky-500/15 rounded-2xl animate-float"
         style={{ animationDelay: "1s" }}
       ></div>
       <div
-        className="absolute top-96 left-20 w-12 h-12 bg-sky-600/20 rounded-full animate-float"
+        className="hidden lg:block absolute top-96 left-20 w-12 h-12 bg-sky-600/20 rounded-full animate-float"
         style={{ animationDelay: "2s" }}
       ></div>
       <div
-        className="absolute top-80 right-32 w-8 h-8 bg-sky-400/25 rounded-full animate-float"
+        className="hidden lg:block absolute top-80 right-32 w-8 h-8 bg-sky-400/25 rounded-full animate-float"
         style={{ animationDelay: "3s" }}
       ></div>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-8">
+      <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-20 sm:pt-24 pb-6 sm:pb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
 
-        <div className="container-apple text-center relative z-10">
-          <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-soft">
-            <FaGraduationCap className="w-10 h-10 text-white" />
+        <div className="container-apple text-center relative z-10 px-4">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-soft">
+            <FaGraduationCap className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
           </div>
-          <h1 className="text-4xl lg:text-6xl font-bold text-appleGray-900 mb-6">
+          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-appleGray-900 mb-4 sm:mb-6">
             Student Visa
             <span className="block text-gradient bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
               Application
             </span>
           </h1>
-          <p className="text-xl text-appleGray-600 max-w-2xl mx-auto mb-8">
+          <p className="text-lg sm:text-xl text-appleGray-600 max-w-2xl mx-auto mb-6 sm:mb-8 px-4">
             Start your journey to study abroad. Complete your application in
             simple steps.
           </p>{" "}
           {/* Progress indicator */}
-          <div className="max-w-4xl mx-auto mb-2">
+          <div className="max-w-4xl mx-auto mb-2 px-4">
             <div className="flex items-center justify-between">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
+                    className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
                       index <= currentStep
                         ? "bg-sky-500 text-white shadow-lg"
                         : "bg-appleGray-200 text-appleGray-400"
@@ -910,14 +917,14 @@ const StudentApplicationForm = () => {
                     title={step.title}
                   >
                     {index < currentStep ? (
-                      <FaCheckCircle className="w-5 h-5" />
+                      <FaCheckCircle className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                     ) : (
-                      <step.icon className="w-5 h-5" />
+                      <step.icon className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                     )}
                   </div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`h-1 w-16 lg:w-24 mx-2 transition-all duration-300 ${
+                      className={`h-1 w-6 sm:w-12 lg:w-16 xl:w-24 mx-1 sm:mx-2 transition-all duration-300 ${
                         index < currentStep ? "bg-sky-500" : "bg-appleGray-200"
                       }`}
                     ></div>
@@ -929,23 +936,25 @@ const StudentApplicationForm = () => {
         </div>
       </section>
       {/* Form Section */}
-      <section className="py-8 relative">
-        <div className="container-apple">
+      <section className="py-6 sm:py-8 relative">
+        <div className="container-apple px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-large p-8 lg:p-12 relative overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-large p-6 sm:p-8 lg:p-12 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-sky-400/10 to-sky-600/10 rounded-full -translate-y-16 translate-x-16"></div>
 
               <form onSubmit={handleSubmit}>
                 {/* Step Content */}
-                <div className="min-h-[500px]">{renderStepContent()}</div>
+                <div className="min-h-[400px] sm:min-h-[500px]">
+                  {renderStepContent()}
+                </div>
 
                 {/* Navigation Buttons */}
-                <div className="flex justify-between items-center mt-12 pt-8 border-t border-appleGray-100">
+                <div className="flex flex-col sm:flex-row justify-between items-center mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-appleGray-100 gap-4 sm:gap-0">
                   <button
                     type="button"
                     onClick={prevStep}
                     disabled={currentStep === 0}
-                    className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
+                    className={`flex items-center justify-center space-x-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 w-full sm:w-auto order-2 sm:order-1 ${
                       currentStep === 0
                         ? "bg-appleGray-100 text-appleGray-400 cursor-not-allowed"
                         : "bg-appleGray-200 text-appleGray-700 hover:bg-appleGray-300 btn-apple-hover"
@@ -955,7 +964,7 @@ const StudentApplicationForm = () => {
                     <span>Previous</span>
                   </button>
 
-                  <div className="text-sm text-appleGray-500">
+                  <div className="text-sm text-appleGray-500 order-1 sm:order-2">
                     Step {currentStep + 1} of {steps.length}
                   </div>
 
@@ -963,7 +972,7 @@ const StudentApplicationForm = () => {
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft"
+                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft w-full sm:w-auto order-3"
                     >
                       {isLoading ? (
                         <>
@@ -981,7 +990,7 @@ const StudentApplicationForm = () => {
                     <button
                       type="button"
                       onClick={nextStep}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft"
+                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft w-full sm:w-auto order-3"
                     >
                       <span>Next</span>
                       <FaArrowRight className="w-4 h-4" />
@@ -994,26 +1003,26 @@ const StudentApplicationForm = () => {
         </div>
       </section>
       {/* Help Section */}
-      <section className="py-16 bg-gradient-to-br from-sky-500/5 to-sky-600/5 relative">
-        <div className="container-apple text-center">
+      <section className="py-12 sm:py-16 bg-gradient-to-br from-sky-500/5 to-sky-600/5 relative">
+        <div className="container-apple text-center px-4">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold text-appleGray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-appleGray-900 mb-4">
               Need Help?
             </h2>
-            <p className="text-appleGray-600 mb-8">
+            <p className="text-appleGray-600 mb-6 sm:mb-8">
               Our team is here to assist you with your application process.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="tel:+94701234567"
-                className="flex items-center justify-center space-x-2 bg-white text-sky-600 px-6 py-3 rounded-2xl font-semibold hover:bg-appleGray-50 transition-all duration-300 btn-apple-hover shadow-soft"
+                className="flex items-center justify-center space-x-2 bg-white text-sky-600 px-6 py-3 rounded-2xl font-semibold hover:bg-appleGray-50 transition-all duration-300 btn-apple-hover shadow-soft w-full sm:w-auto"
               >
                 <FaPhone className="w-4 h-4" />
                 <span>Call Us</span>
               </a>
               <a
                 href="mailto:info@gidzunipath.com"
-                className="flex items-center justify-center space-x-2 bg-sky-500 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-sky-600 transition-all duration-300 btn-apple-hover shadow-soft"
+                className="flex items-center justify-center space-x-2 bg-sky-500 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-sky-600 transition-all duration-300 btn-apple-hover shadow-soft w-full sm:w-auto"
               >
                 <FaEnvelope className="w-4 h-4" />
                 <span>Email Us</span>
@@ -1022,6 +1031,25 @@ const StudentApplicationForm = () => {
           </div>
         </div>
       </section>{" "}
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-3xl p-8 max-w-md mx-4 shadow-large">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FaCheckCircle className="w-8 h-8 text-sky-500" />
+              </div>
+              <p className="text-appleGray-800 mb-6">{modalMessage}</p>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -1046,12 +1074,14 @@ const StudentApplicationForm = () => {
   function renderPersonalInformation() {
     return (
       <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaUser className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaUser className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Personal Information
           </h3>
-          <p className="text-appleGray-600">Tell us about yourself</p>
+          <p className="text-appleGray-600 text-sm sm:text-base">
+            Tell us about yourself
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1225,12 +1255,14 @@ const StudentApplicationForm = () => {
   function renderContactInformation() {
     return (
       <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaPhone className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaPhone className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Contact Information
           </h3>
-          <p className="text-appleGray-600">How can we reach you?</p>
+          <p className="text-appleGray-600 text-sm sm:text-base">
+            How can we reach you?
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1321,12 +1353,12 @@ const StudentApplicationForm = () => {
   function renderAcademicAndLanguageQualifications() {
     return (
       <div className="space-y-8">
-        <div className="text-center mb-8">
-          <FaGraduationCap className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaGraduationCap className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Academic & Language Qualifications
           </h3>
-          <p className="text-appleGray-600">
+          <p className="text-appleGray-600 text-sm sm:text-base">
             Your educational background and English proficiency
           </p>
         </div>
@@ -1496,8 +1528,8 @@ const StudentApplicationForm = () => {
             <label className="block text-sm font-semibold text-appleGray-700 mb-2">
               Additional Documents
             </label>
-            <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
-              <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+            <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 sm:p-8 text-center hover:border-sky-500 transition-all duration-200">
+              <FaFileUpload className="w-6 h-6 sm:w-8 sm:h-8 text-appleGray-400 mx-auto mb-3 sm:mb-4" />
               <input
                 type="file"
                 onChange={(e) =>
@@ -1637,8 +1669,8 @@ const StudentApplicationForm = () => {
                 <label className="block text-sm font-semibold text-appleGray-700 mb-2">
                   IELTS Certificate
                 </label>
-                <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
-                  <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+                <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 sm:p-8 text-center hover:border-sky-500 transition-all duration-200">
+                  <FaFileUpload className="w-6 h-6 sm:w-8 sm:h-8 text-appleGray-400 mx-auto mb-3 sm:mb-4" />
                   <input
                     type="file"
                     onChange={(e) =>
@@ -1678,12 +1710,12 @@ const StudentApplicationForm = () => {
   function renderDocumentsAndFinancialProof() {
     return (
       <div className="space-y-8">
-        <div className="text-center mb-8">
-          <FaFileUpload className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaFileUpload className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Documents & Financial Proof
           </h3>
-          <p className="text-appleGray-600">
+          <p className="text-appleGray-600 text-sm sm:text-base">
             Upload required documents and financial evidence
           </p>
         </div>
@@ -1705,8 +1737,8 @@ const StudentApplicationForm = () => {
               <h5 className="text-lg font-semibold text-appleGray-800 mb-4">
                 CV/Resume *
               </h5>
-              <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-8 text-center hover:border-sky-500 transition-all duration-200">
-                <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+              <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 sm:p-8 text-center hover:border-sky-500 transition-all duration-200">
+                <FaFileUpload className="w-6 h-6 sm:w-8 sm:h-8 text-appleGray-400 mx-auto mb-3 sm:mb-4" />
                 <input
                   type="file"
                   onChange={(e) =>
@@ -1790,17 +1822,17 @@ const StudentApplicationForm = () => {
   function renderAdditionalInformation() {
     return (
       <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaBookOpen className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaBookOpen className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Course Preferences
           </h3>
-          <p className="text-appleGray-600">
+          <p className="text-appleGray-600 text-sm sm:text-base">
             Tell us about your study preferences
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-y-6 lg:gap-x-6 lg:gap-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div>
             <label className="block text-sm font-semibold text-appleGray-700 mb-2">
               Preferred Course Level *

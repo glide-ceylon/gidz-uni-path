@@ -518,57 +518,19 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-4 gap-12 items-center">
-            {/* Contact Info */}{" "}
-            {/* <div className="space-y-8">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-sky-500 rounded-2xl flex items-center justify-center shadow-soft">
-                  <FaPhone className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-appleGray-800">
-                    Call Us
-                  </h3>
-                  <p className="text-appleGray-600">+94 11 234 5678</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-sky-400 rounded-2xl flex items-center justify-center shadow-soft">
-                  <FaWhatsapp className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-appleGray-800">
-                    WhatsApp
-                  </h3>
-                  <p className="text-appleGray-600">+94 77 123 4567</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-appleGray-700 rounded-2xl flex items-center justify-center shadow-soft">
-                  <FaMapPin className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-appleGray-800">
-                    Visit Us
-                  </h3>
-                  <p className="text-appleGray-600">Colombo 07, Sri Lanka</p>
-                </div>
-              </div>
-            </div> */}
+          <div className="flex justify-center items-center">
             {/* CTA Card */}
-            <div className="bg-appleGray-50 col-span-2 col-start-2 p-8 rounded-3xl border border-appleGray-200">
-              <h3 className="text-2xl font-bold text-appleGray-800 mb-4">
+            <div className="bg-appleGray-50 w-full max-w-2xl mx-auto p-6 sm:p-8 rounded-3xl border border-appleGray-200">
+              <h3 className="text-xl sm:text-2xl font-bold text-appleGray-800 mb-4 text-center sm:text-left">
                 Free Consultation
               </h3>
-              <p className="text-appleGray-600 mb-6">
+              <p className="text-appleGray-600 mb-6 text-sm sm:text-base leading-relaxed text-center sm:text-left">
                 Schedule a complimentary consultation to discuss your German
                 education goals and get personalized guidance.
-              </p>{" "}
+              </p>
               <button
                 onClick={() => setShowCreateApointement(true)}
-                className="w-full bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg btn-apple-hover shadow-soft hover:from-sky-600 hover:to-sky-700"
+                className="w-full bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold text-base sm:text-lg btn-apple-hover shadow-soft hover:from-sky-600 hover:to-sky-700 transition-all duration-200"
               >
                 Book Your Consultation
               </button>
