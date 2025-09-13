@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   FaEnvelope,
   FaPhone,
@@ -67,15 +67,14 @@ const ApplicantDetail = () => {
   const [showCropModal, setShowCropModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [crop, setCrop] = useState({
-    unit: "%",
-    width: 90,
-    height: 90,
-    x: 5,
-    y: 5,
-    aspect: 1, // Square aspect ratio for profile pictures
+    unit: "px",
+    width: 200,
+    height: 200,
+    x: 50,
+    y: 50,
   });
   const [completedCrop, setCompletedCrop] = useState(null);
-  const [imgRef, setImgRef] = useState(null);
+  const imgRef = useRef(null);
   const [dashboardStats, setDashboardStats] = useState({
     progressPercentage: 0,
     universityDocumentsUploaded: 0,
@@ -407,6 +406,21 @@ const ApplicantDetail = () => {
     }
   }, [id, fetchApplicant]);
 
+  // Reset crop state when modal opens
+  useEffect(() => {
+    if (showCropModal && selectedImage) {
+      console.log("Crop modal opened, initializing crop state");
+      setCrop({
+        unit: "px",
+        width: 200,
+        height: 200,
+        x: 50,
+        y: 50,
+      });
+      setCompletedCrop(null);
+    }
+  }, [showCropModal, selectedImage]);
+
   const generateNotifications = (applicantData) => {
     const newNotifications = [];
     const now = Date.now();
@@ -474,12 +488,16 @@ const ApplicantDetail = () => {
 
     if (!file.type.startsWith("image/")) {
       alert("Please upload an image file.");
+      e.target.value = ""; // Clear the input
       return;
     }
+
+    console.log("Image selected:", file.name);
 
     // Create a URL for the selected file and show cropping modal
     const reader = new FileReader();
     reader.onload = () => {
+      console.log("Image loaded for cropping");
       setSelectedImage({
         file: file,
         url: reader.result,
@@ -487,7 +505,15 @@ const ApplicantDetail = () => {
       });
       setShowCropModal(true);
     };
+    reader.onerror = () => {
+      console.error("Failed to read image file");
+      alert("Failed to read the image file. Please try again.");
+      e.target.value = ""; // Clear the input
+    };
     reader.readAsDataURL(file);
+
+    // Clear the input value so the same file can be selected again if needed
+    e.target.value = "";
   };
 
   // Function to create a cropped image blob
@@ -526,14 +552,27 @@ const ApplicantDetail = () => {
 
   // Function to handle cropped image upload
   const handleCroppedUpload = async () => {
-    if (!completedCrop || !imgRef || !selectedImage) return;
+    console.log("Upload attempted", {
+      completedCrop,
+      hasImgRef: !!imgRef.current,
+      selectedImage: !!selectedImage,
+    });
+
+    if (!completedCrop || !imgRef.current || !selectedImage) {
+      console.log("Upload blocked - missing requirements");
+      return;
+    }
 
     setUploading(true);
     setProgress(0);
 
     try {
+      console.log("Starting crop and upload process");
       // Get the cropped image blob
-      const croppedImageBlob = await getCroppedImg(imgRef, completedCrop);
+      const croppedImageBlob = await getCroppedImg(
+        imgRef.current,
+        completedCrop
+      );
 
       // Create a file from the blob
       const croppedFile = new File(
@@ -613,25 +652,48 @@ const ApplicantDetail = () => {
       setUploading(false);
       setProgress(0);
       setCompletedCrop(null);
-      setImgRef(null);
+      setCrop();
+      // Note: No need to reset imgRef as it's now a useRef
     } catch (error) {
       console.error("Error uploading cropped profile picture:", error);
+      alert("Failed to upload image. Please try again.");
       setUploading(false);
     }
   };
 
   // Function to cancel cropping
   const handleCropCancel = () => {
+    console.log("Crop cancelled");
     setShowCropModal(false);
     setSelectedImage(null);
     setCompletedCrop(null);
-    setImgRef(null);
+    setCrop({
+      unit: "px",
+      width: 200,
+      height: 200,
+      x: 50,
+      y: 50,
+    });
+    // Clear any file inputs
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => input.value = '');
   };
   // Define the Modal component inside the same file.
   const Modal = ({ children, onClose }) => {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
-        <div className="relative bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl shadow-large border border-appleGray-200 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div
+        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4"
+        onClick={(e) => {
+          // Only close if clicking the backdrop, not the modal content
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
+      >
+        <div
+          className="relative bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl shadow-large border border-appleGray-200 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl max-h-[90vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()} // Prevent modal close when clicking inside
+        >
           {/* Close button */}
           <button
             onClick={onClose}
@@ -2402,57 +2464,132 @@ const ApplicantDetail = () => {
         </div>{" "}
         {/* Modal with Message component */}
         {showMessageModal && (
-          <Modal onClose={() => setShowMessageModal(false)}>
-            <Message />
-          </Modal>
+          <div 
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowMessageModal(false);
+              }
+            }}
+          >
+            <div 
+              className="relative bg-white p-6 rounded-2xl shadow-large border border-appleGray-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowMessageModal(false)}
+                className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center text-appleGray-400 hover:text-appleGray-600 hover:bg-appleGray-100 rounded-full transition-all duration-200"
+              >
+                <FaTimes className="w-4 h-4" />
+              </button>
+              <Message />
+            </div>
+          </div>
         )}
         {showCreateApointemen && (
-          <Modal onClose={() => setShowCreateApointement(false)}>
-            <AppointmentModal onClose={() => setShowCreateApointement(false)} />
-          </Modal>
+          <div 
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowCreateApointement(false);
+              }
+            }}
+          >
+            <div 
+              className="relative bg-white p-6 rounded-2xl shadow-large border border-appleGray-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowCreateApointement(false)}
+                className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center text-appleGray-400 hover:text-appleGray-600 hover:bg-appleGray-100 rounded-full transition-all duration-200"
+              >
+                <FaTimes className="w-4 h-4" />
+              </button>
+              <AppointmentModal onClose={() => setShowCreateApointement(false)} />
+            </div>
+          </div>
         )}
         {/* Image Crop Modal */}
         {showCropModal && selectedImage && (
-          <Modal onClose={handleCropCancel}>
-            <div className="space-y-4 sm:space-y-6">
-              <div className="text-center">
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-appleGray-800 mb-2">
-                  Crop Your Profile Picture
-                </h3>
-                <p className="text-sm sm:text-base text-appleGray-600">
-                  Adjust the crop area to select the part of your image you want
-                  to use
-                </p>
-              </div>
+          <div 
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4"
+            onClick={(e) => {
+              // Only close if clicking the backdrop
+              if (e.target === e.currentTarget) {
+                handleCropCancel();
+              }
+            }}
+          >
+            <div 
+              className="relative bg-white p-6 rounded-2xl shadow-large border border-appleGray-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close button */}
+              <button
+                onClick={handleCropCancel}
+                className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center text-appleGray-400 hover:text-appleGray-600 hover:bg-appleGray-100 rounded-full transition-all duration-200 z-10"
+              >
+                <FaTimes className="w-4 h-4" />
+              </button>
+              
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl font-semibold text-appleGray-800 mb-2">
+                    Crop Your Profile Picture
+                  </h3>
+                  <p className="text-sm text-appleGray-600">
+                    Adjust the crop area to select the part of your image you want to use
+                  </p>
+                </div>
 
               <div className="flex justify-center">
-                <div className="max-w-xs sm:max-w-md lg:max-w-lg w-full">
+                <div className="w-full max-w-md">
                   <ReactCrop
                     crop={crop}
-                    onChange={(c) => setCrop(c)}
-                    onComplete={(c) => setCompletedCrop(c)}
+                    onChange={(c, percentCrop) => {
+                      console.log("Crop changed:", c);
+                      setCrop(c);
+                    }}
+                    onComplete={(c, percentCrop) => {
+                      console.log("Crop completed:", c);
+                      setCompletedCrop(c);
+                    }}
                     aspect={1} // Square aspect ratio
-                    circularCrop={false}
-                    className="max-h-64 sm:max-h-80 lg:max-h-96"
+                    minWidth={50}
+                    minHeight={50}
+                    keepSelection={true}
+                    style={{ maxWidth: "100%", height: "auto" }}
                   >
                     <img
-                      ref={(ref) => setImgRef(ref)}
+                      ref={imgRef}
                       alt="Crop me"
                       src={selectedImage.url}
-                      style={{ maxHeight: "300px", width: "auto" }}
-                      className="max-h-64 sm:max-h-80 lg:max-h-96 w-auto"
-                      onLoad={() => {
-                        // Set initial crop when image loads
-                        const newCrop = {
-                          unit: "%",
-                          width: 90,
-                          height: 90,
-                          x: 5,
-                          y: 5,
-                          aspect: 1,
-                        };
-                        setCrop(newCrop);
-                        setCompletedCrop(newCrop);
+                      style={{ 
+                        maxWidth: "100%", 
+                        height: "auto",
+                        display: "block",
+                        maxHeight: "400px"
+                      }}
+                      onLoad={(e) => {
+                        console.log("Image loaded for cropping");
+                        // Set initial crop when image loads with a delay to ensure proper rendering
+                        setTimeout(() => {
+                          const { naturalWidth, naturalHeight, width, height } = e.target;
+                          console.log("Image dimensions:", { naturalWidth, naturalHeight, width, height });
+                          
+                          // Calculate crop area (60% of the smaller dimension for better visibility)
+                          const cropSize = Math.min(width, height) * 0.6;
+                          const newCrop = {
+                            unit: "px",
+                            width: cropSize,
+                            height: cropSize,
+                            x: (width - cropSize) / 2,
+                            y: (height - cropSize) / 2,
+                          };
+                          console.log("Setting initial crop:", newCrop);
+                          setCrop(newCrop);
+                          setCompletedCrop(newCrop);
+                        }, 100);
                       }}
                     />
                   </ReactCrop>
@@ -2475,14 +2612,22 @@ const ApplicantDetail = () => {
 
               <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-end">
                 <button
-                  onClick={handleCropCancel}
+                  type="button"
+                  onClick={() => {
+                    console.log("Cancel button clicked");
+                    handleCropCancel();
+                  }}
                   disabled={uploading}
                   className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 border border-appleGray-300 text-appleGray-700 rounded-xl hover:bg-appleGray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 touch-manipulation"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={handleCroppedUpload}
+                  type="button"
+                  onClick={() => {
+                    console.log("Upload button clicked");
+                    handleCroppedUpload();
+                  }}
                   disabled={!completedCrop || uploading}
                   className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-sky-500 text-white rounded-xl hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation"
                 >
@@ -2499,8 +2644,9 @@ const ApplicantDetail = () => {
                   )}
                 </button>
               </div>
+              </div>
             </div>
-          </Modal>
+          </div>
         )}
         {/* Feedback Dialog */}
         <FeedbackDialog
