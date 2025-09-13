@@ -30,6 +30,7 @@ const WorkVisaApplicationForm = () => {
   const [errors, setErrors] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const [formData, setFormData] = useState({
     PersonalInformation: {
@@ -181,13 +182,25 @@ const WorkVisaApplicationForm = () => {
 
   // Navigate between steps
   const nextStep = () => {
+    // Prevent multiple rapid calls
+    if (isNavigating) {
+      return;
+    }
+
     // Validate current step before proceeding
     if (!validateCurrentStep()) {
       return; // Don't proceed if validation fails
     }
 
     if (currentStep < steps.length - 1) {
+      setIsNavigating(true);
       setCurrentStep(currentStep + 1);
+
+      // Reset navigation flag after a short delay
+      setTimeout(() => {
+        setIsNavigating(false);
+      }, 100);
+
       // Scroll to top of the form section smoothly
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -233,10 +246,7 @@ const WorkVisaApplicationForm = () => {
           newErrors["PersonalInformation.nationality"] =
             "Nationality is required";
         }
-        if (!formData.PersonalInformation.passportNumber.trim()) {
-          newErrors["PersonalInformation.passportNumber"] =
-            "Passport number is required";
-        }
+        // Note: passportNumber field is commented out in the form, so not validating it
         break;
 
       case 1: // Contact Information - Mandatory
@@ -251,13 +261,35 @@ const WorkVisaApplicationForm = () => {
           newErrors["ContactInformation.currentAddress"] =
             "Current address is required";
         }
-        if (!formData.ContactInformation.country.trim()) {
-          newErrors["ContactInformation.country"] = "Country is required";
-        }
+        // Note: country field is commented out in the form, so not validating it
         break;
 
-      case 2: // Qualifications & Experience - Optional step
-        // No mandatory validation for this step
+      case 2: // Qualifications & Experience - Mandatory fields
+        if (!formData.QualificationsAndExperience.cv) {
+          newErrors["QualificationsAndExperience.cv"] = "CV/Resume is required";
+        }
+        if (!formData.QualificationsAndExperience.educationType) {
+          newErrors["QualificationsAndExperience.educationType"] =
+            "Education type is required";
+        }
+        // Conditional validation based on education type
+        if (
+          formData.QualificationsAndExperience.educationType === "university" &&
+          !formData.QualificationsAndExperience
+            .bachelorOrMasterDegreeCertificate
+        ) {
+          newErrors[
+            "QualificationsAndExperience.bachelorOrMasterDegreeCertificate"
+          ] = "Bachelor or Master Degree Certificate is required";
+        }
+        if (
+          formData.QualificationsAndExperience.educationType === "vocational" &&
+          !formData.QualificationsAndExperience.vocationalTrainingCertificates
+        ) {
+          newErrors[
+            "QualificationsAndExperience.vocationalTrainingCertificates"
+          ] = "Vocational Training (NVQ) Certificates are required";
+        }
         break;
 
       case 3: // Language Skills - Mandatory
@@ -272,13 +304,28 @@ const WorkVisaApplicationForm = () => {
         break;
 
       case 4: // Application Details - Germany Experience and Financial Requirements Mandatory
-        if (!formData.ApplicationDetails.germanyExperience) {
-          newErrors["ApplicationDetails.germanyExperience"] =
-            "Germany experience information is required";
+        if (!formData.ApplicationDetails.previousStayInGermany) {
+          newErrors["ApplicationDetails.previousStayInGermany"] =
+            "Please specify if you've been to Germany before";
         }
-        if (!formData.ApplicationDetails.financialRequirements) {
-          newErrors["ApplicationDetails.financialRequirements"] =
-            "Financial requirements information is required";
+        if (
+          formData.ApplicationDetails.previousStayInGermany === "Yes" &&
+          !formData.ApplicationDetails.previousVisaType
+        ) {
+          newErrors["ApplicationDetails.previousVisaType"] =
+            "Previous visa type is required";
+        }
+        if (!formData.ApplicationDetails.applyingWithSpouse) {
+          newErrors["ApplicationDetails.applyingWithSpouse"] =
+            "Please specify if you're applying with spouse";
+        }
+        if (!formData.ApplicationDetails.CanEarnLivingInGermany) {
+          newErrors["ApplicationDetails.CanEarnLivingInGermany"] =
+            "Please specify if you know about Blocked Account";
+        }
+        if (!formData.ApplicationDetails.aboutYouAndYourNeeds) {
+          newErrors["ApplicationDetails.aboutYouAndYourNeeds"] =
+            "Please tell us about yourself and your needs";
         }
         break;
     }
@@ -304,10 +351,7 @@ const WorkVisaApplicationForm = () => {
     if (!formData.PersonalInformation.nationality.trim()) {
       newErrors["PersonalInformation.nationality"] = "Nationality is required.";
     }
-    if (!formData.PersonalInformation.passportNumber.trim()) {
-      newErrors["PersonalInformation.passportNumber"] =
-        "Passport number is required.";
-    }
+    // Note: passportNumber field is commented out in the form, so not validating it
 
     // Contact Information validation - Mandatory
     if (!formData.ContactInformation.mobileNumber.trim()) {
@@ -325,8 +369,31 @@ const WorkVisaApplicationForm = () => {
       newErrors["ContactInformation.currentAddress"] =
         "Current address is required.";
     }
-    if (!formData.ContactInformation.country.trim()) {
-      newErrors["ContactInformation.country"] = "Country is required.";
+    // Note: country field is commented out in the form, so not validating it
+
+    // Qualifications & Experience validation - Mandatory
+    if (!formData.QualificationsAndExperience.cv) {
+      newErrors["QualificationsAndExperience.cv"] = "CV/Resume is required";
+    }
+    if (!formData.QualificationsAndExperience.educationType) {
+      newErrors["QualificationsAndExperience.educationType"] =
+        "Education type is required";
+    }
+    // Conditional validation based on education type
+    if (
+      formData.QualificationsAndExperience.educationType === "university" &&
+      !formData.QualificationsAndExperience.bachelorOrMasterDegreeCertificate
+    ) {
+      newErrors[
+        "QualificationsAndExperience.bachelorOrMasterDegreeCertificate"
+      ] = "Bachelor or Master Degree Certificate is required";
+    }
+    if (
+      formData.QualificationsAndExperience.educationType === "vocational" &&
+      !formData.QualificationsAndExperience.vocationalTrainingCertificates
+    ) {
+      newErrors["QualificationsAndExperience.vocationalTrainingCertificates"] =
+        "Vocational Training (NVQ) Certificates are required";
     }
 
     // Language Skills validation - Mandatory
@@ -339,16 +406,29 @@ const WorkVisaApplicationForm = () => {
         "English language level is required.";
     }
 
-    // Germany Experience validation - Mandatory
-    if (!formData.ApplicationDetails.germanyExperience) {
-      newErrors["ApplicationDetails.germanyExperience"] =
-        "Germany experience information is required.";
+    // Application Details validation - Mandatory
+    if (!formData.ApplicationDetails.previousStayInGermany) {
+      newErrors["ApplicationDetails.previousStayInGermany"] =
+        "Please specify if you've been to Germany before";
     }
-
-    // Financial Requirements validation - Mandatory
-    if (!formData.ApplicationDetails.financialRequirements) {
-      newErrors["ApplicationDetails.financialRequirements"] =
-        "Financial requirements information is required.";
+    if (
+      formData.ApplicationDetails.previousStayInGermany === "Yes" &&
+      !formData.ApplicationDetails.previousVisaType
+    ) {
+      newErrors["ApplicationDetails.previousVisaType"] =
+        "Previous visa type is required";
+    }
+    if (!formData.ApplicationDetails.applyingWithSpouse) {
+      newErrors["ApplicationDetails.applyingWithSpouse"] =
+        "Please specify if you're applying with spouse";
+    }
+    if (!formData.ApplicationDetails.CanEarnLivingInGermany) {
+      newErrors["ApplicationDetails.CanEarnLivingInGermany"] =
+        "Please specify if you know about Blocked Account";
+    }
+    if (!formData.ApplicationDetails.aboutYouAndYourNeeds) {
+      newErrors["ApplicationDetails.aboutYouAndYourNeeds"] =
+        "Please tell us about yourself and your needs";
     }
 
     setErrors(newErrors);
@@ -372,8 +452,6 @@ const WorkVisaApplicationForm = () => {
       const fileExtension = file.name.split(".").pop();
       const fullFileName = `${fileName}.${fileExtension}`;
 
-      console.log("Uploading file:", fullFileName, "Size:", file.size);
-
       const { data, error } = await supabase.storage
         .from("work_visa_files")
         .upload(fullFileName, file, {
@@ -385,8 +463,6 @@ const WorkVisaApplicationForm = () => {
         console.error("Supabase storage error:", error);
         throw error;
       }
-
-      console.log("File uploaded successfully:", data);
 
       const {
         data: { publicUrl },
@@ -403,6 +479,18 @@ const WorkVisaApplicationForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Prevent submission if we're in the middle of navigation
+    if (isNavigating) {
+      return;
+    }
+
+    // Only allow submission if we're on the last step
+    if (currentStep !== steps.length - 1) {
+      return;
+    }
+
+    // If we're on the last step and not navigating, allow submission
+
     if (!validate()) {
       setModalMessage("Please fill the required fields in the form.");
       setIsModalOpen(true);
@@ -413,7 +501,6 @@ const WorkVisaApplicationForm = () => {
 
     try {
       // Upload files to Supabase Storage
-      console.log("Starting file uploads...");
 
       const bachelorOrMasterDegreeCertificateUrl = formData
         .QualificationsAndExperience.bachelorOrMasterDegreeCertificate
@@ -452,8 +539,6 @@ const WorkVisaApplicationForm = () => {
             `english_cert_${Date.now()}`
           )
         : null;
-
-      console.log("File uploads completed successfully");
 
       // Prepare data for database - standardize format to match existing records
       const applicationData = {
@@ -514,9 +599,6 @@ const WorkVisaApplicationForm = () => {
         MarkasRead: false,
       };
 
-      console.log("Inserting application data to database...");
-      console.log("Standardized application data:", applicationData);
-
       // The work_visa table expects data to be in a JSON column called 'data'
       // Data format matches existing records in the database
       const { data, error } = await supabase
@@ -527,8 +609,6 @@ const WorkVisaApplicationForm = () => {
         console.error("Database error:", error);
         throw error;
       }
-
-      console.log("Application submitted successfully");
 
       setModalMessage(
         "Application submitted successfully! We will contact you soon."
@@ -606,47 +686,47 @@ const WorkVisaApplicationForm = () => {
 
   return (
     <div className="min-h-screen bg-appleGray-50 relative overflow-hidden">
-      {/* Floating Background Elements */}
-      <div className="absolute top-32 left-10 w-20 h-20 bg-sky-400/10 rounded-full animate-float"></div>
+      {/* Floating Background Elements - Hidden on mobile */}
+      <div className="hidden sm:block absolute top-32 left-10 w-20 h-20 bg-sky-400/10 rounded-full animate-float"></div>
       <div
-        className="absolute top-64 right-16 w-16 h-16 bg-sky-500/15 rounded-2xl animate-float"
+        className="hidden sm:block absolute top-64 right-16 w-16 h-16 bg-sky-500/15 rounded-2xl animate-float"
         style={{ animationDelay: "1s" }}
       ></div>
       <div
-        className="absolute top-96 left-20 w-12 h-12 bg-sky-600/20 rounded-full animate-float"
+        className="hidden lg:block absolute top-96 left-20 w-12 h-12 bg-sky-600/20 rounded-full animate-float"
         style={{ animationDelay: "2s" }}
       ></div>
       <div
-        className="absolute top-80 right-32 w-8 h-8 bg-sky-400/25 rounded-full animate-float"
+        className="hidden lg:block absolute top-80 right-32 w-8 h-8 bg-sky-400/25 rounded-full animate-float"
         style={{ animationDelay: "3s" }}
       ></div>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-24 pb-8">
+      <section className="relative overflow-hidden bg-gradient-to-br from-appleGray-50 via-white to-appleGray-100 pt-20 sm:pt-24 pb-6 sm:pb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 via-transparent to-sky-600/5"></div>
 
-        <div className="container-apple text-center relative z-10">
-          <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-soft">
-            <FaUserTie className="w-10 h-10 text-white" />
+        <div className="container-apple text-center relative z-10 px-4">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-soft">
+            <FaUserTie className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
           </div>
-          <h1 className="text-4xl lg:text-6xl font-bold text-appleGray-900 mb-6">
+          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-appleGray-900 mb-4 sm:mb-6">
             Work Visa
             <span className="block text-gradient bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
               Application
             </span>
           </h1>
-          <p className="text-xl text-appleGray-600 max-w-2xl mx-auto mb-8">
+          <p className="text-lg sm:text-xl text-appleGray-600 max-w-2xl mx-auto mb-6 sm:mb-8 px-4">
             Start your career journey abroad. Complete your work visa
             application in simple steps.
           </p>
 
           {/* Progress indicator */}
-          <div className="max-w-4xl mx-auto mb-2">
+          <div className="max-w-4xl mx-auto mb-2 px-4">
             <div className="flex items-center justify-between">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
+                    className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
                       index <= currentStep
                         ? "bg-sky-500 text-white shadow-lg"
                         : "bg-appleGray-200 text-appleGray-400"
@@ -655,14 +735,14 @@ const WorkVisaApplicationForm = () => {
                     title={step.title}
                   >
                     {index < currentStep ? (
-                      <FaCheckCircle className="w-5 h-5" />
+                      <FaCheckCircle className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                     ) : (
-                      <step.icon className="w-5 h-5" />
+                      <step.icon className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                     )}
                   </div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`h-1 w-16 lg:w-24 mx-2 transition-all duration-300 ${
+                      className={`h-1 w-6 sm:w-12 lg:w-16 xl:w-24 mx-1 sm:mx-2 transition-all duration-300 ${
                         index < currentStep ? "bg-sky-500" : "bg-appleGray-200"
                       }`}
                     ></div>
@@ -675,23 +755,41 @@ const WorkVisaApplicationForm = () => {
       </section>
 
       {/* Form Section */}
-      <section className="py-8 relative">
-        <div className="container-apple">
+      <section className="py-6 sm:py-8 relative">
+        <div className="container-apple px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-large p-8 lg:p-12 relative overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-large p-6 sm:p-8 lg:p-12 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-sky-400/10 to-sky-600/10 rounded-full -translate-y-16 translate-x-16"></div>
 
-              <form onSubmit={handleSubmit}>
+              <form
+                onSubmit={(e) => {
+                  // Prevent submission during navigation
+                  if (isNavigating) {
+                    e.preventDefault();
+                    return;
+                  }
+
+                  handleSubmit(e);
+                }}
+                onKeyDown={(e) => {
+                  // Prevent Enter key from submitting form unless on last step
+                  if (e.key === "Enter" && currentStep !== steps.length - 1) {
+                    e.preventDefault();
+                  }
+                }}
+              >
                 {/* Step Content */}
-                <div className="min-h-[500px]">{renderStepContent()}</div>
+                <div className="min-h-[400px] sm:min-h-[500px]">
+                  {renderStepContent()}
+                </div>
 
                 {/* Navigation Buttons */}
-                <div className="flex justify-between items-center mt-12 pt-8 border-t border-appleGray-100">
+                <div className="flex flex-col sm:flex-row justify-between items-center mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-appleGray-100 gap-4 sm:gap-0">
                   <button
                     type="button"
                     onClick={prevStep}
                     disabled={currentStep === 0}
-                    className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
+                    className={`flex items-center justify-center space-x-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 w-full sm:w-auto order-2 sm:order-1 ${
                       currentStep === 0
                         ? "bg-appleGray-100 text-appleGray-400 cursor-not-allowed"
                         : "bg-appleGray-200 text-appleGray-700 hover:bg-appleGray-300 btn-apple-hover"
@@ -701,7 +799,7 @@ const WorkVisaApplicationForm = () => {
                     <span>Previous</span>
                   </button>
 
-                  <div className="text-sm text-appleGray-500">
+                  <div className="text-sm text-appleGray-500 order-1 sm:order-2">
                     Step {currentStep + 1} of {steps.length}
                   </div>
 
@@ -709,7 +807,7 @@ const WorkVisaApplicationForm = () => {
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft"
+                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft w-full sm:w-auto order-3"
                     >
                       {isLoading ? (
                         <>
@@ -727,7 +825,7 @@ const WorkVisaApplicationForm = () => {
                     <button
                       type="button"
                       onClick={nextStep}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft"
+                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 btn-apple-hover shadow-soft w-full sm:w-auto order-3"
                     >
                       <span>Next</span>
                       <FaArrowRight className="w-4 h-4" />
@@ -741,27 +839,27 @@ const WorkVisaApplicationForm = () => {
       </section>
 
       {/* Help Section */}
-      <section className="py-16 bg-gradient-to-br from-sky-500/5 to-sky-600/5 relative">
-        <div className="container-apple text-center">
+      <section className="py-12 sm:py-16 bg-gradient-to-br from-sky-500/5 to-sky-600/5 relative">
+        <div className="container-apple text-center px-4">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold text-appleGray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-appleGray-900 mb-4">
               Need Help?
             </h2>
-            <p className="text-appleGray-600 mb-8">
+            <p className="text-appleGray-600 mb-6 sm:mb-8">
               Our team is here to assist you with your work visa application
               process.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="tel:+94701234567"
-                className="flex items-center justify-center space-x-2 bg-white text-sky-600 px-6 py-3 rounded-2xl font-semibold hover:bg-appleGray-50 transition-all duration-300 btn-apple-hover shadow-soft"
+                className="flex items-center justify-center space-x-2 bg-white text-sky-600 px-6 py-3 rounded-2xl font-semibold hover:bg-appleGray-50 transition-all duration-300 btn-apple-hover shadow-soft w-full sm:w-auto"
               >
                 <FaPhone className="w-4 h-4" />
                 <span>Call Us</span>
               </a>
               <a
                 href="mailto:info@gidzunipath.com"
-                className="flex items-center justify-center space-x-2 bg-sky-500 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-sky-600 transition-all duration-300 btn-apple-hover shadow-soft"
+                className="flex items-center justify-center space-x-2 bg-sky-500 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-sky-600 transition-all duration-300 btn-apple-hover shadow-soft w-full sm:w-auto"
               >
                 <FaEnvelope className="w-4 h-4" />
                 <span>Email Us</span>
@@ -814,12 +912,14 @@ const WorkVisaApplicationForm = () => {
   function renderPersonalInformation() {
     return (
       <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaUser className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaUser className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Personal Information
           </h3>
-          <p className="text-appleGray-600">Tell us about yourself</p>
+          <p className="text-appleGray-600 text-sm sm:text-base">
+            Tell us about yourself
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -943,12 +1043,14 @@ const WorkVisaApplicationForm = () => {
   function renderContactInformation() {
     return (
       <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaPhone className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaPhone className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Contact Information
           </h3>
-          <p className="text-appleGray-600">How can we reach you?</p>
+          <p className="text-appleGray-600 text-sm sm:text-base">
+            How can we reach you?
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1043,12 +1145,12 @@ const WorkVisaApplicationForm = () => {
   function renderQualificationsAndExperience() {
     return (
       <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaBriefcase className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaBriefcase className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Qualifications & Experience
           </h3>
-          <p className="text-appleGray-600">
+          <p className="text-appleGray-600 text-sm sm:text-base">
             Your education and work background
           </p>
         </div>
@@ -1064,8 +1166,8 @@ const WorkVisaApplicationForm = () => {
               <label className="block text-sm font-semibold text-appleGray-700 mb-2">
                 CV/Resume *
               </label>
-              <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
-                <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+              <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-4 sm:p-6 text-center hover:border-sky-500 transition-all duration-200">
+                <FaFileUpload className="w-6 h-6 sm:w-8 sm:h-8 text-appleGray-400 mx-auto mb-3 sm:mb-4" />
                 <input
                   type="file"
                   onChange={(e) =>
@@ -1090,6 +1192,11 @@ const WorkVisaApplicationForm = () => {
                   PDF, DOC, DOCX up to 10MB
                 </p>
               </div>
+              {errors["QualificationsAndExperience.cv"] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors["QualificationsAndExperience.cv"]}
+                </p>
+              )}
             </div>
           </div>
 
@@ -1130,8 +1237,8 @@ const WorkVisaApplicationForm = () => {
                   <label className="block text-sm font-semibold text-appleGray-700 mb-2">
                     Bachelor or Master Degree Certificate *
                   </label>
-                  <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
-                    <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+                  <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-4 sm:p-6 text-center hover:border-sky-500 transition-all duration-200">
+                    <FaFileUpload className="w-6 h-6 sm:w-8 sm:h-8 text-appleGray-400 mx-auto mb-3 sm:mb-4" />
                     <input
                       type="file"
                       onChange={(e) =>
@@ -1167,8 +1274,8 @@ const WorkVisaApplicationForm = () => {
                   <label className="block text-sm font-semibold text-appleGray-700 mb-2">
                     Vocational Training (NVQ) Certificates *
                   </label>
-                  <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-all duration-200">
-                    <FaFileUpload className="w-8 h-8 text-appleGray-400 mx-auto mb-4" />
+                  <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-4 sm:p-6 text-center hover:border-sky-500 transition-all duration-200">
+                    <FaFileUpload className="w-6 h-6 sm:w-8 sm:h-8 text-appleGray-400 mx-auto mb-3 sm:mb-4" />
                     <input
                       type="file"
                       onChange={(e) =>
@@ -1261,12 +1368,14 @@ const WorkVisaApplicationForm = () => {
   function renderLanguageSkills() {
     return (
       <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaLanguage className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaLanguage className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Language Skills
           </h3>
-          <p className="text-appleGray-600">Your language proficiency levels</p>
+          <p className="text-appleGray-600 text-sm sm:text-base">
+            Your language proficiency levels
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1403,12 +1512,12 @@ const WorkVisaApplicationForm = () => {
   function renderApplicationDetails() {
     return (
       <div className="space-y-6">
-        <div className="text-center mb-8">
-          <FaFileUpload className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-appleGray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <FaFileUpload className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-sky-500 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold text-appleGray-900 mb-2">
             Application Details
           </h3>
-          <p className="text-appleGray-600">
+          <p className="text-appleGray-600 text-sm sm:text-base">
             Additional information and requirements for your application
           </p>
         </div>
