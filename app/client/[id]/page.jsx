@@ -630,12 +630,12 @@ const ApplicantDetail = () => {
   // Define the Modal component inside the same file.
   const Modal = ({ children, onClose }) => {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="relative bg-white p-8 rounded-3xl shadow-large border border-appleGray-200 w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12 max-w-2xl">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+        <div className="relative bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl shadow-large border border-appleGray-200 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl max-h-[90vh] overflow-y-auto">
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-appleGray-400 hover:text-appleGray-600 hover:bg-appleGray-100 rounded-full transition-all duration-200"
+            className="absolute top-3 sm:top-4 right-3 sm:right-4 w-8 h-8 flex items-center justify-center text-appleGray-400 hover:text-appleGray-600 hover:bg-appleGray-100 rounded-full transition-all duration-200 touch-manipulation"
           >
             <FaTimes className="w-4 h-4" />
           </button>
@@ -683,7 +683,7 @@ const ApplicantDetail = () => {
     );
   }
   return (
-    <div className="min-h-screen bg-gradient-to-br from-appleGray-50 via-white to-sky-50 relative overflow-hidden pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-appleGray-50 via-white to-sky-50 relative overflow-hidden pt-16 sm:pt-20">
       {/* Notification System */}
       <NotificationSystem
         notifications={notifications}
@@ -708,10 +708,10 @@ const ApplicantDetail = () => {
         style={{ animationDelay: "3s" }}
       ></div>
 
-      <div className="relative py-12 px-4 sm:px-6 lg:px-8">
+      <div className="relative py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
         {" "}
         {/* Header Section */}
-        <div className="max-w-7xl mx-auto mb-8">
+        <div className="max-w-7xl mx-auto mb-6 sm:mb-8">
           <div className="relative">
             {" "}
             {/* Logout Button */}
@@ -726,17 +726,17 @@ const ApplicantDetail = () => {
                 </span>
               </button>
             </div> */}
-            <div className="text-center space-y-6 animate-fade-in-up">
+            <div className="text-center space-y-4 sm:space-y-6 animate-fade-in-up">
               {/* Student Badge */}
-              <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl flex items-center justify-center mx-auto shadow-soft">
-                <FaUserGraduate className="w-10 h-10 text-white" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto shadow-soft">
+                <FaUserGraduate className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
               </div>
 
               <div>
-                <h1 className="text-4xl lg:text-5xl font-bold text-appleGray-800 mb-2">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-appleGray-800 mb-2 px-4">
                   Client Portal
                 </h1>
-                <p className="text-xl text-appleGray-600">
+                <p className="text-lg sm:text-xl text-appleGray-600 px-4">
                   Welcome back, {applicant.first_name} {applicant.last_name}
                 </p>
               </div>
@@ -744,37 +744,37 @@ const ApplicantDetail = () => {
           </div>
         </div>
         {/* Dashboard Overview */}
-        <div className="max-w-7xl mx-auto mb-8">
+        <div className="max-w-7xl mx-auto mb-6 sm:mb-8">
           {" "}
           {/* Progress Banner */}
-          <div className="bg-gradient-to-r from-sky-500 to-sky-600 rounded-3xl p-6 lg:p-8 mb-6 text-white shadow-large progress-banner">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-2 sm:space-y-0">
+          <div className="bg-gradient-to-r from-sky-500 to-sky-600 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 text-white shadow-large progress-banner">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 space-y-2 sm:space-y-0">
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold mb-1">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold mb-1">
                   Your Journey Progress
                 </h2>
-                <p className="text-sky-100">
+                <p className="text-sm sm:text-base text-sky-100">
                   {dashboardStats.progressPercentage}% Complete
                 </p>
               </div>
               <div className="text-left sm:text-right">
-                <div className="text-2xl sm:text-3xl font-bold stats-counter">
+                <div className="text-xl sm:text-2xl lg:text-3xl font-bold stats-counter">
                   {dashboardStats.progressPercentage}%
                 </div>
-                <div className="text-sm text-sky-100">Complete</div>
+                <div className="text-xs sm:text-sm text-sky-100">Complete</div>
               </div>
             </div>
-            <div className="w-full bg-sky-400/30 rounded-full h-3 mb-4">
+            <div className="w-full bg-sky-400/30 rounded-full h-2 sm:h-3 mb-3 sm:mb-4">
               <div
-                className="bg-white h-3 rounded-full transition-all duration-1000 ease-out progress-bar-animated"
+                className="bg-white h-2 sm:h-3 rounded-full transition-all duration-1000 ease-out progress-bar-animated"
                 style={{
                   width: `${dashboardStats.progressPercentage}%`,
                   "--progress-width": `${dashboardStats.progressPercentage}%`,
                 }}
               ></div>
             </div>
-            <div className="flex items-center text-sm text-sky-100">
-              <FaCheckCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+            <div className="flex items-center text-xs sm:text-sm text-sky-100">
+              <FaCheckCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
               <span>
                 Next:{" "}
                 {dashboardStats.progressPercentage < 20
@@ -792,12 +792,12 @@ const ApplicantDetail = () => {
             </div>
           </div>{" "}
           {/* Quick Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 quick-stats-grid">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6 quick-stats-grid">
             {/* University Documents Status */}
-            <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-                  <FaUniversity className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+            <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-2xl sm:rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-blue-100 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                  <FaUniversity className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600" />
                 </div>
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -821,7 +821,7 @@ const ApplicantDetail = () => {
                     : "Action Needed"}
                 </span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
+              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
                 {dashboardStats.universityDocumentsUploaded}/
                 {dashboardStats.universityDocumentsTotal}
               </div>
@@ -831,10 +831,10 @@ const ApplicantDetail = () => {
             </div>
 
             {/* Visa Documents Status */}
-            <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
-                  <FaPassport className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
+            <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-2xl sm:rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-orange-100 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                  <FaPassport className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-orange-600" />
                 </div>
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -856,7 +856,7 @@ const ApplicantDetail = () => {
                     : "Action Needed"}
                 </span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
+              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
                 {dashboardStats.visaDocumentsUploaded}/
                 {dashboardStats.visaDocumentsTotal}
               </div>
@@ -866,10 +866,10 @@ const ApplicantDetail = () => {
             </div>
 
             {/* Universities Applied */}
-            <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-2xl flex items-center justify-center">
-                  <FaGraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+            <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-2xl sm:rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-purple-100 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                  <FaGraduationCap className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600" />
                 </div>
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -883,7 +883,7 @@ const ApplicantDetail = () => {
                     : "Pending"}
                 </span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
+              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
                 {dashboardStats.universitiesApplied}
               </div>
               <div className="text-xs sm:text-sm text-appleGray-600">
@@ -892,10 +892,10 @@ const ApplicantDetail = () => {
             </div>
 
             {/* Payment Status */}
-            <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-2xl flex items-center justify-center">
-                  <FaCreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+            <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-2xl sm:rounded-3xl shadow-soft border border-appleGray-200 dashboard-card">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-green-100 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                  <FaCreditCard className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600" />
                 </div>
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -909,7 +909,7 @@ const ApplicantDetail = () => {
                     : "Pending"}
                 </span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
+              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-appleGray-800 mb-1 stats-counter">
                 {(applicant?.payment1 ? 1 : 0) + (applicant?.payment2 ? 1 : 0)}
                 /2
               </div>
@@ -925,9 +925,9 @@ const ApplicantDetail = () => {
               Math.floor(dashboardStats.universityDocumentsTotal * 0.5) ||
             !applicant?.payment1 ||
             !applicant?.payment2) && (
-            <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-3xl p-4 sm:p-6 mb-6 animate-fade-in-up">
+            <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-4 sm:mb-6 animate-fade-in-up">
               <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
                   <FaExclamationTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div className="flex-1">
@@ -978,24 +978,24 @@ const ApplicantDetail = () => {
           )}
         </div>{" "}
         {/* Quick Actions */}
-        <div className="max-w-7xl mx-auto mb-8">
-          <h3 className="text-lg sm:text-xl font-semibold text-appleGray-800 mb-4">
+        <div className="max-w-7xl mx-auto mb-6 sm:mb-8">
+          <h3 className="text-lg sm:text-xl font-semibold text-appleGray-800 mb-3 sm:mb-4 px-2">
             Quick Actions
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 dashboard-grid">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 dashboard-grid">
             <button
               onClick={() => setShowMessageModal(true)}
-              className="group bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 hover:shadow-medium transition-all duration-300 card-apple-hover relative dashboard-card"
+              className="group bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-soft border border-appleGray-200 hover:shadow-medium transition-all duration-300 card-apple-hover relative dashboard-card min-h-[80px] sm:min-h-[auto]"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-100 rounded-2xl flex items-center justify-center group-hover:bg-sky-200 transition-colors duration-300">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-100 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-sky-200 transition-colors duration-300 flex-shrink-0">
                   <FaComments className="w-5 h-5 sm:w-6 sm:h-6 text-sky-600" />
                 </div>
-                <div className="text-left">
-                  <h4 className="text-base sm:text-lg font-semibold text-appleGray-800">
+                <div className="text-left flex-1 min-w-0">
+                  <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-appleGray-800 truncate">
                     Messages
                   </h4>
-                  <p className="text-xs sm:text-sm text-appleGray-600">
+                  <p className="text-xs sm:text-sm text-appleGray-600 truncate">
                     Chat with counselor
                   </p>
                 </div>
@@ -1006,17 +1006,17 @@ const ApplicantDetail = () => {
 
             <button
               onClick={() => setShowCreateApointement(true)}
-              className="group bg-white p-4 sm:p-6 rounded-3xl shadow-soft border border-appleGray-200 hover:shadow-medium transition-all duration-300 card-apple-hover relative dashboard-card"
+              className="group bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-soft border border-appleGray-200 hover:shadow-medium transition-all duration-300 card-apple-hover relative dashboard-card min-h-[80px] sm:min-h-[auto]"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-2xl flex items-center justify-center group-hover:bg-green-200 transition-colors duration-300">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-green-200 transition-colors duration-300 flex-shrink-0">
                   <FaCalendarAlt className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 </div>
-                <div className="text-left">
-                  <h4 className="text-base sm:text-lg font-semibold text-appleGray-800">
+                <div className="text-left flex-1 min-w-0">
+                  <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-appleGray-800 truncate">
                     Appointments
                   </h4>
-                  <p className="text-xs sm:text-sm text-appleGray-600">
+                  <p className="text-xs sm:text-sm text-appleGray-600 truncate">
                     Schedule meeting
                   </p>
                 </div>
@@ -1027,13 +1027,13 @@ const ApplicantDetail = () => {
           </div>
         </div>
         {/* Tabbed Navigation */}
-        <div className="max-w-7xl mx-auto mb-8">
-          <div className="bg-white rounded-3xl shadow-soft border border-appleGray-200 overflow-hidden">
+        <div className="max-w-7xl mx-auto mb-6 sm:mb-8">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-soft border border-appleGray-200 overflow-hidden">
             {" "}
             {/* Tab Headers */}
             <div className="border-b border-appleGray-200">
               {/* Mobile Tab Headers - Grid Layout */}
-              <nav className="grid grid-cols-3 gap-1 p-2 md:hidden">
+              <nav className="grid grid-cols-2 sm:grid-cols-3 gap-1 p-2 md:hidden">
                 {[
                   { id: "overview", label: "Overview", icon: FaChartLine },
                   // { id: "timeline", label: "Timeline", icon: FaCalendarAlt },
@@ -1059,7 +1059,7 @@ const ApplicantDetail = () => {
                         }
                       }}
                       disabled={isVisaTabLocked}
-                      className={`relative flex flex-col items-center justify-center p-3 rounded-xl text-xs font-medium transition-all duration-200 ${
+                      className={`relative flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg sm:rounded-xl text-xs font-medium transition-all duration-200 touch-manipulation ${
                         isVisaTabLocked
                           ? "text-appleGray-400 cursor-not-allowed opacity-50 bg-appleGray-50"
                           : activeTab === tab.id
@@ -1067,8 +1067,8 @@ const ApplicantDetail = () => {
                           : "text-appleGray-600 hover:text-appleGray-800 hover:bg-appleGray-50 cursor-pointer"
                       }`}
                     >
-                      <tab.icon className="w-5 h-5 mb-1" />
-                      <span className="text-center leading-tight">
+                      <tab.icon className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
+                      <span className="text-center leading-tight text-xs">
                         {tab.label}
                       </span>
                       {/* Mobile Tab badges */}
@@ -1126,7 +1126,7 @@ const ApplicantDetail = () => {
                         }
                       }}
                       disabled={isVisaTabLocked}
-                      className={`flex items-center space-x-2 px-4 sm:px-6 py-4 text-sm font-medium border-b-2 transition-all duration-200 whitespace-nowrap ${
+                      className={`flex items-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium border-b-2 transition-all duration-200 whitespace-nowrap touch-manipulation ${
                         isVisaTabLocked
                           ? "border-transparent text-appleGray-400 cursor-not-allowed opacity-50"
                           : activeTab === tab.id
@@ -1170,7 +1170,7 @@ const ApplicantDetail = () => {
               </nav>
             </div>
             {/* Tab Content */}
-            <div className="min-h-[600px] tab-content">
+            <div className="min-h-[400px] sm:min-h-[600px] tab-content">
               {/* Visa Tab Locked Message */}
               {activeTab === "tasks" && applicant?.lock_1 && (
                 <div className="p-6 sm:p-8 flex items-center justify-center">
@@ -2249,7 +2249,7 @@ const ApplicantDetail = () => {
 
                           {!profilePicUrl && (
                             <div className="text-center">
-                              <label className="cursor-pointer bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-2xl text-sm font-medium transition-colors duration-200 inline-flex items-center space-x-2">
+                              <label className="cursor-pointer bg-sky-500 hover:bg-sky-600 text-white px-4 sm:px-6 py-3 sm:py-2 rounded-2xl text-sm font-medium transition-colors duration-200 inline-flex items-center space-x-2 touch-manipulation min-h-[44px] justify-center">
                                 <FaUpload className="w-4 h-4" />
                                 <span>Upload Photo</span>
                                 <input
@@ -2311,7 +2311,7 @@ const ApplicantDetail = () => {
                                     alert("Referral code copied to clipboard!");
                                   });
                               }}
-                              className="flex items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                              className="flex items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-sm font-medium transition-colors duration-200 whitespace-nowrap touch-manipulation min-h-[44px]"
                             >
                               <FaCopy className="w-4 h-4" />
                               <span>Copy</span>
@@ -2365,7 +2365,7 @@ const ApplicantDetail = () => {
 
                         <button
                           onClick={() => setShowFeedbackDialog(true)}
-                          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-2xl font-semibold transition-all duration-200 inline-flex items-center space-x-2 shadow-soft hover:shadow-medium"
+                          className="bg-orange-500 hover:bg-orange-600 text-white px-4 sm:px-6 py-3 rounded-2xl font-semibold transition-all duration-200 inline-flex items-center space-x-2 shadow-soft hover:shadow-medium touch-manipulation min-h-[48px] w-full sm:w-auto justify-center"
                         >
                           <FaComments className="w-5 h-5" />
                           <span>Write Feedback</span>
@@ -2414,32 +2414,33 @@ const ApplicantDetail = () => {
         {/* Image Crop Modal */}
         {showCropModal && selectedImage && (
           <Modal onClose={handleCropCancel}>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div className="text-center">
-                <h3 className="text-2xl font-semibold text-appleGray-800 mb-2">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-appleGray-800 mb-2">
                   Crop Your Profile Picture
                 </h3>
-                <p className="text-appleGray-600">
+                <p className="text-sm sm:text-base text-appleGray-600">
                   Adjust the crop area to select the part of your image you want
                   to use
                 </p>
               </div>
 
               <div className="flex justify-center">
-                <div className="max-w-lg w-full">
+                <div className="max-w-xs sm:max-w-md lg:max-w-lg w-full">
                   <ReactCrop
                     crop={crop}
                     onChange={(c) => setCrop(c)}
                     onComplete={(c) => setCompletedCrop(c)}
                     aspect={1} // Square aspect ratio
                     circularCrop={false}
-                    className="max-h-96"
+                    className="max-h-64 sm:max-h-80 lg:max-h-96"
                   >
                     <img
                       ref={(ref) => setImgRef(ref)}
                       alt="Crop me"
                       src={selectedImage.url}
-                      style={{ maxHeight: "400px", width: "auto" }}
+                      style={{ maxHeight: "300px", width: "auto" }}
+                      className="max-h-64 sm:max-h-80 lg:max-h-96 w-auto"
                       onLoad={() => {
                         // Set initial crop when image loads
                         const newCrop = {
@@ -2472,18 +2473,18 @@ const ApplicantDetail = () => {
                 </div>
               )}
 
-              <div className="flex space-x-4 justify-end">
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-end">
                 <button
                   onClick={handleCropCancel}
                   disabled={uploading}
-                  className="px-6 py-2 border border-appleGray-300 text-appleGray-700 rounded-xl hover:bg-appleGray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                  className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 border border-appleGray-300 text-appleGray-700 rounded-xl hover:bg-appleGray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 touch-manipulation"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCroppedUpload}
                   disabled={!completedCrop || uploading}
-                  className="px-6 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center space-x-2"
+                  className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-sky-500 text-white rounded-xl hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation"
                 >
                   {uploading ? (
                     <>

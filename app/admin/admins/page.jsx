@@ -248,7 +248,7 @@ export default function AdminManagementPage() {
                 <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
                     <!-- Header with Logo -->
                     <div style="display: flex; align-items: center; justify-content: center; padding: 20px 0; background-color: #003366; margin-bottom: 30px;">
-                        <img src="https://www.gidzunipath.com/logo.png" style="height: 70px; width: auto; margin-right: 10px;" /> 
+                        <img src="/gidz-transperant.png" style="height: 70px; width: auto; margin-right: 10px;" /> 
                         <h1 style="color: #ffffff; margin-left: 10px; font-size: 28px;">Gidz Uni Path</h1>
                     </div>
                     
