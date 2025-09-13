@@ -1256,9 +1256,9 @@ const ApplicantDetail = () => {
                       <FaUniversity className="w-5 h-5 text-sky-500 mr-3" />
                       University Application Guidelines
                     </h3>
-                    <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-3xl p-6">
-                      <div className="mb-6">
-                        <p className="text-appleGray-700 mb-4">
+                    <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-3xl p-4 md:p-6">
+                      <div className="mb-4 md:mb-6">
+                        <p className="text-appleGray-700 mb-4 text-sm md:text-base">
                           To begin your university application process, please
                           carefully follow the steps below. Once complete, send
                           all required documents via WhatsApp or Email.
@@ -1266,46 +1266,46 @@ const ApplicantDetail = () => {
                       </div>
 
                       {/* Step 1 */}
-                      <div className="mb-6">
-                        <div className="flex items-start space-x-3 mb-3">
+                      <div className="mb-4 md:mb-6">
+                        <div className="flex items-start space-x-3 mb-2 md:mb-3">
                           <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                             <FaCheckCircle className="w-3 h-3 text-white" />
                           </div>
-                          <h4 className="text-lg font-semibold text-appleGray-800">
+                          <h4 className="text-base md:text-lg font-semibold text-appleGray-800">
                             STEP 1: Create a New Email Address
                           </h4>
                         </div>
-                        <p className="text-appleGray-600 ml-9">
+                        <p className="text-appleGray-600 ml-9 text-sm md:text-base">
                           Specifically for university applications. This will
                           help keep tracking all the process.
                         </p>
                       </div>
 
                       {/* Step 2 */}
-                      <div className="mb-6">
-                        <div className="flex items-start space-x-3 mb-4">
+                      <div className="mb-4 md:mb-6">
+                        <div className="flex items-start space-x-3 mb-3 md:mb-4">
                           <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                             <FaCheckCircle className="w-3 h-3 text-white" />
                           </div>
-                          <h4 className="text-lg font-semibold text-appleGray-800">
+                          <h4 className="text-base md:text-lg font-semibold text-appleGray-800">
                             STEP 2: Submit the Required Documents
                           </h4>
                         </div>
-                        <p className="text-appleGray-600 ml-9 mb-4">
+                        <p className="text-appleGray-600 ml-9 mb-3 md:mb-4 text-sm md:text-base">
                           Please prepare and submit clear scanned copies (PDF
                           format recommended) of the following documents based
                           on the program you are applying for:
                         </p>
 
                         {/* Bachelor's Degree Requirements */}
-                        <div className="ml-9 mb-6">
+                        <div className="ml-6 md:ml-9 mb-4 md:mb-6">
                           <div className="flex items-center space-x-2 mb-3">
-                            <FaBook className="w-4 h-4 text-blue-600" />
-                            <h5 className="text-base font-semibold text-appleGray-800">
+                            <FaBook className="w-4 h-4 text-blue-600 hidden md:inline" />
+                            <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                               For Bachelor&apos;s Degree Applicants
                             </h5>
                           </div>
-                          <div className="bg-white rounded-2xl p-4 space-y-2">
+                          <div className="bg-white rounded-2xl p-3 md:p-4 space-y-2">
                             {[
                               "Proof of Language Proficiency (IELTS – Academic)",
                               "G.C.E. O-Level Certificate (Must be certified by the Ministry of Foreign Affairs)",
@@ -1317,30 +1317,30 @@ const ApplicantDetail = () => {
                             ].map((item, index) => (
                               <div
                                 key={index}
-                                className="flex items-start space-x-2 text-sm text-appleGray-700"
+                                className="flex items-start space-x-2 text-xs md:text-sm text-appleGray-700 py-1"
                               >
-                                <span className="text-blue-600 font-medium mt-0.5">
+                                <span className="text-blue-600 font-medium mt-0.5 min-w-[16px]">
                                   {index + 1}.
                                 </span>
-                                <span>{item}</span>
+                                <span className="leading-relaxed">{item}</span>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         {/* Master's Degree Requirements */}
-                        <div className="ml-9 mb-6">
+                        <div className="ml-6 md:ml-9 mb-4 md:mb-6">
                           <div className="flex items-center space-x-2 mb-3">
-                            <FaGraduationCap className="w-4 h-4 text-purple-600" />
-                            <h5 className="text-base font-semibold text-appleGray-800">
+                            <FaGraduationCap className="w-4 h-4 text-purple-600 hidden md:inline" />
+                            <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                               For Master&apos;s Degree Applicants
                             </h5>
                           </div>
-                          <p className="text-sm text-appleGray-600 mb-3">
+                          <p className="text-xs md:text-sm text-appleGray-600 mb-3">
                             (Include all of the above Bachelor&apos;s
                             requirements, plus the following:)
                           </p>
-                          <div className="bg-white rounded-2xl p-4 space-y-2">
+                          <div className="bg-white rounded-2xl p-3 md:p-4 space-y-2">
                             {[
                               "Bachelor's Degree Certificate",
                               "Bachelor's Transcript",
@@ -1350,41 +1350,41 @@ const ApplicantDetail = () => {
                             ].map((item, index) => (
                               <div
                                 key={index}
-                                className="flex items-start space-x-2 text-sm text-appleGray-700"
+                                className="flex items-start space-x-2 text-xs md:text-sm text-appleGray-700 py-1"
                               >
-                                <span className="text-purple-600 font-medium mt-0.5">
+                                <span className="text-purple-600 font-medium mt-0.5 min-w-[16px]">
                                   {index + 1}.
                                 </span>
-                                <span>{item}</span>
+                                <span className="leading-relaxed">{item}</span>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         {/* Submit Documents */}
-                        <div className="ml-9">
+                        <div className="ml-6 md:ml-9">
                           <div className="flex items-center space-x-2 mb-3">
-                            <FaEnvelope className="w-4 h-4 text-green-600" />
-                            <h5 className="text-base font-semibold text-appleGray-800">
+                            <FaEnvelope className="w-4 h-4 text-green-600 hidden md:inline" />
+                            <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                               Submit Documents To: WhatsApp or Email
                             </h5>
                           </div>
                           <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-4">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                            <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
                               <a
                                 href="https://wa.me/4915566389194"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                className="flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-200 min-h-[44px] w-full sm:w-auto"
                               >
-                                <FaPhone className="w-4 h-4" />
+                                <FaPhone className="w-4 h-4 hidden md:inline" />
                                 <span>WhatsApp: +49 155 6638 9194</span>
                               </a>
                               <a
                                 href="mailto:gidzunipath@gmail.com"
-                                className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                className="flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-200 min-h-[44px] w-full sm:w-auto"
                               >
-                                <FaEnvelope className="w-4 h-4" />
+                                <FaEnvelope className="w-4 h-4 hidden md:inline" />
                                 <span>Email: gidzunipath@gmail.com</span>
                               </a>
                             </div>
@@ -1428,26 +1428,26 @@ const ApplicantDetail = () => {
                 <div className="p-6 sm:p-8 space-y-8">
                   <div>
                     {/* Visa Application Tracker */}
-                    <div className="mb-8">
-                      <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
-                        <FaTasks className="w-5 h-5 text-sky-500 mr-3" />
+                    <div className="mb-6 md:mb-8">
+                      <h3 className="text-lg md:text-xl font-bold text-appleGray-800 mb-4 md:mb-6 flex items-center">
+                        <FaTasks className="w-5 h-5 text-sky-500 mr-3 hidden md:inline" />
                         Visa Application Tracker
                       </h3>
 
-                      <div className="bg-gradient-to-r from-sky-50 to-sky-100 border border-sky-200 rounded-3xl p-6 mb-6">
-                        <h4 className="text-lg font-semibold text-sky-800 mb-6 flex items-center">
-                          <FaPassport className="w-5 h-5 text-sky-600 mr-3" />
+                      <div className="bg-gradient-to-r from-sky-50 to-sky-100 border border-sky-200 rounded-3xl p-4 md:p-6 mb-4 md:mb-6">
+                        <h4 className="text-base md:text-lg font-semibold text-sky-800 mb-4 md:mb-6 flex items-center">
+                          <FaPassport className="w-5 h-5 text-sky-600 mr-3 hidden md:inline" />
                           Visa Application Progress
                         </h4>
 
-                        <div className="space-y-4">
+                        <div className="space-y-3 md:space-y-4">
                           {visaStepsStatus.map((item, index) => (
                             <div
                               key={index}
-                              className="flex items-start space-x-4 p-4 bg-white rounded-xl shadow-sm"
+                              className="flex items-start space-x-3 md:space-x-4 p-3 md:p-4 bg-white rounded-xl shadow-sm"
                             >
                               <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                                   item.status === "completed"
                                     ? "bg-green-100 text-green-600"
                                     : item.status === "current"
@@ -1456,18 +1456,18 @@ const ApplicantDetail = () => {
                                 }`}
                               >
                                 {item.status === "completed" ? (
-                                  <FaCheckCircle className="w-5 h-5" />
+                                  <FaCheckCircle className="w-4 h-4 md:w-5 md:h-5" />
                                 ) : (
-                                  <item.icon className="w-5 h-5" />
+                                  <item.icon className="w-4 h-4 md:w-5 md:h-5" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                  <h5 className="text-sm font-semibold text-appleGray-800">
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                  <h5 className="text-xs md:text-sm font-semibold text-appleGray-800">
                                     Step {item.step}: {item.title}
                                   </h5>
                                   <span
-                                    className={`text-xs px-2 py-1 rounded-full ${
+                                    className={`text-xs px-2 py-1 rounded-full w-fit ${
                                       item.status === "completed"
                                         ? "bg-green-100 text-green-700"
                                         : item.status === "current"
@@ -1482,7 +1482,7 @@ const ApplicantDetail = () => {
                                       : "Pending"}
                                   </span>
                                 </div>
-                                <p className="text-sm text-appleGray-600 mt-1">
+                                <p className="text-xs md:text-sm text-appleGray-600 mt-1 leading-relaxed">
                                   {item.description}
                                 </p>
                               </div>
@@ -1494,14 +1494,14 @@ const ApplicantDetail = () => {
                       {/* Interview Questions Section - Show when step 4 is current */}
                       {visaStepsStatus.find((step) => step.step === 4)
                         ?.status === "current" && (
-                        <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-3xl p-6 mb-6">
-                          <h4 className="text-xl font-semibold text-blue-800 mb-6 flex items-center">
-                            <FaComments className="w-5 h-5 text-blue-600 mr-3" />
+                        <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-3xl p-4 md:p-6 mb-4 md:mb-6">
+                          <h4 className="text-lg md:text-xl font-semibold text-blue-800 mb-4 md:mb-6 flex items-center">
+                            <FaComments className="w-5 h-5 text-blue-600 mr-3 hidden md:inline" />
                             German Student Visa Interview: General Questions &
                             Sample Answers
                           </h4>
 
-                          <div className="space-y-6">
+                          <div className="space-y-4 md:space-y-6">
                             {[
                               {
                                 question: "Q1: What is your name?",
@@ -1648,17 +1648,17 @@ const ApplicantDetail = () => {
                             ].map((item, index) => (
                               <div
                                 key={index}
-                                className="bg-white rounded-2xl p-5 border border-blue-200"
+                                className="bg-white rounded-2xl p-3 md:p-5 border border-blue-200"
                               >
-                                <h5 className="text-base font-semibold text-appleGray-800 mb-3 flex items-start">
-                                  <FaQuestionCircle className="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+                                <h5 className="text-sm md:text-base font-semibold text-appleGray-800 mb-3 flex items-start">
+                                  <FaQuestionCircle className="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0 hidden md:inline" />
                                   {item.question}
                                 </h5>
-                                <div className="ml-6">
-                                  <div className="bg-blue-50 rounded-xl p-4">
+                                <div className="ml-0 md:ml-6">
+                                  <div className="bg-blue-50 rounded-xl p-3 md:p-4">
                                     <div className="flex items-start space-x-2">
-                                      <FaLightbulb className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                                      <div className="text-sm text-appleGray-700 whitespace-pre-line">
+                                      <FaLightbulb className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0 hidden md:inline" />
+                                      <div className="text-xs md:text-sm text-appleGray-700 whitespace-pre-line leading-relaxed">
                                         {item.answer}
                                       </div>
                                     </div>
@@ -1668,16 +1668,16 @@ const ApplicantDetail = () => {
                             ))}
                           </div>
 
-                          <div className="mt-8 bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-6 border border-green-200">
+                          <div className="mt-6 md:mt-8 bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-4 md:p-6 border border-green-200">
                             <div className="flex items-start space-x-3">
-                              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <FaCheckCircle className="w-4 h-4 text-white" />
+                              <div className="w-6 h-6 md:w-8 md:h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <FaCheckCircle className="w-3 h-3 md:w-4 md:h-4 text-white" />
                               </div>
                               <div>
-                                <h5 className="text-lg font-semibold text-green-800 mb-2">
+                                <h5 className="text-base md:text-lg font-semibold text-green-800 mb-2">
                                   Interview Tips:
                                 </h5>
-                                <ul className="text-sm text-green-700 space-y-1">
+                                <ul className="text-xs md:text-sm text-green-700 space-y-1">
                                   <li>• Be confident and speak clearly</li>
                                   <li>• Dress professionally</li>
                                   <li>• Arrive early for your appointment</li>
@@ -1698,9 +1698,9 @@ const ApplicantDetail = () => {
                       {/* Appointment Scheduling Section - Show when step 5 is current */}
                       {visaStepsStatus.find((step) => step.step === 5)
                         ?.status === "current" && (
-                        <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-3xl p-6 mb-6">
-                          <h4 className="text-xl font-semibold text-purple-800 mb-6 flex items-center">
-                            <FaCalendarAlt className="w-5 h-5 text-purple-600 mr-3" />
+                        <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-3xl p-4 md:p-6 mb-4 md:mb-6">
+                          <h4 className="text-lg md:text-xl font-semibold text-purple-800 mb-4 md:mb-6 flex items-center">
+                            <FaCalendarAlt className="w-5 h-5 text-purple-600 mr-3 hidden md:inline" />
                             Visa Appointment Scheduling
                           </h4>
                         </div>
@@ -1708,27 +1708,27 @@ const ApplicantDetail = () => {
                     </div>
 
                     {/* Visa Application Submission Document Checklist */}
-                    <div className="mb-8">
-                      <h3 className="text-xl font-bold text-appleGray-800 mb-6 flex items-center">
-                        <FaPassport className="w-5 h-5 text-sky-500 mr-3" />
+                    <div className="mb-6 md:mb-8">
+                      <h3 className="text-lg md:text-xl font-bold text-appleGray-800 mb-4 md:mb-6 flex items-center">
+                        <FaPassport className="w-5 h-5 text-sky-500 mr-3 hidden md:inline" />
                         Visa Application Submission – Document Checklist
                       </h3>
 
-                      <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-3xl p-6">
-                        <div className="mb-6">
-                          <p className="text-appleGray-700 mb-4">
+                      <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-3xl p-4 md:p-6">
+                        <div className="mb-4 md:mb-6">
+                          <p className="text-appleGray-700 mb-4 text-sm md:text-base">
                             To apply for your German student visa, please follow
                             these steps and submit all required documents via
                             <b> WhatsApp</b> or <b>Email</b>.
                           </p>
                         </div>
                         {/* Step 1 */}
-                        <div className="mb-6">
-                          <div className="flex items-start space-x-3 mb-3">
+                        <div className="mb-4 md:mb-6">
+                          <div className="flex items-start space-x-3 mb-2 md:mb-3">
                             <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                               <FaCheckCircle className="w-3 h-3 text-white" />
                             </div>
-                            <h4 className="text-lg font-semibold text-appleGray-800">
+                            <h4 className="text-base md:text-lg font-semibold text-appleGray-800">
                               STEP 1: Create a Blocked Account
                             </h4>
                           </div>
@@ -1741,8 +1741,8 @@ const ApplicantDetail = () => {
                           </p>
 
                           <div className="ml-9 space-y-6">
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
-                              <ul className="list-disc ml-6 text-sm text-appleGray-700 space-y-2">
+                            <div className="bg-white rounded-2xl p-3 md:p-5 border border-orange-200">
+                              <ul className="list-disc ml-4 md:ml-6 text-xs md:text-sm text-appleGray-700 space-y-2">
                                 <li>
                                   <span className="font-medium">
                                     Blocked Account
@@ -1763,14 +1763,14 @@ const ApplicantDetail = () => {
                                   in public health insurance)
                                 </li>
                               </ul>
-                              <div className="mt-4">
+                              <div className="mt-3 md:mt-4">
                                 <a
                                   href="https://www.expatrio.com?f=gideong1"
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                  className="inline-flex items-center justify-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-200 w-full sm:w-auto min-h-[44px]"
                                 >
-                                  <FaUniversity className="w-4 h-4" />
+                                  <FaUniversity className="w-4 h-4 hidden md:inline" />
                                   <span>Open with Expatrio</span>
                                 </a>
                               </div>
@@ -1778,55 +1778,55 @@ const ApplicantDetail = () => {
                           </div>
                         </div>
                         {/* Step 2 */}
-                        <div className="mb-6">
-                          <div className="flex items-start space-x-3 mb-3">
+                        <div className="mb-4 md:mb-6">
+                          <div className="flex items-start space-x-3 mb-2 md:mb-3">
                             <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                               <FaCheckCircle className="w-3 h-3 text-white" />
                             </div>
-                            <h4 className="text-lg font-semibold text-appleGray-800">
+                            <h4 className="text-base md:text-lg font-semibold text-appleGray-800">
                               STEP 2: Create a New Email Address
                             </h4>
                           </div>
-                          <p className="text-appleGray-600 ml-9">
+                          <p className="text-appleGray-600 ml-9 text-sm md:text-base">
                             For a secure and organized visa process, please
                             create a new Gmail account and password exclusively
                             for visa communications.
                           </p>
                         </div>
                         {/* Step 3 */}
-                        <div className="mb-6">
-                          <div className="flex items-start space-x-3 mb-4">
+                        <div className="mb-4 md:mb-6">
+                          <div className="flex items-start space-x-3 mb-3 md:mb-4">
                             <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                               <FaCheckCircle className="w-3 h-3 text-white" />
                             </div>
-                            <h4 className="text-lg font-semibold text-appleGray-800">
+                            <h4 className="text-base md:text-lg font-semibold text-appleGray-800">
                               STEP 3: Submit the Following Documents
                             </h4>
                           </div>
-                          <p className="text-appleGray-600 ml-9 mb-6">
+                          <p className="text-appleGray-600 ml-9 mb-4 md:mb-6 text-sm md:text-base">
                             Please send clear scanned copies of the following
                             documents:
                           </p>
 
                           {/* Document Requirements */}
-                          <div className="ml-9 space-y-6">
+                          <div className="ml-6 md:ml-9 space-y-4 md:space-y-6">
                             {/* Motivation Letter */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                            <div className="bg-white rounded-2xl p-3 md:p-5 border border-orange-200">
                               <div className="flex items-start space-x-3 mb-3">
-                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
+                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5 hidden md:inline" />
+                                <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                                   1. Motivation Letter (for the Embassy)
                                 </h5>
                               </div>
-                              <p className="text-sm text-appleGray-600 mb-3 ml-8">
+                              <p className="text-xs md:text-sm text-appleGray-600 mb-3 ml-0 md:ml-8">
                                 This is required along with your Admission
                                 Letter.
                               </p>
-                              <div className="ml-8">
-                                <p className="text-sm font-medium text-appleGray-700 mb-2">
+                              <div className="ml-0 md:ml-8">
+                                <p className="text-xs md:text-sm font-medium text-appleGray-700 mb-2">
                                   Your motivation letter should clearly include:
                                 </p>
-                                <ul className="text-sm text-appleGray-600 space-y-1">
+                                <ul className="text-xs md:text-sm text-appleGray-600 space-y-1">
                                   <li>• Why you want to study in Germany</li>
                                   <li>
                                     • Why you chose this specific degree and
@@ -1844,15 +1844,15 @@ const ApplicantDetail = () => {
                             </div>
 
                             {/* Updated CV */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                            <div className="bg-white rounded-2xl p-3 md:p-5 border border-orange-200">
                               <div className="flex items-start space-x-3 mb-3">
-                                <FaIdCard className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
+                                <FaIdCard className="w-5 h-5 text-orange-600 mt-0.5 hidden md:inline" />
+                                <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                                   2. Updated CV (Curriculum Vitae)
                                 </h5>
                               </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
+                              <div className="ml-0 md:ml-8">
+                                <ul className="text-xs md:text-sm text-appleGray-600 space-y-1">
                                   <li>• Preferably in tabular format</li>
                                   <li>
                                     • Include educational background, skills,
@@ -1863,15 +1863,15 @@ const ApplicantDetail = () => {
                             </div>
 
                             {/* Passport Copy */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                            <div className="bg-white rounded-2xl p-3 md:p-5 border border-orange-200">
                               <div className="flex items-start space-x-3 mb-3">
-                                <FaPassport className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
+                                <FaPassport className="w-5 h-5 text-orange-600 mt-0.5 hidden md:inline" />
+                                <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                                   3. Passport Copy
                                 </h5>
                               </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
+                              <div className="ml-0 md:ml-8">
+                                <ul className="text-xs md:text-sm text-appleGray-600 space-y-1">
                                   <li>
                                     • Include all passport pages with stamps,
                                     and especially pages 2 to 9
@@ -1881,15 +1881,15 @@ const ApplicantDetail = () => {
                             </div>
 
                             {/* Biometric Photo */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                            <div className="bg-white rounded-2xl p-3 md:p-5 border border-orange-200">
                               <div className="flex items-start space-x-3 mb-3">
-                                <FaUserEdit className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
+                                <FaUserEdit className="w-5 h-5 text-orange-600 mt-0.5 hidden md:inline" />
+                                <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                                   4. Biometric Photo
                                 </h5>
                               </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
+                              <div className="ml-0 md:ml-8">
+                                <ul className="text-xs md:text-sm text-appleGray-600 space-y-1">
                                   <li>
                                     • Must be a recent photo with a white
                                     background
@@ -1903,15 +1903,15 @@ const ApplicantDetail = () => {
                             </div>
 
                             {/* Work Experience */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                            <div className="bg-white rounded-2xl p-3 md:p-5 border border-orange-200">
                               <div className="flex items-start space-x-3 mb-3">
-                                <FaCertificate className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
+                                <FaCertificate className="w-5 h-5 text-orange-600 mt-0.5 hidden md:inline" />
+                                <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                                   5. Work Experience / Courses
                                 </h5>
                               </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
+                              <div className="ml-0 md:ml-8">
+                                <ul className="text-xs md:text-sm text-appleGray-600 space-y-1">
                                   <li>
                                     • Include any job experience letters,
                                     internships, or extra courses you have
@@ -1922,15 +1922,15 @@ const ApplicantDetail = () => {
                             </div>
 
                             {/* Birth Certificate */}
-                            <div className="bg-white rounded-2xl p-5 border border-orange-200">
+                            <div className="bg-white rounded-2xl p-3 md:p-5 border border-orange-200">
                               <div className="flex items-start space-x-3 mb-3">
-                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
+                                <FaFileAlt className="w-5 h-5 text-orange-600 mt-0.5 hidden md:inline" />
+                                <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                                   6. Birth Certificate (English Translation)
                                 </h5>
                               </div>
-                              <div className="ml-8">
-                                <ul className="text-sm text-appleGray-600 space-y-1">
+                              <div className="ml-0 md:ml-8">
+                                <ul className="text-xs md:text-sm text-appleGray-600 space-y-1">
                                   <li>
                                     • Must be officially translated into English
                                   </li>
@@ -1939,28 +1939,28 @@ const ApplicantDetail = () => {
                             </div>
 
                             {/* Submit Documents */}
-                            <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-4 border border-green-200">
+                            <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-3 md:p-4 border border-green-200">
                               <div className="flex items-center space-x-2 mb-3">
-                                <FaEnvelope className="w-4 h-4 text-green-600" />
-                                <h5 className="text-base font-semibold text-appleGray-800">
+                                <FaEnvelope className="w-4 h-4 text-green-600 hidden md:inline" />
+                                <h5 className="text-sm md:text-base font-semibold text-appleGray-800">
                                   Submit Documents To: WhatsApp or Email
                                 </h5>
                               </div>
-                              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                              <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
                                 <a
                                   href="https://wa.me/4915566389194"
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                  className="flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-200 min-h-[44px] w-full sm:w-auto"
                                 >
-                                  <FaPhone className="w-4 h-4" />
+                                  <FaPhone className="w-4 h-4 hidden md:inline" />
                                   <span>WhatsApp: +49 155 6638 9194</span>
                                 </a>
                                 <a
                                   href="mailto:gidzunipath@gmail.com"
-                                  className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200"
+                                  className="flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-200 min-h-[44px] w-full sm:w-auto"
                                 >
-                                  <FaEnvelope className="w-4 h-4" />
+                                  <FaEnvelope className="w-4 h-4 hidden md:inline" />
                                   <span>Email: gidzunipath@gmail.com</span>
                                 </a>
                               </div>
