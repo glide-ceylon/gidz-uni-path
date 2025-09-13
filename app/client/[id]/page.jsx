@@ -676,7 +676,7 @@ const ApplicantDetail = () => {
     });
     // Clear any file inputs
     const fileInputs = document.querySelectorAll('input[type="file"]');
-    fileInputs.forEach(input => input.value = '');
+    fileInputs.forEach((input) => (input.value = ""));
   };
   // Define the Modal component inside the same file.
   const Modal = ({ children, onClose }) => {
@@ -2464,7 +2464,7 @@ const ApplicantDetail = () => {
         </div>{" "}
         {/* Modal with Message component */}
         {showMessageModal && (
-          <div 
+          <div
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
@@ -2472,7 +2472,7 @@ const ApplicantDetail = () => {
               }
             }}
           >
-            <div 
+            <div
               className="relative bg-white p-6 rounded-2xl shadow-large border border-appleGray-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
@@ -2487,7 +2487,7 @@ const ApplicantDetail = () => {
           </div>
         )}
         {showCreateApointemen && (
-          <div 
+          <div
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
@@ -2495,7 +2495,7 @@ const ApplicantDetail = () => {
               }
             }}
           >
-            <div 
+            <div
               className="relative bg-white p-6 rounded-2xl shadow-large border border-appleGray-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
@@ -2505,13 +2505,15 @@ const ApplicantDetail = () => {
               >
                 <FaTimes className="w-4 h-4" />
               </button>
-              <AppointmentModal onClose={() => setShowCreateApointement(false)} />
+              <AppointmentModal
+                onClose={() => setShowCreateApointement(false)}
+              />
             </div>
           </div>
         )}
         {/* Image Crop Modal */}
         {showCropModal && selectedImage && (
-          <div 
+          <div
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4"
             onClick={(e) => {
               // Only close if clicking the backdrop
@@ -2520,7 +2522,7 @@ const ApplicantDetail = () => {
               }
             }}
           >
-            <div 
+            <div
               className="relative bg-white p-6 rounded-2xl shadow-large border border-appleGray-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
@@ -2531,119 +2533,130 @@ const ApplicantDetail = () => {
               >
                 <FaTimes className="w-4 h-4" />
               </button>
-              
+
               <div className="space-y-6">
                 <div className="text-center">
                   <h3 className="text-xl font-semibold text-appleGray-800 mb-2">
                     Crop Your Profile Picture
                   </h3>
                   <p className="text-sm text-appleGray-600">
-                    Adjust the crop area to select the part of your image you want to use
+                    Adjust the crop area to select the part of your image you
+                    want to use
                   </p>
                 </div>
 
-              <div className="flex justify-center">
-                <div className="w-full max-w-md">
-                  <ReactCrop
-                    crop={crop}
-                    onChange={(c, percentCrop) => {
-                      console.log("Crop changed:", c);
-                      setCrop(c);
-                    }}
-                    onComplete={(c, percentCrop) => {
-                      console.log("Crop completed:", c);
-                      setCompletedCrop(c);
-                    }}
-                    aspect={1} // Square aspect ratio
-                    minWidth={50}
-                    minHeight={50}
-                    keepSelection={true}
-                    style={{ maxWidth: "100%", height: "auto" }}
-                  >
-                    <img
-                      ref={imgRef}
-                      alt="Crop me"
-                      src={selectedImage.url}
-                      style={{ 
-                        maxWidth: "100%", 
-                        height: "auto",
-                        display: "block",
-                        maxHeight: "400px"
+                <div className="flex justify-center">
+                  <div className="w-full max-w-md">
+                    <ReactCrop
+                      crop={crop}
+                      onChange={(c, percentCrop) => {
+                        console.log("Crop changed:", c);
+                        setCrop(c);
                       }}
-                      onLoad={(e) => {
-                        console.log("Image loaded for cropping");
-                        // Set initial crop when image loads with a delay to ensure proper rendering
-                        setTimeout(() => {
-                          const { naturalWidth, naturalHeight, width, height } = e.target;
-                          console.log("Image dimensions:", { naturalWidth, naturalHeight, width, height });
-                          
-                          // Calculate crop area (60% of the smaller dimension for better visibility)
-                          const cropSize = Math.min(width, height) * 0.6;
-                          const newCrop = {
-                            unit: "px",
-                            width: cropSize,
-                            height: cropSize,
-                            x: (width - cropSize) / 2,
-                            y: (height - cropSize) / 2,
-                          };
-                          console.log("Setting initial crop:", newCrop);
-                          setCrop(newCrop);
-                          setCompletedCrop(newCrop);
-                        }, 100);
+                      onComplete={(c, percentCrop) => {
+                        console.log("Crop completed:", c);
+                        setCompletedCrop(c);
                       }}
-                    />
-                  </ReactCrop>
-                </div>
-              </div>
+                      aspect={1} // Square aspect ratio
+                      minWidth={50}
+                      minHeight={50}
+                      keepSelection={true}
+                      style={{ maxWidth: "100%", height: "auto" }}
+                    >
+                      <img
+                        ref={imgRef}
+                        alt="Crop me"
+                        src={selectedImage.url}
+                        style={{
+                          maxWidth: "100%",
+                          height: "auto",
+                          display: "block",
+                          maxHeight: "400px",
+                        }}
+                        onLoad={(e) => {
+                          console.log("Image loaded for cropping");
+                          // Set initial crop when image loads with a delay to ensure proper rendering
+                          setTimeout(() => {
+                            const {
+                              naturalWidth,
+                              naturalHeight,
+                              width,
+                              height,
+                            } = e.target;
+                            console.log("Image dimensions:", {
+                              naturalWidth,
+                              naturalHeight,
+                              width,
+                              height,
+                            });
 
-              {uploading && (
-                <div className="space-y-2">
-                  <div className="w-full bg-appleGray-200 rounded-full h-2">
-                    <div
-                      className="bg-sky-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    ></div>
+                            // Calculate crop area (60% of the smaller dimension for better visibility)
+                            const cropSize = Math.min(width, height) * 0.6;
+                            const newCrop = {
+                              unit: "px",
+                              width: cropSize,
+                              height: cropSize,
+                              x: (width - cropSize) / 2,
+                              y: (height - cropSize) / 2,
+                            };
+                            console.log("Setting initial crop:", newCrop);
+                            setCrop(newCrop);
+                            setCompletedCrop(newCrop);
+                          }, 100);
+                        }}
+                      />
+                    </ReactCrop>
                   </div>
-                  <p className="text-center text-sm text-appleGray-600">
-                    Uploading... {progress}%
-                  </p>
                 </div>
-              )}
 
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-end">
-                <button
-                  type="button"
-                  onClick={() => {
-                    console.log("Cancel button clicked");
-                    handleCropCancel();
-                  }}
-                  disabled={uploading}
-                  className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 border border-appleGray-300 text-appleGray-700 rounded-xl hover:bg-appleGray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 touch-manipulation"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    console.log("Upload button clicked");
-                    handleCroppedUpload();
-                  }}
-                  disabled={!completedCrop || uploading}
-                  className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-sky-500 text-white rounded-xl hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation"
-                >
-                  {uploading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Uploading...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FaUpload className="w-4 h-4" />
-                      <span>Upload Cropped Image</span>
-                    </>
-                  )}
-                </button>
-              </div>
+                {uploading && (
+                  <div className="space-y-2">
+                    <div className="w-full bg-appleGray-200 rounded-full h-2">
+                      <div
+                        className="bg-sky-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-center text-sm text-appleGray-600">
+                      Uploading... {progress}%
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-end">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("Cancel button clicked");
+                      handleCropCancel();
+                    }}
+                    disabled={uploading}
+                    className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 border border-appleGray-300 text-appleGray-700 rounded-xl hover:bg-appleGray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 touch-manipulation"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("Upload button clicked");
+                      handleCroppedUpload();
+                    }}
+                    disabled={!completedCrop || uploading}
+                    className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-sky-500 text-white rounded-xl hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation"
+                  >
+                    {uploading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaUpload className="w-4 h-4" />
+                        <span>Upload Cropped Image</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
