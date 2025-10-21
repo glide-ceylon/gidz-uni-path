@@ -1369,10 +1369,19 @@ const StudentApplicationForm = () => {
                 )
               }
               rows={3}
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["ContactInformation.Address"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               placeholder="Enter your full address"
               required
             />
+            {errors["ContactInformation.Address"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["ContactInformation.Address"]}
+              </p>
+            )}
           </div>
         </div>
       </div>
