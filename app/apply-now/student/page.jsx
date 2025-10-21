@@ -500,14 +500,14 @@ const StudentApplicationForm = () => {
 
       case 3: // Documents & Financial Proof - Both Mandatory
         // CV is mandatory
-        if (!formData.CVUpload.File) {
-          newErrors["CVUpload.File"] = "CV/Resume is required";
-        }
+        // if (!formData.CVUpload.File) {
+        //   newErrors["CVUpload.File"] = "CV/Resume is required";
+        // }
         // Financial proof is mandatory
-        if (!formData.FinancialProof.CanEarnLivingInGermany) {
-          newErrors["FinancialProof.CanEarnLivingInGermany"] =
-            "Financial information is required";
-        }
+        // if (!formData.FinancialProof.CanEarnLivingInGermany) {
+        //   newErrors["FinancialProof.CanEarnLivingInGermany"] =
+        //     "Financial information is required";
+        // }
         break;
 
       case 4: // Preferences - Course Preference Mandatory
@@ -600,11 +600,11 @@ const StudentApplicationForm = () => {
       finalErrors["IELTSResults.ScoreOption"] = "IELTS information is required";
     }
 
-    // Financial Proof - Mandatory
-    if (!formData.FinancialProof.CanEarnLivingInGermany) {
-      finalErrors["FinancialProof.CanEarnLivingInGermany"] =
-        "Financial information is required";
-    }
+    // // Financial Proof - Mandatory
+    // if (!formData.FinancialProof.CanEarnLivingInGermany) {
+    //   finalErrors["FinancialProof.CanEarnLivingInGermany"] =
+    //     "Financial information is required";
+    // }
 
     // Course Preferences - Mandatory
     if (!formData.AdditionalInformation.Course.trim()) {
@@ -621,9 +621,9 @@ const StudentApplicationForm = () => {
     }
 
     // CV/Resume - Mandatory
-    if (!formData.CVUpload.File) {
-      finalErrors["CVUpload.File"] = "CV/Resume is required";
-    }
+    // if (!formData.CVUpload.File) {
+    //   finalErrors["CVUpload.File"] = "CV/Resume is required";
+    // }
 
     if (Object.keys(finalErrors).length > 0) {
       setErrors(finalErrors);
@@ -1276,10 +1276,19 @@ const StudentApplicationForm = () => {
               onChange={(e) =>
                 handleInputChange("ContactInformation", "Email", e.target.value)
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["ContactInformation.Email"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               placeholder="Enter your email address"
               required
             />
+            {errors["ContactInformation.Email"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["ContactInformation.Email"]}
+              </p>
+            )}
           </div>
 
           <div>
@@ -1296,10 +1305,19 @@ const StudentApplicationForm = () => {
                   e.target.value
                 )
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["ContactInformation.MobileNo"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               placeholder="Enter your mobile number"
               required
             />
+            {errors["ContactInformation.MobileNo"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["ContactInformation.MobileNo"]}
+              </p>
+            )}
           </div>
 
           <div>
@@ -1315,7 +1333,11 @@ const StudentApplicationForm = () => {
                   e.target.value
                 )
               }
-              className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                errors["ContactInformation.Country"]
+                  ? "border-red-300 bg-red-50"
+                  : "border-appleGray-200"
+              }`}
               required
             >
               <option value="">Select your country</option>
@@ -1325,6 +1347,12 @@ const StudentApplicationForm = () => {
                 </option>
               ))}
             </select>
+            {errors["ContactInformation.Country"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["ContactInformation.Country"]}
+              </p>
+            )}
+            {/* </select> */}
           </div>
 
           <div className="md:col-span-2">
@@ -1405,7 +1433,13 @@ const StudentApplicationForm = () => {
                           newSubjects
                         );
                       }}
-                      className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                      className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                        errors[
+                          `EducationalQualification.ALevel.SubjectResults.${index}.Subject`
+                        ]
+                          ? "border-red-300 bg-red-50"
+                          : "border-appleGray-200"
+                      }`}
                     >
                       <option value="">Select subject</option>
                       {subjectsList.map((subj) => (
@@ -1414,6 +1448,17 @@ const StudentApplicationForm = () => {
                         </option>
                       ))}
                     </select>
+                    {errors[
+                      `EducationalQualification.ALevel.SubjectResults.${index}.Subject`
+                    ] && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {
+                          errors[
+                            `EducationalQualification.ALevel.SubjectResults.${index}.Subject`
+                          ]
+                        }
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -1434,7 +1479,13 @@ const StudentApplicationForm = () => {
                           newSubjects
                         );
                       }}
-                      className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                      className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                        errors[
+                          `EducationalQualification.ALevel.SubjectResults.${index}.Result`
+                        ]
+                          ? "border-red-300 bg-red-50"
+                          : "border-appleGray-200"
+                      }`}
                     >
                       <option value="">Select grade</option>
                       <option value="A">A</option>
@@ -1443,6 +1494,17 @@ const StudentApplicationForm = () => {
                       <option value="S">S</option>
                       <option value="W">W</option>
                     </select>
+                    {errors[
+                      `EducationalQualification.ALevel.SubjectResults.${index}.Result`
+                    ] && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {
+                          errors[
+                            `EducationalQualification.ALevel.SubjectResults.${index}.Result`
+                          ]
+                        }
+                      </p>
+                    )}
                   </div>
                 </div>
               )
@@ -1606,6 +1668,11 @@ const StudentApplicationForm = () => {
                 </label>
               ))}
             </div>
+            {errors["IELTSResults.ScoreOption"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors["IELTSResults.ScoreOption"]}
+              </p>
+            )}
           </div>
 
           {formData.IELTSResults.ScoreOption === "Yes" && (
@@ -1634,9 +1701,18 @@ const StudentApplicationForm = () => {
                             e.target.value
                           )
                         }
-                        className="w-full px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                        className={`w-full px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                          errors[`IELTSResults.${skill}`]
+                            ? "border-red-300 bg-red-50"
+                            : "border-appleGray-200"
+                        }`}
                         placeholder="0.0"
                       />
+                      {errors[`IELTSResults.${skill}`] && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors[`IELTSResults.${skill}`]}
+                        </p>
+                      )}
                     </div>
                   )
                 )}
@@ -1660,9 +1736,18 @@ const StudentApplicationForm = () => {
                       e.target.value
                     )
                   }
-                  className="w-full md:w-48 px-4 py-3 border border-appleGray-200 rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+                  className={`w-full md:w-48 px-4 py-3 border rounded-2xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 ${
+                    errors["IELTSResults.OverallScore"]
+                      ? "border-red-300 bg-red-50"
+                      : "border-appleGray-200"
+                  }`}
                   placeholder="0.0"
                 />
+                {errors["IELTSResults.OverallScore"] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors["IELTSResults.OverallScore"]}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -1735,7 +1820,7 @@ const StudentApplicationForm = () => {
           <div className="grid grid-cols-1 gap-6">
             <div className="bg-appleGray-50 p-6 rounded-2xl">
               <h5 className="text-lg font-semibold text-appleGray-800 mb-4">
-                CV/Resume *
+                CV/Resume
               </h5>
               <div className="border-2 border-dashed border-appleGray-300 rounded-2xl p-6 sm:p-8 text-center hover:border-sky-500 transition-all duration-200">
                 <FaFileUpload className="w-6 h-6 sm:w-8 sm:h-8 text-appleGray-400 mx-auto mb-3 sm:mb-4" />
