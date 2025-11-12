@@ -241,9 +241,11 @@ export default function ContactPage() {
               </p>
               <div className="space-y-2">
                 <p className="text-lg font-semibold text-appleGray-800">
-                  Arasady Road, Kaddudai
+                  Ponnalai Road,
                 </p>
-                <p className="text-appleGray-600">Manipay, Jaffna, Sri Lanka</p>
+                <p className="text-appleGray-600">
+                  Sandilipay, 40000, Sri Lanka
+                </p>
                 <div className="flex items-center justify-center space-x-2 text-appleGray-500">
                   <FaMapMarkerAlt className="w-4 h-4" />
                   <span className="text-sm">By appointment</span>
@@ -476,8 +478,9 @@ export default function ContactPage() {
             </a>
 
             {/* Instagram */}
+
             <a
-              href="https://www.instagram.com/gideon_ingermany?igsh=MWVmaXk0M2J2YzBzNw=="
+              href="https://www.instagram.com/gidzunipath?igsh=MWpqbWtiY2luaGMyMA%3D%3D&utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
               className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-white hover:scale-110 transition-all duration-300 shadow-soft"
@@ -487,7 +490,7 @@ export default function ContactPage() {
 
             {/* Facebook */}
             <a
-              href="https://www.facebook.com/gideonxofficial?mibextid=ZbWKwL"
+              href="https://www.facebook.com/share/1CpQuTdxRJ/?mibextid=wwXIfr"
               target="_blank"
               rel="noopener noreferrer"
               className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white hover:scale-110 transition-all duration-300 shadow-soft"
@@ -497,7 +500,7 @@ export default function ContactPage() {
 
             {/* YouTube */}
             <a
-              href="https://youtube.com/@gideonxofficial?si=7hO1rIXzrDMpJ0Wk"
+              href="https://youtube.com/@gidzmedia?si=PBu6fGumkNcWXuKr"
               target="_blank"
               rel="noopener noreferrer"
               className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white hover:scale-110 transition-all duration-300 shadow-soft"
