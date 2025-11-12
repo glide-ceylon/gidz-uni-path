@@ -185,10 +185,10 @@ export default function RootLayout({ children }) {
                     </div>
                     <div>
                       <p className="text-appleGray-300 font-medium">
-                        Arasady Road, Kaddudai
+                        Ponnalai Road,
                       </p>
                       <p className="text-appleGray-400">
-                        Manipay, Jaffna, Sri Lanka
+                        Sandilipay, 40000, Sri Lanka
                       </p>
                     </div>
                   </div>
@@ -220,10 +220,10 @@ export default function RootLayout({ children }) {
                     </div>
                     <div>
                       <p className="text-appleGray-300 font-medium">
-                        Mon - Fri: 9:00 AM - 6:00 PM
+                        Mon - Fri: 8:30 AM - 6:00 PM
                       </p>
                       <p className="text-appleGray-400">
-                        Sat: 9:00 AM - 2:00 PM
+                        Sat: 8:30 AM - 2:00 PM
                       </p>
                     </div>
                   </div>

@@ -2151,10 +2151,10 @@ const ApplicantDetail = () => {
                         </p>
                         <div className="space-y-2">
                           <p className="text-lg font-semibold text-appleGray-800">
-                            Arasady Road, Kaddudai
+                            Ponnalai Road,
                           </p>
                           <p className="text-appleGray-600">
-                            Manipay, Jaffna, Sri Lanka
+                            Sandilipay, 40000, Sri Lanka
                           </p>
                           <div className="flex items-center justify-center space-x-2 text-appleGray-500">
                             <FaMapMarkerAlt className="w-4 h-4" />
