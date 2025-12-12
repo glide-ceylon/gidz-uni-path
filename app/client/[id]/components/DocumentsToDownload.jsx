@@ -5,17 +5,14 @@ import { supabase } from "../../../../lib/supabase";
 import {
   FaDownload,
   FaFilePdf,
-  FaExternalLinkAlt,
   FaExclamationTriangle,
   FaClock,
-  FaEye,
+  FaInbox,
 } from "react-icons/fa";
 
 const DocumentsToDownload = ({ applicationId }) => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
-  const [newDoc, setNewDoc] = useState({ name: "", file: null });
 
   // Fetch documents when component mounts or applicationId changes
   useEffect(() => {
@@ -31,7 +28,7 @@ const DocumentsToDownload = ({ applicationId }) => {
       .select("*")
       .eq("application_id", appId)
       .eq("upload_by", "Us")
-      .order("name", { ascending: true });
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Error fetching documents:", error.message);
@@ -41,89 +38,30 @@ const DocumentsToDownload = ({ applicationId }) => {
     setLoading(false);
   };
 
-  const handleFileUpload = async () => {
-    const { name, file } = newDoc;
-
-    // Basic validation
-    if (!name || !file) {
-      alert("Please provide a document name and select a file.");
-      return;
-    }
-
-    // Validate file type
-    if (file.type !== "application/pdf") {
-      alert("Only PDF files are allowed.");
-      return;
-    }
-
-    // Validate file size (<= 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      alert("File size should be 5MB or less.");
-      return;
-    }
-
-    setUploading(true);
-
-    const sanitizedFileName = file.name.replace(/\s+/g, "_");
-    const fileName = `${Date.now()}_${sanitizedFileName}`;
-
-    const { data: storageData, error: uploadError } = await supabase.storage
-      .from("documents")
-      .upload(fileName, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    if (uploadError) {
-      console.error("Error uploading file:", uploadError.message);
-      alert("Failed to upload file. Please try again.");
-      setUploading(false);
-      return;
-    }
-
-    const { data: publicUrlData } = supabase.storage
-      .from("documents")
-      .getPublicUrl(storageData.path);
-
-    const fileURL = publicUrlData.publicUrl;
-
-    // Insert file information into the database
-    const { data: insertedData, error: insertError } = await supabase
-      .from("documents")
-      .insert([
-        {
-          application_id: applicationId,
-          name,
-          upload_by: "Us",
-          url: fileURL,
-        },
-      ])
-      .select();
-
-    if (insertError) {
-      console.error("Error saving document information:", insertError.message);
-      alert("Failed to save document information. Please try again.");
-      setUploading(false);
-      return;
-    }
-
-    setDocuments([...documents, insertedData[0]]);
-    setNewDoc({ name: "", file: null });
-    setUploading(false);
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
   };
+
   return (
     <div className="w-full">
+      {/* Header */}
       <div className="mb-6">
         <h3 className="text-xl font-bold text-appleGray-800 mb-2 flex items-center">
-          <FaDownload className="w-5 h-5 text-sky-500 mr-2" />
-          Available Downloads
+          <FaInbox className="w-5 h-5 text-sky-500 mr-2" />
+          MY DOWNLOADS
         </h3>
         <p className="text-sm text-appleGray-600">
-          Documents provided by GIDZ Uni Path team
+          Total number of messages: {documents.length}
         </p>
       </div>
 
+      {/* Documents Table */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <div className="text-center space-y-4">
@@ -146,57 +84,72 @@ const DocumentsToDownload = ({ applicationId }) => {
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              className="group bg-appleGray-50 hover:bg-white border border-appleGray-200 rounded-2xl p-4 transition-all duration-300 hover:shadow-soft"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <FaFilePdf className="w-5 h-5 text-blue-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-appleGray-800 text-sm">
-                      {doc.name}
-                    </h4>
-                    <p className="text-xs text-appleGray-500">
-                      Provided by: {doc.upload_by}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  {doc.url ? (
-                    <div className="flex items-center space-x-2">
-                      <a
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 shadow-soft hover:shadow-medium inline-flex items-center space-x-2"
-                      >
-                        <FaEye className="w-4 h-4" />
-                        <span>View</span>
-                      </a>
-                      <a
-                        href={doc.url}
-                        download
-                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 shadow-soft hover:shadow-medium inline-flex items-center space-x-2"
-                      >
-                        <FaDownload className="w-4 h-4" />
-                        <span>Download</span>
-                      </a>
-                    </div>
-                  ) : (
-                    <div className="px-4 py-2 bg-appleGray-200 text-appleGray-500 rounded-xl text-sm font-medium">
-                      Not Available
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="bg-white border border-appleGray-200 rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-appleGray-50 border-b border-appleGray-200">
+                <tr>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                    Name of document
+                  </th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                    Type
+                  </th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                    Received on
+                  </th>
+                  <th className="text-right px-4 py-3 text-sm font-semibold text-appleGray-700">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-appleGray-100">
+                {documents.map((doc) => (
+                  <tr
+                    key={doc.id}
+                    className="hover:bg-appleGray-50 transition-colors duration-200"
+                  >
+                    <td className="px-4 py-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <FaFilePdf className="w-4 h-4 text-blue-500" />
+                        </div>
+                        <span className="text-sm font-medium text-appleGray-800 truncate max-w-[200px]">
+                          {doc.name}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-appleGray-600">
+                      {doc.category || doc.type || "-"}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-appleGray-600">
+                      {formatDate(doc.created_at)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end">
+                        {doc.url ? (
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download
+                            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                          >
+                            <FaDownload className="w-3 h-3" />
+                            <span>Download</span>
+                          </a>
+                        ) : (
+                          <span className="text-sm text-appleGray-400">
+                            Not available
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

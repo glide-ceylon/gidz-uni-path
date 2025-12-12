@@ -10,15 +10,38 @@ import {
   FaCloudUploadAlt,
   FaExclamationTriangle,
   FaClock,
+  FaDownload,
+  FaTrash,
+  FaInfoCircle,
+  FaEye,
 } from "react-icons/fa";
+
+const DOCUMENT_CATEGORIES = [
+  "Proof of Language Proficiency",
+  "G.C.E. O-Level Certificate (Certified by the Ministry of Foreign Affairs)",
+  "G.C.E. A-Level Certificate (Certified by the Ministry of Foreign Affairs)",
+  "Updated Curriculum Vitae (CV) - Europass CV",
+  "School Leaving Certificate (Translated into English)",
+  "Copy of Valid Passport",
+  "Birth Certificate (English translation required)",
+  "Bachelor's Degree Certificate",
+  "Bachelor's Transcript",
+  "Letters of Recommendation",
+  "Medium of Instruction Certificate",
+  "Internship",
+  "Work Experience Letters",
+  "Thesis",
+  "Handbook",
+  "Others",
+];
 
 const DocumentsToUpload = ({ applicationId }) => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentDoc, setCurrentDoc] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [fileToUpload, setFileToUpload] = useState(null);
+  const [deleting, setDeleting] = useState(null);
 
   // Fetch documents when component mounts or applicationId changes
   useEffect(() => {
@@ -34,7 +57,7 @@ const DocumentsToUpload = ({ applicationId }) => {
       .select("*")
       .eq("application_id", appId)
       .eq("upload_by", "Client")
-      .order("name", { ascending: true });
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Error fetching documents:", error.message);
@@ -44,61 +67,45 @@ const DocumentsToUpload = ({ applicationId }) => {
     setLoading(false);
   };
 
-  const openModal = (doc) => {
-    setCurrentDoc(doc);
-    setIsModalOpen(true);
-    setFileToUpload(null);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setCurrentDoc(null);
-    setFileToUpload(null);
-  };
-
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setFileToUpload(e.target.files[0]);
     }
   };
 
-  const handleFileUpload = async (e) => {
-    e.preventDefault();
-
-    if (!currentDoc) {
-      alert("No document selected.");
-      return;
-    }
-
-    const file = fileToUpload;
-
+  const handleFileUpload = async () => {
     // Basic validation
-    if (!file) {
+    if (!fileToUpload) {
       alert("Please select a file to upload.");
       return;
     }
 
+    if (!selectedCategory) {
+      alert("Please choose a category for your document.");
+      return;
+    }
+
     // Validate file type
-    if (file.type !== "application/pdf") {
+    if (fileToUpload.type !== "application/pdf") {
       alert("Only PDF files are allowed.");
       return;
     }
 
     // Validate file size (<= 5MB)
     const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
+    if (fileToUpload.size > maxSize) {
       alert("File size should be 5MB or less.");
       return;
     }
 
     setUploading(true);
 
-    const sanitizedFileName = file.name.replace(/\s+/g, "_");
+    const sanitizedFileName = fileToUpload.name.replace(/\s+/g, "_");
     const fileName = `${Date.now()}_${sanitizedFileName}`;
 
     const { data: storageData, error: uploadError } = await supabase.storage
       .from("documents")
-      .upload(fileName, file, {
+      .upload(fileName, fileToUpload, {
         cacheControl: "3600",
         upsert: false,
       });
@@ -116,16 +123,16 @@ const DocumentsToUpload = ({ applicationId }) => {
 
     const fileURL = publicUrlData.publicUrl;
 
-    // Insert or update file information in the database
+    // Insert file information into the database with category
     const { data: insertedData, error: insertError } = await supabase
       .from("documents")
-      .upsert([
+      .insert([
         {
-          id: currentDoc.id,
           application_id: applicationId,
-          name: currentDoc.name,
-          upload_by: "Us",
+          name: fileToUpload.name,
+          upload_by: "Client",
           url: fileURL,
+          category: selectedCategory,
         },
       ])
       .select();
@@ -138,27 +145,154 @@ const DocumentsToUpload = ({ applicationId }) => {
     }
 
     // Update the documents state
-    setDocuments((prevDocs) =>
-      prevDocs.map((doc) =>
-        doc.id === insertedData[0].id ? insertedData[0] : doc
-      )
-    );
-
+    setDocuments([insertedData[0], ...documents]);
+    setFileToUpload(null);
+    setSelectedCategory("");
+    // Reset file input
+    const fileInput = document.getElementById("file-upload-input");
+    if (fileInput) fileInput.value = "";
     setUploading(false);
-    closeModal();
   };
+
+  const handleDelete = async (doc) => {
+    if (!confirm(`Are you sure you want to delete "${doc.name}"?`)) {
+      return;
+    }
+
+    setDeleting(doc.id);
+
+    try {
+      // Delete from database
+      const { error: dbError } = await supabase
+        .from("documents")
+        .delete()
+        .eq("id", doc.id);
+
+      if (dbError) {
+        console.error("Error deleting document:", dbError.message);
+        alert("Failed to delete document. Please try again.");
+        setDeleting(null);
+        return;
+      }
+
+      // Update local state
+      setDocuments(documents.filter((d) => d.id !== doc.id));
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      alert("Failed to delete document. Please try again.");
+    }
+
+    setDeleting(null);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
+  };
+
   return (
     <div className="w-full">
+      {/* Header */}
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-appleGray-800 mb-2 flex items-center">
+        <h3 className="text-xl font-bold text-appleGray-800 mb-4 flex items-center">
           <FaCloudUploadAlt className="w-5 h-5 text-sky-500 mr-2" />
-          Upload Documents
+          MY DOCUMENTS
         </h3>
-        <p className="text-sm text-appleGray-600">
-          Upload your required documents in PDF format
-        </p>
+
+        {/* Instructions */}
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-2">
+          <div className="flex items-start space-x-2">
+            <FaInfoCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-amber-800">
+              Please only upload PDF files
+            </p>
+          </div>
+          <div className="flex items-start space-x-2">
+            <FaInfoCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-amber-800">
+              Please upload different documents in different files (e.g. school
+              certificate)
+            </p>
+          </div>
+          <div className="flex items-start space-x-2">
+            <FaInfoCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-amber-800">
+              Please upload each file only once and choose a suitable file name
+              (e.g. Diploma bachelor)
+            </p>
+          </div>
+        </div>
       </div>
 
+      {/* Upload Form */}
+      <div className="bg-white border border-appleGray-200 rounded-2xl p-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* File Input */}
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-appleGray-700 mb-2">
+              Select or drop a file here
+            </label>
+            <input
+              type="file"
+              id="file-upload-input"
+              accept="application/pdf"
+              onChange={handleFileChange}
+              className="w-full px-4 py-3 border border-appleGray-300 rounded-xl bg-appleGray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
+            />
+          </div>
+
+          {/* Category Dropdown */}
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-appleGray-700 mb-2">
+              Choose category
+            </label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-4 py-3 border border-appleGray-300 rounded-xl bg-appleGray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
+            >
+              <option value="">Select a category...</option>
+              {DOCUMENT_CATEGORIES.map((category, index) => (
+                <option key={index} value={category}>
+                  {index + 1}. {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Upload Button */}
+          <div className="flex items-end">
+            <button
+              onClick={handleFileUpload}
+              disabled={uploading || !fileToUpload || !selectedCategory}
+              className={`px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-medium transition-all duration-300 shadow-soft hover:shadow-medium inline-flex items-center space-x-2 ${
+                uploading || !fileToUpload || !selectedCategory
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+            >
+              {uploading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Uploading...</span>
+                </>
+              ) : (
+                <>
+                  <FaUpload className="w-4 h-4" />
+                  <span>UPLOAD FILE</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Documents Table */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <div className="text-center space-y-4">
@@ -168,142 +302,103 @@ const DocumentsToUpload = ({ applicationId }) => {
             <p className="text-appleGray-600">Loading documents...</p>
           </div>
         </div>
-      ) : documents.length === 0 ? (
+      ) : documents.filter((doc) => doc.url).length === 0 ? (
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-appleGray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <FaExclamationTriangle className="w-6 h-6 text-appleGray-400" />
+            <FaFilePdf className="w-6 h-6 text-appleGray-400" />
           </div>
-          <p className="text-appleGray-500 font-medium">No documents found</p>
+          <p className="text-appleGray-500 font-medium">
+            No documents uploaded yet
+          </p>
+          <p className="text-sm text-appleGray-400 mt-1">
+            Upload your first document using the form above
+          </p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              className="group bg-appleGray-50 hover:bg-white border border-appleGray-200 rounded-2xl p-4 transition-all duration-300 hover:shadow-soft"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                    <FaFilePdf className="w-5 h-5 text-red-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-appleGray-800 text-sm">
-                      {doc.name}
-                    </h4>
-                    <p className="text-xs text-appleGray-500">
-                      Uploaded by: {doc.upload_by}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  {doc.url ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-soft">
-                        <FaCheck className="text-white text-sm" />
-                      </div>
-                      <a
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
-                      >
-                        View
-                      </a>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => openModal(doc)}
-                      className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 shadow-soft hover:shadow-medium inline-flex items-center space-x-2"
-                      title="Upload Document"
+        <div className="bg-white border border-appleGray-200 rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-appleGray-50 border-b border-appleGray-200">
+                <tr>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                    Name
+                  </th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                    Uploaded
+                  </th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                    Category
+                  </th>
+                  <th className="text-right px-4 py-3 text-sm font-semibold text-appleGray-700">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-appleGray-100">
+                {documents
+                  .filter((doc) => doc.url)
+                  .map((doc) => (
+                    <tr
+                      key={doc.id}
+                      className="hover:bg-appleGray-50 transition-colors duration-200"
                     >
-                      <FaUpload className="w-4 h-4" />
-                      <span>Upload</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Modern Upload Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-3xl shadow-large border border-appleGray-200 w-11/12 max-w-lg p-8 relative">
-            {/* Close button */}
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-appleGray-400 hover:text-appleGray-600 hover:bg-appleGray-100 rounded-full transition-all duration-200"
-              disabled={uploading}
-            >
-              <FaTimes className="w-4 h-4" />
-            </button>
-
-            {/* Header */}
-            <div className="mb-6">
-              <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <FaCloudUploadAlt className="w-8 h-8 text-sky-500" />
-              </div>
-              <h3 className="text-2xl font-bold text-appleGray-800 text-center mb-2">
-                Upload Document
-              </h3>
-              <p className="text-center text-appleGray-600">
-                Upload <span className="font-medium">{currentDoc?.name}</span>
-              </p>
-            </div>
-
-            <form onSubmit={handleFileUpload} className="space-y-6">
-              <div>
-                <label className="block text-sm font-semibold text-appleGray-700 mb-2">
-                  Select PDF File
-                </label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    id="file"
-                    accept="application/pdf"
-                    onChange={handleFileChange}
-                    className="w-full px-4 py-3 border border-appleGray-300 rounded-2xl shadow-soft bg-appleGray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
-                  />
-                </div>
-                <p className="text-xs text-appleGray-500 mt-2">
-                  Maximum file size: 5MB. Only PDF files are accepted.
-                </p>
-              </div>
-
-              <div className="flex space-x-3">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 px-4 py-3 bg-appleGray-200 hover:bg-appleGray-300 text-appleGray-700 rounded-2xl font-medium transition-all duration-300"
-                  disabled={uploading}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className={`flex-1 px-4 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl font-medium transition-all duration-300 shadow-soft inline-flex items-center justify-center space-x-2 ${
-                    uploading ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                  disabled={uploading}
-                >
-                  {uploading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Uploading...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FaUpload className="w-4 h-4" />
-                      <span>Upload</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <FaFilePdf className="w-4 h-4 text-red-500" />
+                          </div>
+                          <span className="text-sm font-medium text-appleGray-800 truncate max-w-[200px]">
+                            {doc.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-appleGray-600">
+                        {formatDate(doc.created_at)}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-appleGray-600">
+                        {doc.category || "-"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end space-x-2">
+                          {doc.url && (
+                            <>
+                              <a
+                                href={doc.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center space-x-1 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                              >
+                                <FaEye className="w-3 h-3" />
+                                <span>View</span>
+                              </a>
+                              <a
+                                href={doc.url}
+                                download
+                                className="inline-flex items-center space-x-1 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                              >
+                                <FaDownload className="w-3 h-3" />
+                                <span>Download</span>
+                              </a>
+                            </>
+                          )}
+                          <button
+                            onClick={() => handleDelete(doc)}
+                            disabled={deleting === doc.id}
+                            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-lg transition-colors duration-200 disabled:opacity-50"
+                          >
+                            {deleting === doc.id ? (
+                              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                              <FaTrash className="w-3 h-3" />
+                            )}
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

@@ -246,114 +246,141 @@ export default function ApplicationPage() {
             </div>
           </div>
 
-          {/* Documents Section */}
-          {applicationData.documents?.length > 0 ? (
-            <div className="bg-white rounded-3xl shadow-soft border border-appleGray-200 p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-appleGray-800">
-                  Required Documents
-                </h2>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-appleGray-600">Submitted</span>
-                  <div className="w-3 h-3 bg-orange-500 rounded-full ml-4"></div>
-                  <span className="text-sm text-appleGray-600">Pending</span>
+          {/* MY DOCUMENTS Section */}
+          <div className="bg-white rounded-3xl shadow-soft border border-appleGray-200 p-8 mb-8">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-appleGray-800 mb-4 flex items-center">
+                <Icon
+                  icon="material-symbols:cloud-upload"
+                  className="text-2xl text-sky-500 mr-2"
+                />
+                MY DOCUMENTS
+              </h2>
+
+              {/* Instructions */}
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-2">
+                <div className="flex items-start space-x-2">
+                  <Icon
+                    icon="material-symbols:info"
+                    className="text-lg text-amber-600 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-sm text-amber-800">
+                    Please only upload PDF files
+                  </p>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <Icon
+                    icon="material-symbols:info"
+                    className="text-lg text-amber-600 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-sm text-amber-800">
+                    Please upload different documents in different files (e.g.
+                    school certificate)
+                  </p>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <Icon
+                    icon="material-symbols:info"
+                    className="text-lg text-amber-600 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-sm text-amber-800">
+                    Please upload each file only once and choose a suitable file
+                    name (e.g. Diploma bachelor)
+                  </p>
                 </div>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {applicationData.documents.map((doc, index) => (
-                  <div
-                    key={index}
-                    className="bg-appleGray-50 rounded-2xl p-6 border-2 border-transparent hover:border-appleGray-200 transition-all duration-200"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-appleGray-800 mb-2">
-                          {doc.name}
-                        </h3>
-                        <div className="flex items-center space-x-2">
-                          {doc.submitted ? (
-                            <>
-                              <Icon
-                                icon="material-symbols:check-circle"
-                                className="text-xl text-green-500"
-                              />
-                              <span className="text-green-600 font-medium">
-                                Submitted
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <Icon
-                                icon="material-symbols:pending"
-                                className="text-xl text-orange-500"
-                              />
-                              <span className="text-orange-600 font-medium">
-                                Required
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-4">
-                      {doc.submitted ? (
-                        <button
-                          disabled
-                          className="w-full px-4 py-3 bg-green-100 text-green-700 rounded-2xl font-medium cursor-not-allowed flex items-center justify-center space-x-2"
+            {/* Documents Table */}
+            {applicationData.documents?.length > 0 ? (
+              <div className="bg-white border border-appleGray-200 rounded-2xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-appleGray-50 border-b border-appleGray-200">
+                      <tr>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                          Name
+                        </th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                          Uploaded
+                        </th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                          Category
+                        </th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-appleGray-700">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-appleGray-100">
+                      {applicationData.documents.map((doc, index) => (
+                        <tr
+                          key={index}
+                          className="hover:bg-appleGray-50 transition-colors duration-200"
                         >
-                          <Icon
-                            icon="material-symbols:check-circle"
-                            className="text-lg"
-                          />
-                          <span>Upload Complete</span>
-                        </button>
-                      ) : (
-                        <label className="w-full px-4 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl font-medium cursor-pointer transition-all duration-200 btn-apple-hover flex items-center justify-center space-x-2">
-                          <Icon
-                            icon="material-symbols:upload"
-                            className="text-lg"
-                          />
-                          <span>Upload Document</span>
-                          <input
-                            type="file"
-                            accept=".pdf,.jpg,.png,.jpeg"
-                            onChange={(e) => handleDocumentUpload(e, doc.name)}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                          <td className="px-4 py-3">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <Icon
+                                  icon="material-symbols:picture-as-pdf"
+                                  className="text-lg text-red-500"
+                                />
+                              </div>
+                              <span className="text-sm font-medium text-appleGray-800 truncate max-w-[200px]">
+                                {doc.name}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-appleGray-600">
+                            {doc.created_at
+                              ? new Date(doc.created_at).toLocaleDateString()
+                              : "-"}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-appleGray-600">
+                            {doc.category || "-"}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center justify-end space-x-2">
+                              {doc.url ? (
+                                <a
+                                  href={doc.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center space-x-1 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                                >
+                                  <Icon
+                                    icon="material-symbols:download"
+                                    className="text-sm"
+                                  />
+                                  <span>Download</span>
+                                </a>
+                              ) : (
+                                <span className="text-sm text-appleGray-400">
+                                  Pending
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-3xl shadow-soft border border-appleGray-200 p-12 text-center">
-              <div className="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                <Icon
-                  icon="material-symbols:check-circle"
-                  className="text-3xl text-green-500"
-                />
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-appleGray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Icon
+                    icon="material-symbols:folder-open"
+                    className="text-2xl text-appleGray-400"
+                  />
+                </div>
+                <p className="text-appleGray-500 font-medium">
+                  No documents uploaded yet
+                </p>
               </div>
-              <h3 className="text-2xl font-bold text-appleGray-800 mb-3">
-                All Documents Submitted
-              </h3>
-              <p className="text-appleGray-600 mb-6">
-                No additional documents are required for your application at
-                this time.
-              </p>
-              <div className="flex items-center justify-center space-x-2 text-green-600">
-                <Icon
-                  icon="material-symbols:check-circle"
-                  className="text-xl"
-                />
-                <span className="font-medium">Application Complete</span>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     );

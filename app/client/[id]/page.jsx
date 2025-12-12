@@ -1470,7 +1470,7 @@ const ApplicantDetail = () => {
               {activeTab === "documents" && (
                 <div className="p-6 sm:p-8 space-y-8">
                   <DocumentsToUpload applicationId={id} />
-                  <DocumentsToDownload applicationId={id} />
+                  {/* <DocumentsToDownload applicationId={id} /> */}
                 </div>
               )}
 
