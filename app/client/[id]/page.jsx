@@ -2563,7 +2563,7 @@ const ApplicantDetail = () => {
                       keepSelection={true}
                       style={{ maxWidth: "100%", height: "auto" }}
                     >
-                      <img
+                      <Image
                         ref={imgRef}
                         alt="Crop me"
                         src={selectedImage.url}
