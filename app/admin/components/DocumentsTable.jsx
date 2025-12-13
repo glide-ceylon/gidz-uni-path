@@ -137,23 +137,43 @@ const DocumentsTable = ({ applicationId }) => {
     }
   };
 
+  // Handle Download from URL
+  const handleDownload = async (url, filename) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = filename || "document";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      // Fallback
+      window.open(url, "_blank");
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      {/* <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
             <Icon icon="mdi:upload" className="text-sm text-white" />
           </div>
           <h3 className="text-lg font-semibold text-gray-900">Upload</h3>
-        </div>
-        <button
+        </div> */}
+      {/* <button
           className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 text-sm font-semibold"
           onClick={() => setShowAddModal(true)}
         >
           <Icon icon="mdi:plus" className="text-base" />
           Add Document
-        </button>
-      </div>
+        </button> */}
+      {/* </div> */}
 
       {loading ? (
         <div className="bg-white/60 backdrop-blur-sm rounded-xl p-8 border border-gray-100 text-center">
@@ -163,7 +183,7 @@ const DocumentsTable = ({ applicationId }) => {
           </div>
           <p className="text-gray-600 mt-3">Loading documents...</p>
         </div>
-      ) : documents.length === 0 ? (
+      ) : documents.filter((doc) => doc.url).length === 0 ? (
         <div className="bg-white/60 backdrop-blur-sm rounded-xl p-8 border border-gray-100 text-center">
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Icon
@@ -172,9 +192,6 @@ const DocumentsTable = ({ applicationId }) => {
             />
           </div>
           <p className="text-gray-600 text-base">No documents found.</p>
-          <p className="text-gray-500 text-sm mt-1">
-            Add a document to get started.
-          </p>
         </div>
       ) : (
         <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-gray-100 overflow-hidden">
@@ -186,10 +203,7 @@ const DocumentsTable = ({ applicationId }) => {
                     Document Name
                   </th>
                   <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    View
+                    Category
                   </th>
                   <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Actions
@@ -197,92 +211,83 @@ const DocumentsTable = ({ applicationId }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {documents.map((doc) => (
-                  <tr
-                    key={doc.id}
-                    className="hover:bg-gray-50/50 transition-colors duration-200"
-                  >
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                          <Icon
-                            icon="mdi:file-document"
-                            className="text-white text-sm"
-                          />
+                {documents
+                  .filter((doc) => doc.url)
+                  .map((doc) => (
+                    <tr
+                      key={doc.id}
+                      className="hover:bg-gray-50/50 transition-colors duration-200"
+                    >
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <Icon
+                              icon="mdi:file-document"
+                              className="text-white text-sm"
+                            />
+                          </div>
+                          <span className="text-gray-900 font-medium">
+                            {doc.name}
+                          </span>
                         </div>
-                        <span className="text-gray-900 font-medium">
-                          {doc.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6">
-                      <span
-                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${
-                          doc.type === "visa"
-                            ? "bg-purple-100 text-purple-800"
-                            : doc.type === "university"
-                            ? "bg-emerald-100 text-emerald-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        <Icon
-                          icon={
+                      </td>
+                      <td className="py-4 px-6">
+                        {/* <span
+                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${
                             doc.type === "visa"
-                              ? "mdi:passport"
+                              ? "bg-purple-100 text-purple-800"
                               : doc.type === "university"
-                              ? "mdi:school"
-                              : "mdi:file-question"
-                          }
-                          className="text-sm"
-                        />
-                        {doc.type === "visa"
-                          ? "Visa"
-                          : doc.type === "university"
-                          ? "University"
-                          : doc.type || "Unknown"}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      {doc.url ? (
-                        <a
-                          href={doc.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm hover:underline transition-colors duration-200"
+                              ? "bg-emerald-100 text-emerald-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
                         >
-                          <Icon icon="mdi:eye" className="text-base" />
-                          Click here to view
-                        </a>
-                      ) : (
-                        <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
-                          <Icon icon="mdi:clock-outline" className="text-sm" />
-                          Not Yet Uploaded
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                          onClick={() => {
-                            setCurrentDoc({ ...doc });
-                            setShowEditModal(true);
-                          }}
-                          title="Edit document"
-                        >
-                          <Icon icon="mdi:pencil" className="text-lg" />
-                        </button>
-                        <button
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                          onClick={() => handleDeleteDocument(doc.id)}
-                          title="Delete document"
-                        >
-                          <Icon icon="mdi:delete" className="text-lg" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          <Icon
+                            icon={
+                              doc.type === "visa"
+                                ? "mdi:passport"
+                                : doc.type === "university"
+                                ? "mdi:school"
+                                : "mdi:file-question"
+                            }
+                            className="text-sm"
+                          />
+                          {doc.type === "visa"
+                            ? "Visa"
+                            : doc.type === "university"
+                            ? "University"
+                            : doc.type || "Unknown"}
+                        </span> */}
+                        <span>{doc.category || "-"}</span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-2">
+                          {/* <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-200"
+                            title="View document"
+                          >
+                            <Icon icon="mdi:eye" className="text-lg" />
+                          </a> */}
+                          <button
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                            onClick={() => handleDownload(doc.url, doc.name)}
+                            title="Download document"
+                          >
+                            <Icon icon="mdi:download" className="text-lg" />
+                          </button>
+                          <button
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                            onClick={() => handleDeleteDocument(doc.id)}
+                            title="Delete document"
+                          >
+                            <Icon icon="mdi:delete" className="text-lg" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

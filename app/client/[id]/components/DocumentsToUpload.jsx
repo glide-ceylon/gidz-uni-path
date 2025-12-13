@@ -362,7 +362,7 @@ const DocumentsToUpload = ({ applicationId }) => {
                         <div className="flex items-center justify-end space-x-2">
                           {doc.url && (
                             <>
-                              <a
+                              {/* <a
                                 href={doc.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -370,7 +370,7 @@ const DocumentsToUpload = ({ applicationId }) => {
                               >
                                 <FaEye className="w-3 h-3" />
                                 <span>View</span>
-                              </a>
+                              </a> */}
                               <a
                                 href={doc.url}
                                 download
