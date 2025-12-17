@@ -345,7 +345,7 @@ const ApplicantDetail = () => {
                         <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 32px 32px 40px 32px; position: relative;">
                             <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
                                 <div style="width: 48px; height: 48px; background: rgba(255, 255, 255, 0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
-                                    <img src="/gidz-transperant.png" style="height: 32px; width: auto;" alt="Gidz Uni Path Logo" />
+                                    <img src="/gidz-logo-image.jpg" style="height: 32px; width: auto;" alt="Gidz Uni Path Logo" />
                                 </div>
                                 <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.025em;">Gidz Uni Path</h1>
                             </div>
