@@ -30,7 +30,7 @@
     "express": "^4.21.2",
     "gidzunipath": "file:",
     "mongodb": "^6.14.2",
-    "next": "^15.0.3",
+    "next": "15.0.7",
     "nodemailer": "^7.0.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
