@@ -962,9 +962,9 @@ const ApplicantDetail = () => {
             </div>
             <div className="space-y-6">
               <DocumentsTable applicationId={id} />
-              {/* <div className="border-t border-gray-200 pt-6">
+              <div className="border-t border-gray-200 pt-6">
                 <DcoumentsFromUs applicationId={id} />
-              </div> */}
+              </div>
             </div>
           </div>
 

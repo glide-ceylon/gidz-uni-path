@@ -56,7 +56,7 @@ const DocumentsToUpload = ({ applicationId }) => {
       .from("documents")
       .select("*")
       .eq("application_id", appId)
-      .eq("upload_by", "Client")
+      // .eq("upload_by", "Client")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -195,10 +195,99 @@ const DocumentsToUpload = ({ applicationId }) => {
     });
   };
 
+  // Separate documents by upload source
+  const clientDocuments = documents.filter(
+    (doc) => doc.url && doc.upload_by === "Client"
+  );
+  const usDocuments = documents.filter(
+    (doc) => doc.url && doc.upload_by !== "Client"
+  );
+
+  // Component for rendering documents table
+  const DocumentsTable = ({ docs, showActions = false }) => (
+    <div className="bg-white border border-appleGray-200 rounded-2xl overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-appleGray-50 border-b border-appleGray-200">
+            <tr>
+              <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                Name
+              </th>
+              <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                Uploaded
+              </th>
+              <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
+                Category
+              </th>
+              <th className="text-right px-4 py-3 text-sm font-semibold text-appleGray-700">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-appleGray-100">
+            {docs.map((doc) => (
+              <tr
+                key={doc.id}
+                className="hover:bg-appleGray-50 transition-colors duration-200"
+              >
+                <td className="px-4 py-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <FaFilePdf className="w-4 h-4 text-red-500" />
+                    </div>
+                    <span className="text-sm font-medium text-appleGray-800 truncate max-w-[200px]">
+                      {doc.name}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-sm text-appleGray-600">
+                  {formatDate(doc.created_at)}
+                </td>
+                <td className="px-4 py-3 text-sm text-appleGray-600">
+                  {doc.category || "-"}
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center justify-end space-x-2">
+                    {doc.url && (
+                      <>
+                        <a
+                          href={doc.url}
+                          download
+                          className="inline-flex items-center space-x-1 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                        >
+                          <FaDownload className="w-3 h-3" />
+                          <span>Download</span>
+                        </a>
+                      </>
+                    )}
+                    {showActions && (
+                      <button
+                        onClick={() => handleDelete(doc)}
+                        disabled={deleting === doc.id}
+                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-lg transition-colors duration-200 disabled:opacity-50"
+                      >
+                        {deleting === doc.id ? (
+                          <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <FaTrash className="w-3 h-3" />
+                        )}
+                        <span>Delete</span>
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="w-full">
+    <div className="w-full space-y-8">
       {/* Header */}
-      <div className="mb-6">
+      <div>
         <h3 className="text-xl font-bold text-appleGray-800 mb-4 flex items-center">
           <FaCloudUploadAlt className="w-5 h-5 text-sky-500 mr-2" />
           MY DOCUMENTS
@@ -229,70 +318,76 @@ const DocumentsToUpload = ({ applicationId }) => {
         </div>
       </div>
 
-      {/* Upload Form */}
-      <div className="bg-white border border-appleGray-200 rounded-2xl p-4 mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          {/* File Input */}
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-appleGray-700 mb-2">
-              Select or drop a file here
-            </label>
-            <input
-              type="file"
-              id="file-upload-input"
-              accept="application/pdf"
-              onChange={handleFileChange}
-              className="w-full px-4 py-3 border border-appleGray-300 rounded-xl bg-appleGray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
-            />
-          </div>
+      {/* Upload Form - Only for Client Documents */}
+      <div>
+        <h4 className="text-lg font-semibold text-appleGray-800 mb-4 flex items-center">
+          <FaUpload className="w-4 h-4 text-sky-500 mr-2" />
+          Upload Your Documents
+        </h4>
+        <div className="bg-white border border-appleGray-200 rounded-2xl p-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* File Input */}
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-appleGray-700 mb-2">
+                Select or drop a file here
+              </label>
+              <input
+                type="file"
+                id="file-upload-input"
+                accept="application/pdf"
+                onChange={handleFileChange}
+                className="w-full px-4 py-3 border border-appleGray-300 rounded-xl bg-appleGray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
+              />
+            </div>
 
-          {/* Category Dropdown */}
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-appleGray-700 mb-2">
-              Choose category
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-3 border border-appleGray-300 rounded-xl bg-appleGray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
-            >
-              <option value="">Select a category...</option>
-              {DOCUMENT_CATEGORIES.map((category, index) => (
-                <option key={index} value={category}>
-                  {index + 1}. {category}
-                </option>
-              ))}
-            </select>
-          </div>
+            {/* Category Dropdown */}
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-appleGray-700 mb-2">
+                Choose category
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full px-4 py-3 border border-appleGray-300 rounded-xl bg-appleGray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
+              >
+                <option value="">Select a category...</option>
+                {DOCUMENT_CATEGORIES.map((category, index) => (
+                  <option key={index} value={category}>
+                    {index + 1}. {category}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Upload Button */}
-          <div className="flex items-end">
-            <button
-              onClick={handleFileUpload}
-              disabled={uploading || !fileToUpload || !selectedCategory}
-              className={`px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-medium transition-all duration-300 shadow-soft hover:shadow-medium inline-flex items-center space-x-2 ${
-                uploading || !fileToUpload || !selectedCategory
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
-              }`}
-            >
-              {uploading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Uploading...</span>
-                </>
-              ) : (
-                <>
-                  <FaUpload className="w-4 h-4" />
-                  <span>UPLOAD FILE</span>
-                </>
-              )}
-            </button>
+            {/* Upload Button */}
+            <div className="flex items-end">
+              <button
+                onClick={handleFileUpload}
+                disabled={uploading || !fileToUpload || !selectedCategory}
+                className={`px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-medium transition-all duration-300 shadow-soft hover:shadow-medium inline-flex items-center space-x-2 ${
+                  uploading || !fileToUpload || !selectedCategory
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+              >
+                {uploading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Uploading...</span>
+                  </>
+                ) : (
+                  <>
+                    <FaUpload className="w-4 h-4" />
+                    <span>UPLOAD FILE</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Documents Table */}
+      {/* Client Documents Section */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <div className="text-center space-y-4">
@@ -302,105 +397,51 @@ const DocumentsToUpload = ({ applicationId }) => {
             <p className="text-appleGray-600">Loading documents...</p>
           </div>
         </div>
-      ) : documents.filter((doc) => doc.url).length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 bg-appleGray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <FaFilePdf className="w-6 h-6 text-appleGray-400" />
-          </div>
-          <p className="text-appleGray-500 font-medium">
-            No documents uploaded yet
-          </p>
-          <p className="text-sm text-appleGray-400 mt-1">
-            Upload your first document using the form above
-          </p>
-        </div>
       ) : (
-        <div className="bg-white border border-appleGray-200 rounded-2xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-appleGray-50 border-b border-appleGray-200">
-                <tr>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
-                    Name
-                  </th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
-                    Uploaded
-                  </th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-appleGray-700">
-                    Category
-                  </th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold text-appleGray-700">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-appleGray-100">
-                {documents
-                  .filter((doc) => doc.url)
-                  .map((doc) => (
-                    <tr
-                      key={doc.id}
-                      className="hover:bg-appleGray-50 transition-colors duration-200"
-                    >
-                      <td className="px-4 py-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <FaFilePdf className="w-4 h-4 text-red-500" />
-                          </div>
-                          <span className="text-sm font-medium text-appleGray-800 truncate max-w-[200px]">
-                            {doc.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-appleGray-600">
-                        {formatDate(doc.created_at)}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-appleGray-600">
-                        {doc.category || "-"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end space-x-2">
-                          {doc.url && (
-                            <>
-                              {/* <a
-                                href={doc.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center space-x-1 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
-                              >
-                                <FaEye className="w-3 h-3" />
-                                <span>View</span>
-                              </a> */}
-                              <a
-                                href={doc.url}
-                                download
-                                className="inline-flex items-center space-x-1 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
-                              >
-                                <FaDownload className="w-3 h-3" />
-                                <span>Download</span>
-                              </a>
-                            </>
-                          )}
-                          <button
-                            onClick={() => handleDelete(doc)}
-                            disabled={deleting === doc.id}
-                            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-lg transition-colors duration-200 disabled:opacity-50"
-                          >
-                            {deleting === doc.id ? (
-                              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                              <FaTrash className="w-3 h-3" />
-                            )}
-                            <span>Delete</span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+        <>
+          {/* Your Uploaded Documents */}
+          <div>
+            <h4 className="text-lg font-semibold text-appleGray-800 mb-4 flex items-center">
+              <FaCheck className="w-4 h-4 text-green-500 mr-2" />
+              Your Uploaded Documents
+            </h4>
+            {clientDocuments.length === 0 ? (
+              <div className="text-center py-12 bg-appleGray-50 rounded-2xl">
+                <div className="w-16 h-16 bg-appleGray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <FaFilePdf className="w-6 h-6 text-appleGray-400" />
+                </div>
+                <p className="text-appleGray-500 font-medium">
+                  No documents uploaded yet
+                </p>
+                <p className="text-sm text-appleGray-400 mt-1">
+                  Upload your documents using the form above
+                </p>
+              </div>
+            ) : (
+              <DocumentsTable docs={clientDocuments} showActions={true} />
+            )}
           </div>
-        </div>
+
+          {/* Documents from Organization Section */}
+          {usDocuments.length > 0 && (
+            <div>
+              <h4 className="text-lg font-semibold text-appleGray-800 mb-4 flex items-center">
+                <FaEye className="w-4 h-4 text-blue-500 mr-2" />
+                Documents from GIDZ-UNI-PATH
+              </h4>
+              {/* <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3 mb-4">
+                <div className="flex items-start space-x-2">
+                  <FaInfoCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-blue-800">
+                    These documents have been provided by the organization. You
+                    can view and download them.
+                  </p>
+                </div>
+              </div> */}
+              <DocumentsTable docs={usDocuments} showActions={false} />
+            </div>
+          )}
+        </>
       )}
     </div>
   );
