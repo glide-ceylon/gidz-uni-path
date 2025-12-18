@@ -427,7 +427,7 @@ const DocumentsToUpload = ({ applicationId }) => {
             <div>
               <h4 className="text-lg font-semibold text-appleGray-800 mb-4 flex items-center">
                 <FaEye className="w-4 h-4 text-blue-500 mr-2" />
-                Documents from GIDZ-UNI-PATH
+                Documents from GidzUniPath
               </h4>
               {/* <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3 mb-4">
                 <div className="flex items-start space-x-2">
